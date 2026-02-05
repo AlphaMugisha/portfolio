@@ -5,7 +5,8 @@ $user = 'root';
 $pass = '';
 $dbname = 'alpha_portfolio';
 
-$conn = mysqli_connect($host, $user, $pass, $dbname);
+$res = mysqli_query($conn, "SELECT * FROM site_settings WHERE id=1");
+$site = mysqli_fetch_assoc($res);
 $db_connected = $conn ? true : false;
 
 // --- 2. CONTACT FORM LOGIC ---
