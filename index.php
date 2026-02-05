@@ -39,12 +39,14 @@ $settings = mysqli_fetch_assoc($settings_res);
         
         body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; position: relative; }
 
-        /* --- 3. ANIMATED BACKGROUND --- */
+        /* --- 3. ANIMATIONS & BACKGROUND --- */
         .background-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; overflow: hidden; }
         .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: var(--primary); }
         .blob-2 { bottom: 10%; right: -10%; width: 400px; height: 400px; background: var(--secondary); animation-delay: -5s; }
+        
         @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- 4. NAVIGATION --- */
         nav { width: 100%; padding: 25px 8%; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; z-index: 1000; backdrop-filter: blur(12px); border-bottom: var(--border); background: rgba(10, 10, 10, 0.7); }
@@ -71,10 +73,16 @@ $settings = mysqli_fetch_assoc($settings_res);
         .circle-spin { position: absolute; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px); border-radius: 50%; border: 2px dashed var(--primary); opacity: 0.3; animation: spin 20s linear infinite; z-index: 1; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- 6. PROJECTS SECTION --- */
+        /* --- 6. PROJECTS SECTION & SEARCH --- */
         .section { padding: 100px 8%; }
         .section-header { margin-bottom: 60px; }
         .section-header h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        
+        #projectSearch {
+            width: 100%; padding: 15px 15px 15px 45px; background: var(--glass); border: var(--border); border-radius: 50px; color: white; outline: none; transition: 0.3s;
+        }
+        #projectSearch:focus { border-color: var(--primary); background: rgba(255,255,255,0.05); }
+
         .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
         .project-card { background: var(--card-bg); border: var(--border); border-radius: 20px; padding: 35px; transition: 0.4s; position: relative; overflow: hidden; }
         .project-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(30,30,30,0.8); }
@@ -87,9 +95,8 @@ $settings = mysqli_fetch_assoc($settings_res);
         .info-item { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 20px; background: var(--glass); border-radius: 15px; border: var(--border); text-decoration: none; color: #fff; transition: 0.3s; }
         .info-item:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
         .icon-box { width: 50px; height: 50px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; }
-        .contact-right { flex: 1.5; min-width: 300px; }
-        .form-box { background: var(--card-bg); padding: 40px; border-radius: 20px; border: var(--border); }
-        .input-group input, .input-group textarea { width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 12px; color: #fff; font-size: 1rem; outline: none; margin-bottom: 20px; }
+        .form-box { background: var(--card-bg); padding: 40px; border-radius: 20px; border: var(--border); flex: 1.5; }
+        .input-group input, .input-group textarea { width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 12px; color: #fff; outline: none; margin-bottom: 20px; }
         .btn-submit { width: 100%; padding: 18px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none; border-radius: 12px; color: #fff; font-weight: 700; cursor: pointer; transition: 0.3s; }
 
         @media (max-width: 768px) { .hero h1 { font-size: 3.2rem; } .nav-menu { display: none; } }
@@ -137,12 +144,17 @@ $settings = mysqli_fetch_assoc($settings_res);
     <section id="projects" class="section">
         <div class="section-header">
             <h2>Featured Projects</h2>
-            <p style="color: var(--text-muted);">Dynamically loaded projects from the dashboard.</p>
+            <p style="color: var(--text-muted);">A selection of my recent work in Web Development & Systems.</p>
+            
+            <div style="margin-top: 30px; position: relative; max-width: 400px;">
+                <ion-icon name="search-outline" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary);"></ion-icon>
+                <input type="text" id="projectSearch" placeholder="Search by tech (e.g. PHP, MySQL)...">
+            </div>
         </div>
 
-        <div class="project-grid">
+        <div class="project-grid" id="projectGrid">
             <?php
-            // ONLY LOAD ACTIVE PROJECTS
+            // Load only Active projects
             $proj_res = mysqli_query($conn, "SELECT * FROM projects WHERE status='active' ORDER BY id DESC");
             while($row = mysqli_fetch_assoc($proj_res)): ?>
                 <div class="project-card">
@@ -193,6 +205,7 @@ $settings = mysqli_fetch_assoc($settings_res);
     </section>
 
     <script>
+        // --- 1. TYPEWRITER EFFECT ---
         const textElement = document.getElementById('type-text');
         const phrases = ["Web Developer", "Class President", "Robotics Enthusiast", "Pilot in Training"];
         let phraseIndex = 0; let charIndex = 0; let isDeleting = false;
@@ -205,6 +218,23 @@ $settings = mysqli_fetch_assoc($settings_res);
             else { setTimeout(typeEffect, isDeleting ? 100 : 150); }
         }
         document.addEventListener('DOMContentLoaded', typeEffect);
+
+        // --- 2. LIVE SEARCH FILTER ---
+        const searchInput = document.getElementById('projectSearch');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        searchInput.addEventListener('input', function() {
+            const filter = searchInput.value.toLowerCase();
+            projectCards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(filter)) {
+                    card.style.display = "block";
+                    card.style.animation = "fadeIn 0.5s ease";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
     </script>
 </body>
 </html>
