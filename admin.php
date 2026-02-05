@@ -2,6 +2,15 @@
 $conn = mysqli_connect('localhost', 'root', '', 'alpha_portfolio');
 $status_msg = "";
 
+<?php
+session_start();
+if (!isset($_SESSION['admin_logged_in'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// ... your existing admin.php code starts here ...
+
 // --- FEATURE 1: UPDATE HERO/BIO/SOCIALS ---
 if (isset($_POST['update_profile'])) {
     $name = mysqli_real_escape_string($conn, $_POST['my_name']);
