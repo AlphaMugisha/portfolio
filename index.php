@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect('localhost', 'root', '', 'alpha_portfolio');
+$conn = mysqli_connect('sql204.infinityfree.com', '	if0_41132058', 'i9jTQrpMDnh', 'if0_41132058_alphadev');
 $settings = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM site_settings WHERE id=1"));
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_msg'])) {
