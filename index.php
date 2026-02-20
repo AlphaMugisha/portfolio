@@ -1,14 +1,7 @@
 <?php
-$conn = mysqli_connect('sql204.infinityfree.com', '	if0_41132058', 'i9jTQrpMDnh', 'if0_41132058_alphadev');
+$conn = mysqli_connect('localhost', 'root', '', 'alpha_portfolio');
 $settings = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM site_settings WHERE id=1"));
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_msg'])) {
-    $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $msg = mysqli_real_escape_string($conn, $_POST['message']);
-    mysqli_query($conn, "INSERT INTO contact_messages (name, email, message) VALUES ('$name', '$email', '$msg')");
-    $sent = true;
-}
+$projects = mysqli_query($conn, "SELECT * FROM projects ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_msg'])) {
     <title><?php echo $settings['my_name']; ?> | Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <link rel="stylesheet" href="style.css"> </head>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
     <div class="background-fx"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
     
@@ -41,27 +35,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_msg'])) {
     <section id="projects" style="padding:100px 8%;">
         <h2 style="font-size:2.5rem; margin-bottom:40px;">Projects</h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:30px;">
-            <?php
-            $res = mysqli_query($conn, "SELECT * FROM projects WHERE status='active' ORDER BY id DESC");
-            while($row = mysqli_fetch_assoc($res)): ?>
-                <div class="project-card">
-                    <ion-icon name="<?php echo $row['icon_name']; ?>" style="font-size:3rem; color:var(--primary);"></ion-icon>
-                    <h3 style="margin:20px 0;"><?php echo $row['title']; ?></h3>
-                    <p style="color:var(--text-muted); margin-bottom:20px;"><?php echo $row['description']; ?></p>
-                    <a href="<?php echo $row['link']; ?>" style="color:var(--primary); text-decoration:none; font-weight:800;">View Source →</a>
+            <?php while($row = mysqli_fetch_assoc($projects)): ?>
+                <div class="project-card" style="background:var(--card-bg); border:var(--border); border-radius:24px; padding:20px; transition:0.4s;">
+                    <img src="uploads/<?php echo $row['image']; ?>" style="width:100%; height:200px; object-fit:cover; border-radius:15px; margin-bottom:20px;">
+                    <h3 style="margin-bottom:10px;"><?php echo $row['title']; ?></h3>
+                    <p style="color:var(--text-muted); margin-bottom:20px; line-height:1.6;"><?php echo $row['description']; ?></p>
+                    <a href="<?php echo $row['link']; ?>" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:800;">Explore Project →</a>
                 </div>
             <?php endwhile; ?>
         </div>
     </section>
 
     <script>
+        // Smooth 3D tilt effect for cards
         const cards = document.querySelectorAll('.project-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width - 0.5;
                 const y = (e.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `perspective(1000px) rotateY(${x * 20}deg) rotateX(${-y * 20}deg) translateY(-10px)`;
+                card.style.transform = `perspective(1000px) rotateY(${x * 15}deg) rotateX(${-y * 15}deg) translateY(-10px)`;
             });
             card.addEventListener('mouseleave', () => {
                 card.style.transform = `perspective(1000px) rotateY(0) rotateX(0) translateY(0)`;
