@@ -180,6 +180,51 @@
 }
 .animate-drift { animation: drift 18s ease-in-out infinite; }
 
+/* Skeleton shimmer. A single band travels across the placeholder so a
+   loading card reads as "working" rather than "broken". The global
+   reduced-motion rule above stops it; the placeholder stays legible. */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(242, 242, 242, 0.11),
+    transparent
+  );
+  animation: shimmer 1.8s var(--ease-out-expo) infinite;
+}
+
+/* The curtain is in the server markup, so its reveal has to be CSS — a
+   framer-motion initial state would leave the name invisible until hydration,
+   and the first paint would be a bare counter on black. */
+@keyframes preloader-rise {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.preloader-rise {
+  animation: preloader-rise 0.8s var(--ease-out-expo) both;
+}
+
+/* Failsafe: the preloader is present in the server markup so the page never
+   flashes before the curtain. If JS never runs to remove it, this clears it
+   anyway — a broken script must not lock the site behind a black screen. */
+@keyframes preloader-failsafe {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+[data-preloader] {
+  animation: preloader-failsafe 1ms linear 8s forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
