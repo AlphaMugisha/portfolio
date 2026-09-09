@@ -2,10 +2,17 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useInView,
+  useScroll,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 
 /**
- * The site's signature move.
+ * The site's signature image treatment.
  *
  * Three things happen at once, and they are deliberately the SAME three
  * everywhere an image appears, so the page reads as one idea rather than a
@@ -17,6 +24,12 @@ import { motion, useScroll, useSpring, useTransform, useReducedMotion } from "fr
  *
  * The drift is what sells depth — the frame holds still while its contents
  * move, which is how a real parallax plate behaves.
+ *
+ * The entrance is driven by an explicit `useInView` on the frame rather than
+ * by `whileInView` on the animated elements. Two reasons: viewport margins
+ * here are px (a percentage margin is rejected outright and the observer
+ * never fires at all), and the element that decides "am I visible" is the
+ * frame, which never moves — not the plate inside it, which does.
  */
 export default function RevealImage({
   src,
@@ -38,6 +51,7 @@ export default function RevealImage({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const inView = useInView(ref, { once: true, margin: "-90px" });
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -59,8 +73,7 @@ export default function RevealImage({
     <motion.div
       ref={ref}
       initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
-      whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
-      viewport={{ once: true, margin: "-12%" }}
+      animate={inView ? { clipPath: "inset(0% 0% 0% 0%)" } : undefined}
       transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1] }}
       className={`relative overflow-hidden ${rounded} ${className}`}
     >
@@ -70,8 +83,7 @@ export default function RevealImage({
       >
         <motion.div
           initial={{ scale: 1.12 }}
-          whileInView={{ scale: 1 }}
-          viewport={{ once: true, margin: "-12%" }}
+          animate={inView ? { scale: 1 } : undefined}
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
           className="relative h-full w-full"
         >

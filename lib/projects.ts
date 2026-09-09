@@ -27,8 +27,6 @@ export interface Project {
   evidence?: string;
   repo?: string;
   featured: boolean;
-  /** Two-tone accent for the case-study header. */
-  accent: "teal" | "rust";
 }
 
 /** Cover photography lives at a path derived from the slug. */
@@ -59,7 +57,6 @@ export const projects: Project[] = [
     evidence: "Counts read from the running rnsp_db instance and git history.",
     repo: "https://github.com/couper117/platform",
     featured: true,
-    accent: "teal",
   },
   {
     slug: "greenhouse-automation",
@@ -75,7 +72,6 @@ export const projects: Project[] = [
     stack: ["ESP32", "C++", "Arduino", "DHT Sensor", "OLED", "Relay", "Supabase"],
     status: "prototype",
     featured: true,
-    accent: "rust",
   },
   {
     slug: "clean-kigali",
@@ -97,7 +93,6 @@ export const projects: Project[] = [
     evidence: "Routes and audit logging verified against the running server.",
     repo: "https://github.com/AlphaMugisha/umuganda",
     featured: true,
-    accent: "teal",
   },
   {
     slug: "tembera",
@@ -119,7 +114,6 @@ export const projects: Project[] = [
     ],
     evidence: "Row counts read from the running tourism_db instance.",
     featured: true,
-    accent: "rust",
   },
   {
     slug: "transiteco",
@@ -142,7 +136,6 @@ export const projects: Project[] = [
     evidence: "Row counts read from the project database.",
     repo: "https://github.com/AlphaMugisha/Tega-Bus",
     featured: false,
-    accent: "teal",
   },
   {
     slug: "digital-ikibina",
@@ -159,7 +152,6 @@ export const projects: Project[] = [
     status: "in-progress",
     repo: "https://github.com/AlphaMugisha/digital-ikibina",
     featured: false,
-    accent: "rust",
   },
   {
     slug: "payment-system",
@@ -181,7 +173,6 @@ export const projects: Project[] = [
     evidence: "Verified against the running application and its database.",
     repo: "https://github.com/AlphaMugisha/payment-system",
     featured: false,
-    accent: "teal",
   },
   {
     slug: "school-systems",
@@ -203,7 +194,6 @@ export const projects: Project[] = [
     evidence: "Each system verified running locally against its own database.",
     repo: "https://github.com/AlphaMugisha/kami",
     featured: false,
-    accent: "rust",
   },
 ];
 

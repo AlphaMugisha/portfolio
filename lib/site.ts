@@ -18,10 +18,13 @@ export const site = {
   url: "https://alphamugisha.dev", // PLACEHOLDER — update once deployed.
 } as const;
 
+/* Labels follow the reference's naming — "Work" and "Expertise" rather than
+   "Projects" and "Skills". The section ids are unchanged, so every existing
+   anchor, deep link and case-study back-link still resolves. */
 export const navItems = [
+  { label: "Work", href: "/#projects" },
   { label: "About", href: "/#about" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Projects", href: "/#projects" },
+  { label: "Expertise", href: "/#skills" },
   { label: "Journey", href: "/#journey" },
   { label: "Contact", href: "/#contact" },
 ] as const;

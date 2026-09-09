@@ -16,17 +16,18 @@ export interface SkillGroup {
   title: string;
   index: string;
   blurb: string;
-  accent: "teal" | "rust";
+  /** Shown on the pointer when the group's row is hovered. */
+  preview: string;
   skills: Skill[];
 }
 
 export const skillGroups: SkillGroup[] = [
   {
     id: "software",
+    preview: "/images/projects/tembera.jpg",
     title: "Software",
     index: "01",
     blurb: "The layer most of my work ships through.",
-    accent: "teal",
     skills: [
       { name: "React", detail: "Components / State / Hooks" },
       { name: "Next.js", detail: "App Router / SSR / Routing" },
@@ -44,10 +45,10 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: "hardware",
+    preview: "/images/projects/greenhouse-automation.jpg",
     title: "Hardware",
     index: "02",
     blurb: "Where the code stops being abstract and moves something.",
-    accent: "rust",
     skills: [
       { name: "ESP32", detail: "Embedded / IoT / Wi-Fi" },
       { name: "Arduino Uno", detail: "Microcontrollers / C++" },
@@ -62,10 +63,10 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: "ai",
+    preview: "/images/projects/digital-ikibina.jpg",
     title: "AI",
     index: "03",
     blurb: "Treated as an engineering tool, not a talking point.",
-    accent: "teal",
     skills: [
       { name: "Claude", detail: "Reasoning / Agents / Code" },
       { name: "OpenAI", detail: "APIs / Completions" },
@@ -78,10 +79,10 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: "data",
+    preview: "/images/projects/rwasport.jpg",
     title: "Data & Backend",
     index: "04",
     blurb: "Where the truth of a system actually lives.",
-    accent: "rust",
     skills: [
       { name: "PostgreSQL", detail: "Relational / Prisma" },
       { name: "MySQL", detail: "Relational / PHP stack" },

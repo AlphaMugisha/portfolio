@@ -1,37 +1,117 @@
 "use client";
 
-import { Reveal, TextReveal, Counter, Zoom } from "@/components/ui/motion-primitives";
+import { motion, useReducedMotion } from "framer-motion";
 import RevealImage from "@/components/ui/RevealImage";
-import SectionHeading from "@/components/ui/SectionHeading";
+import { Reveal, Counter, MaskedWords } from "@/components/ui/motion-primitives";
+import { site } from "@/lib/site";
 
 /**
- * About — a conventional two-column introduction with a portrait plate.
+ * About.
  *
- * Every figure below is countable from the work in this portfolio. There is
- * no invented "years of experience" number and no self-assessed proficiency,
- * because neither would be verifiable.
+ * The reference's arrangement, which is worth copying because it works: a
+ * centred gold label under a hairline rule, then a framed portrait held on
+ * the left with the name set vertically down its edge, and to the right a
+ * statement whose emphasis alternates word by word, two columns of prose,
+ * and a strip of hard facts underneath.
  */
-const figures = [
-  { value: 8, suffix: "", label: "Systems in this portfolio" },
-  { value: 4, suffix: "", label: "Database engines used" },
-  { value: 30, suffix: "+", label: "Technologies worked with" },
+
+/* The alternating weight is the whole reason the statement can be set this
+   large without shouting: the eye reads the bold words as the sentence and
+   the light ones as the connective tissue. Indices, not flags, so the
+   pattern is stated once. */
+const STATEMENT = ["I build", "systems", "where", "software", "meets", "hardware."];
+const STRONG = new Set([0, 2, 4]);
+
+const FACTS = [
+  { label: "Based", value: site.location },
+  { label: "Role", value: site.role },
+  { label: "Focus", value: "Platforms · Embedded · AI" },
+  { label: "Status", value: "Open to new work" },
+];
+
+/** Every figure here is countable from the work in this portfolio. */
+const FIGURES = [
+  { value: 8, suffix: "", label: "Systems shipped" },
+  { value: 4, suffix: "", label: "Database engines" },
+  { value: 30, suffix: "+", label: "Technologies used" },
 ];
 
 export default function About() {
-  return (
-    <section id="about" className="relative scroll-mt-32 px-6 py-28 sm:px-10 sm:py-36">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="About" title="A short introduction" />
+  const reduced = useReducedMotion();
 
-        <div className="mt-16 grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-24">
-          <div>
-            <TextReveal
+  return (
+    <section
+      id="about"
+      data-band="dark"
+      className="relative scroll-mt-24 overflow-hidden bg-ink px-6 py-24 sm:px-10 sm:py-32"
+    >
+      <div className="mx-auto max-w-[1600px]">
+        {/* ---- Label ---- */}
+        <div className="flex flex-col items-center text-center">
+          <Reveal>
+            <p className="meta flex items-center gap-3 text-text-muted">
+              <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
+              01 — The person behind the work
+              <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.06}>
+            <h2 className="text-display mt-6 text-[clamp(1.9rem,5.2vw,4rem)] text-primary">
+              About me
+            </h2>
+          </Reveal>
+
+          <motion.div
+            initial={reduced ? undefined : { scaleX: 0 }}
+            whileInView={reduced ? undefined : { scaleX: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 h-px w-full max-w-3xl origin-center bg-line-strong"
+          />
+        </div>
+
+        {/* ---- Body ---- */}
+        <div className="mt-16 grid gap-12 lg:mt-20 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1fr)] lg:gap-16 xl:gap-24">
+          {/* Portrait, held in a frame with the name down its edge */}
+          <div className="relative pl-10 sm:pl-14">
+            <p
+              className="meta absolute left-0 top-0 origin-top-left translate-y-full -rotate-90 whitespace-nowrap text-text-muted"
+              aria-hidden="true"
+            >
+              {site.name}
+            </p>
+
+            <div className="relative border border-line p-2.5 sm:p-3">
+              <RevealImage
+                src="/images/portrait.jpg"
+                alt={`Portrait of ${site.name}`}
+                className="aspect-4/5 w-full"
+                sizes="(max-width: 1024px) 100vw, 34vw"
+                drift={8}
+              />
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <span className="meta text-text-muted">Kigali · RW</span>
+              <span className="meta text-primary">{new Date().getFullYear()}</span>
+            </div>
+          </div>
+
+          {/* Statement + prose + facts */}
+          <div className="flex flex-col justify-center">
+            <MaskedWords
               as="h3"
-              className="text-display text-[clamp(1.5rem,2.9vw,2.3rem)] text-text-primary"
-              lines={["I build complete systems,", "not just interfaces."]}
+              words={STATEMENT}
+              className="text-editorial text-[clamp(1.6rem,4.4vw,3.4rem)] text-text-primary"
+              wordClassName={(i) =>
+                STRONG.has(i)
+                  ? "font-bold text-text-primary"
+                  : "font-light text-text-secondary"
+              }
             />
 
-            <div className="mt-8 space-y-6 text-pretty leading-relaxed text-text-secondary">
+            <div className="mt-10 grid gap-8 text-pretty leading-relaxed text-text-secondary sm:grid-cols-2">
               <Reveal delay={0.05}>
                 <p>
                   My work begins with the data. Before a screen exists there is a
@@ -41,7 +121,7 @@ export default function About() {
                 </p>
               </Reveal>
 
-              <Reveal delay={0.1}>
+              <Reveal delay={0.11}>
                 <p>
                   Since then I have built web platforms, REST APIs,
                   administrative dashboards and connected devices — React,
@@ -49,46 +129,35 @@ export default function About() {
                   behind them, over PostgreSQL, MySQL and SQLite.
                 </p>
               </Reveal>
-
-              <Reveal delay={0.15}>
-                <p>
-                  I care about software that holds up in use: clear structure,
-                  honest data, and interfaces that stay usable on an ordinary
-                  connection.
-                </p>
-              </Reveal>
             </div>
 
-            <div className="mt-14 grid grid-cols-3 gap-6 border-t border-line pt-10">
-              {figures.map((f, i) => (
-                <Reveal key={f.label} delay={i * 0.08}>
+            {/* Hard facts */}
+            <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-7 border-t border-line pt-10 sm:grid-cols-4">
+              {FACTS.map((f, i) => (
+                <Reveal key={f.label} delay={i * 0.06}>
                   <div>
-                    <p className="text-display text-4xl text-text-primary sm:text-5xl">
+                    <dt className="meta text-text-muted">{f.label}</dt>
+                    <dd className="mt-2.5 text-sm leading-snug text-text-primary">
+                      {f.value}
+                    </dd>
+                  </div>
+                </Reveal>
+              ))}
+            </dl>
+
+            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-10">
+              {FIGURES.map((f, i) => (
+                <Reveal key={f.label} delay={i * 0.07}>
+                  <div>
+                    <p className="text-display text-[clamp(1.8rem,4vw,3rem)] text-primary">
                       <Counter value={f.value} suffix={f.suffix} />
                     </p>
-                    <p className="mt-3 font-sans text-[10px] uppercase tracking-[0.14em] text-text-muted">
-                      {f.label}
-                    </p>
+                    <p className="meta mt-2.5 text-text-muted">{f.label}</p>
                   </div>
                 </Reveal>
               ))}
             </div>
           </div>
-
-          {/* Portrait */}
-          <Zoom from="right" className="relative" scale={0.85}>
-            <RevealImage
-              src="/images/portrait.jpg"
-              alt="Portrait of Alpha Mugisha"
-              className="aspect-4/5 w-full"
-              sizes="(max-width: 1024px) 100vw, 40vw"
-              drift={9}
-            />
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-4 -left-4 -z-10 h-full w-full rounded-sm border border-primary/35"
-            />
-          </Zoom>
         </div>
       </div>
     </section>

@@ -227,6 +227,12 @@ export function TextReveal({
   as?: "h1" | "h2" | "h3" | "p" | "div";
 }) {
   const reduced = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+  // Observe the heading, never the line. A line starts fully below its own
+  // overflow-hidden mask, so an observer watching the line sees a clipped,
+  // zero-area box, reports "not visible", and never releases it — the reveal
+  // would deadlock on its own initial state.
+  const inView = useInView(ref, { once: true, margin: "-90px" });
 
   if (reduced) {
     return (
@@ -241,17 +247,81 @@ export function TextReveal({
   }
 
   return (
-    <Tag className={className}>
+    <Tag
+      ref={ref as React.RefObject<HTMLHeadingElement & HTMLParagraphElement & HTMLDivElement>}
+      className={className}
+    >
       {lines.map((line, i) => (
         <span key={i} className="block overflow-hidden pb-[0.08em]">
           <motion.span
             className={`block ${lineClassName}`}
             initial={{ y: "110%" }}
-            whileInView={{ y: "0%" }}
-            viewport={{ once: true, margin: "-90px" }}
+            animate={inView ? { y: "0%" } : undefined}
             transition={{ duration: 1, delay: delay + i * 0.09, ease: EASE }}
           >
             {line}
+          </motion.span>
+        </span>
+      ))}
+    </Tag>
+  );
+}
+
+/* ---------- Masked line ------------------------------------------- */
+
+/**
+ * A run of inline items that each rise out of their own mask, released
+ * together when the container is reached.
+ *
+ * Same rule as TextReveal: the observer watches the container. Callers supply
+ * the items, so the emphasis can vary word by word.
+ */
+export function MaskedWords({
+  words,
+  className = "",
+  wordClassName,
+  stagger = 0.07,
+  delay = 0,
+  as: Tag = "h3",
+}: {
+  words: string[];
+  className?: string;
+  /** Per-word classes, so emphasis can alternate across the sentence. */
+  wordClassName?: (index: number) => string;
+  stagger?: number;
+  delay?: number;
+  as?: "h1" | "h2" | "h3" | "p" | "div";
+}) {
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-90px" });
+
+  if (reduced) {
+    return (
+      <Tag className={className}>
+        {words.map((w, i) => (
+          <span key={i} className={`mr-[0.28em] inline-block ${wordClassName?.(i) ?? ""}`}>
+            {w}
+          </span>
+        ))}
+      </Tag>
+    );
+  }
+
+  return (
+    <Tag
+      ref={ref as React.RefObject<HTMLHeadingElement & HTMLParagraphElement & HTMLDivElement>}
+      className={className}
+    >
+      {words.map((w, i) => (
+        <span key={i} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+          <motion.span
+            className={`mr-[0.28em] inline-block ${wordClassName?.(i) ?? ""}`}
+            initial={{ y: "112%" }}
+            animate={inView ? { y: "0%" } : undefined}
+            transition={{ duration: 0.95, delay: delay + i * stagger, ease: EASE }}
+          >
+            {w}
           </motion.span>
         </span>
       ))}
@@ -362,7 +432,7 @@ export function Zoom({
       className={className}
       initial={{ opacity: 0, scale, x: off.x, y: off.y }}
       whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-      viewport={{ once, margin: "-8%" }}
+      viewport={{ once, margin: "-80px" }}
       transition={{ duration, delay, ease: EASE }}
     >
       {children}
@@ -390,7 +460,7 @@ export function ZoomStagger({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once, margin: "-6%" }}
+      viewport={{ once, margin: "-60px" }}
       variants={{ hidden: {}, visible: { transition: { staggerChildren: stagger } } }}
     >
       {children}

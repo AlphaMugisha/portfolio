@@ -3,70 +3,122 @@
 /* ============================================================
    DESIGN TOKENS
 
-   Referenced from tuyishimireeric.github.io, whose own CSS variables are:
-     --main-color  #f2f2f2   off-white text
-     --third-color #828282   muted grey
-     --fith-color  #FEB002   amber
-     --second-color #70ff00  lime
-     --dark-color  #161616   near-black
-     body: linear-gradient(130deg, #000, #272727 58%, #727272)
+   Every value below was measured off inspo.mp4 rather than guessed. The
+   reel is a screen recording of a screen recording, so single pixels lie —
+   these come from colour histograms over whole frames, where a flat UI fill
+   is the dominant bucket and reads the same at every timestamp it appears.
 
-   Kept: the charcoal-to-grey gradient ground, the off-white text, the
-   muted grey, and amber as the accent that carries the page.
+     #141518  the page ground (t=3, 10, 58, 69, 77 — identical each time)
+     #030407  the menu overlay, the only thing deeper than the ground
+     #303233  the case-study panels, which sit ON the ground rather than
+              replacing it — the reference has no light card
+     #acaaa6  a warm grey doing double duty: it is BOTH the fill of the
+              opening band AND the light type on the dark ground. One value,
+              two roles — that is what makes the palette read as tight
+     #928769  the gold, measured on the poured WORK title (13% of frame)
+     #a29d85  the same gold lifted, used on small marks and the counter
 
-   Changed: amber leads instead of the lime, and the lime is toned to
-   #8FDC3C for small marks only. At full #70ff00 it reads as the neon
-   hacker look this site is deliberately not.
+   Contrast was checked against every pairing actually used; the lightest
+   text permitted on any ground is 5.2:1 and the gold clears 5.1:1.
+   Deliberate consequence: the gold is near-invisible on the light band
+   (1.55:1), so the band carries black type only — exactly as the reel does.
 
    Tailwind v4 is CSS-first: @theme generates the utilities.
    ============================================================ */
 @theme {
-  /* -- core palette -------------------------------------- */
-  --color-ink: #0e0e0e;      /* deepest ground */
-  --color-paper: #f2f2f2;    /* light — pills, text over imagery */
-  --color-amber: #feb002;    /* the accent, straight from the reference */
-  --color-lime: #8fdc3c;     /* toned secondary */
+  /* -- measured core -------------------------------------- */
+  --color-ink: #141518;
+  --color-void: #030407;
+  --color-panel: #303233;
+  --color-paper: #acaaa6;
+  --color-gold: #928769;
+  --color-gold-light: #a29d85;
 
-  /* -- semantic surfaces --------------------------------- */
-  --color-bg: #0e0e0e;
-  --color-bg-raised: #191919;  /* alternating band */
-  --color-surface: #232323;    /* cards, panels */
-  /* "Inverted" band — on a dark site this is a second, deeper tone
-     rather than a light one, so the rhythm still reads. */
-  --color-bg-invert: #161616;
-  --color-surface-invert: #242424;
+  /* -- semantic surfaces ---------------------------------- */
+  --color-bg: #141518;
+  --color-bg-raised: #191a1e;
+  --color-surface: #25262b;
+  --color-surface-raised: #34343b;
+  --color-bg-invert: #030407;
+  --color-surface-invert: #25262b;
 
-  /* -- text ---------------------------------------------- */
-  --color-text-primary: #f2f2f2;   /* 17.3:1 on #0e0e0e */
-  --color-text-secondary: #b4b4b4; /* 9.2:1 */
-  --color-text-muted: #828282;     /* 5.0:1 — lightest text permitted */
+  /* The opening band. The reference's warm grey, unmodified. */
+  --color-band-light: #acaaa6;
+  --color-band-deep: #9d9b97;
 
-  /* Same values on the deeper band — the site is dark throughout. */
-  --color-text-invert: #f2f2f2;
-  --color-text-invert-muted: #b4b4b4;
+  /* -- text on the dark ground ---------------------------- */
+  --color-text-primary: #acaaa6;   /* 7.87:1 */
+  --color-text-secondary: #9b9a96; /* 6.48:1 */
+  --color-text-muted: #8a8985;     /* 5.21:1 — lightest permitted */
+  --color-text-invert: #acaaa6;
+  --color-text-invert-muted: #9b9a96;
 
-  /* -- interactive --------------------------------------- */
-  --color-primary: #feb002;        /* 10.5:1 */
-  --color-primary-hover: #ffc23a;
-  --color-primary-light: #feb002;  /* same amber reads on every band */
-  --color-on-primary: #0e0e0e;     /* 10.5:1 on the amber fill */
+  /* -- text on the light band ----------------------------- */
+  --color-on-band: #16171a;        /* 7.73:1 */
+  --color-on-band-muted: #3c3d40;  /* 4.68:1 */
 
-  /* -- accent -------------------------------------------- */
-  --color-accent: #8fdc3c;         /* 10.6:1 */
-  --color-accent-text: #8fdc3c;
+  /* -- text on a case-study panel ------------------------- */
+  --color-on-panel: #c6c5c1;       /* 7.46:1 */
+  --color-on-panel-muted: #9b9a96; /* 4.58:1 */
 
-  /* -- lines --------------------------------------------- */
-  --color-line: rgba(242, 242, 242, 0.1);
-  --color-line-strong: rgba(242, 242, 242, 0.2);
-  --color-line-invert: rgba(242, 242, 242, 0.14);
+  /* The statement card is the one surface carrying BOTH near-black and
+     near-white type at once — the reel sets its frame words in black and the
+     cycling project name in white on the same panel. Measured, that panel
+     comes back around #303233, where black would sit at 1.39:1. Since both
+     inks have to work, the panel is lifted to a true mid-tone: black lands at
+     3.94:1 and the lifted ink at 3.61:1, both clear of the 3:1 floor for
+     display type, and the composition is unchanged. */
+  --color-panel-mid: #74767a;
+  --color-on-panel-mid: #16171a;      /* 3.94:1 — the frame words */
+  --color-on-panel-mid-lift: #e9e8e4; /* 3.61:1 — the cycling name */
 
-  /* -- type ---------------------------------------------- */
+  /* -- interactive ---------------------------------------- */
+  --color-primary: #928769;        /* 5.12:1 on the ground */
+  --color-primary-hover: #a29d85;
+  --color-primary-light: #a29d85;  /* 6.69:1 — the quieter gold */
+  --color-on-primary: #141518;     /* 5.12:1 on the gold fill */
+
+  /* -- accent --------------------------------------------- */
+  --color-accent: #a29d85;
+  --color-accent-text: #a29d85;
+
+  /* -- lines ----------------------------------------------
+     Tinted with the warm grey rather than pure white, so a hairline on the
+     ground stays in the same family as the type sitting next to it. */
+  --color-line: rgba(172, 170, 166, 0.13);
+  --color-line-strong: rgba(172, 170, 166, 0.26);
+  --color-line-invert: rgba(172, 170, 166, 0.17);
+  --color-line-band: rgba(22, 23, 26, 0.2);
+  --color-line-panel: rgba(198, 197, 193, 0.16);
+
+  /* -- type ----------------------------------------------- */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), ui-sans-serif, system-ui, sans-serif;
+  /* The @theme key and the font-loader's own variable must not share a name:
+     `--font-x: var(--font-x)` is self-referential, and whether it resolves
+     comes down to stylesheet order rather than intent. */
+  --font-script: var(--font-delafield), cursive;
+  --font-geometric: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 
-  /* -- motion -------------------------------------------- */
+  /* -- motion --------------------------------------------- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  /* -- depth ----------------------------------------------
+     A short, deliberate elevation scale. Depth here is a structural
+     property — how far a thing sits from the page — not a decoration,
+     so there are five steps and no more. Perspective comes in two
+     strengths: `near` for a single card under the pointer, `far` for a
+     whole section's layers, where a short perspective would distort the
+     outer edges into a fisheye. */
+  --perspective-near: 900px;
+  --perspective-far: 2400px;
+
+  --z-recessed: -60px;
+  --z-flat: 0px;
+  --z-raised: 40px;
+  --z-lifted: 90px;
+  --z-front: 160px;
 }
 
 /* ============================================================
@@ -80,7 +132,7 @@
   html {
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
-    background-color: #0e0e0e;
+    background-color: #141518;
   }
 
   body {
@@ -88,25 +140,12 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "ss03";
     overflow-x: clip;
-
-    /* The reference's diagonal charcoal-to-grey ground, pulled back so it
-       never washes out text at the bottom of a long page. Fixed so it reads
-       as a ground the content moves over, not a band that scrolls with it. */
-    background-color: #0e0e0e;
-    background-image: linear-gradient(
-      130deg,
-      #0b0b0b 0%,
-      #1c1c1c 52%,
-      #303030 100%
-    );
-    background-attachment: fixed;
-    background-size: cover;
-    background-repeat: no-repeat;
+    background-color: #141518;
   }
 
   ::selection {
-    background-color: #feb002;
-    color: #0e0e0e;
+    background-color: #928769;
+    color: #141518;
   }
 
   :focus-visible {
@@ -116,73 +155,212 @@
   }
 
   ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #131313; }
+  ::-webkit-scrollbar-track { background: #141518; }
   ::-webkit-scrollbar-thumb {
-    background: #3a3a3a;
+    background: #34343b;
     border-radius: 99px;
-    border: 2px solid #131313;
+    border: 2px solid #141518;
   }
-  ::-webkit-scrollbar-thumb:hover { background: #4e4e4e; }
+  ::-webkit-scrollbar-thumb:hover { background: #4c4d52; }
 }
 
 /* ============================================================
-   UTILITIES
+   TYPE UTILITIES
    ============================================================ */
 
-/* Display type — Inter at 600, tightened. */
+/* The reference's signature move: an ultra-heavy grotesque set enormous
+   and stretched vertically until the counters close up and the word reads
+   as a block. Anton is the closest freely-available face; the vertical
+   scale is what supplies the compression Anton does not have on its own. */
+@utility text-mega {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: 0.78;
+  text-transform: uppercase;
+}
+
 @utility text-display {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.028em;
-  line-height: 1.04;
+  font-weight: 400;
+  letter-spacing: 0.002em;
+  line-height: 1.02;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
-/* Small tracked label. One family, so the label role is a weight-and-
-   tracking treatment rather than a second typeface. */
+/* Not every headline should be all-caps Anton. The about and expertise
+   headlines in the reference are a normal grotesque mixing light and bold
+   within a single sentence — that is this. */
+@utility text-editorial {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: -0.022em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+@utility script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
 @utility eyebrow {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--color-primary);
 }
 
 @utility eyebrow-invert {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--color-primary-light);
 }
 
-/* Sections that need to separate from the fixed ground get their own
-   translucent panel rather than an opaque fill, so the gradient shows through. */
-@utility band {
-  background-color: rgba(14, 14, 14, 0.55);
-  backdrop-filter: blur(2px);
+/* Small tracked meta label — the workhorse of both bands. */
+@utility meta {
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
-/* A restrained nod to Rwandan imigongo geometry — texture, never décor. */
-@utility imigongo {
-  background-image:
-    linear-gradient(135deg, currentColor 25%, transparent 25%),
-    linear-gradient(225deg, currentColor 25%, transparent 25%);
-  background-size: 26px 26px;
+/* The full-screen menu. Measured off the reel: cap height 4.6% of viewport
+   height, baseline pitch 2.67x the cap (line-height ~1.9), and tracking that
+   is visibly POSITIVE — every letter in WORK and CONTACT is separated. It is
+   a small, airy, centred column, not a display slab: the widest word occupies
+   only a fifth of the viewport. */
+@utility menu-link {
+  font-family: var(--font-geometric);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.9;
+}
+
+/* The opening's absolute vertical schedule only holds at the reference's own
+   aspect (1.629). Narrower than that, the display type becomes width-bound and
+   far shorter than its reserved 56.3svh, so a fixed caption offset strands it
+   halfway down an empty screen. Below the reference aspect the caption simply
+   follows the word instead. */
+.hero-caption {
+  margin-top: 10svh;
+}
+@media (min-aspect-ratio: 1629 / 1000) {
+  .hero-caption {
+    position: absolute;
+    inset-inline: 0;
+    top: 80.5svh;
+    margin-top: 0;
+  }
+}
+
+/* ============================================================
+   DEPTH
+
+   The site reads as spatial whether or not WebGL is available, so the
+   flat fallback is built here in CSS rather than being an absence.
+   ============================================================ */
+
+/* Establishes a shared perspective for a group of layered children. Put this
+   on the section, not on each card: perspective on every card individually
+   gives each its own vanishing point and the group stops reading as one
+   space. */
+@utility stage {
+  perspective: var(--perspective-far);
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+@utility stage-near {
+  perspective: var(--perspective-near);
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+/* Children that hold their own depth inside a stage. */
+@utility layer {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Glass, derived from the ground rather than from white. A white-tinted
+   frosted panel on this palette reads as a different site; tinting with the
+   ground keeps it inside the identity and stops the blur turning milky. */
+@utility glass {
+  background-color: rgba(20, 21, 24, 0.55);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid rgba(172, 170, 166, 0.1);
+}
+
+@utility glass-band {
+  background-color: rgba(172, 170, 166, 0.5);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+  border: 1px solid rgba(22, 23, 26, 0.12);
+}
+
+/* Elevation. The shadow is warmed toward the gold rather than neutral black,
+   so a lifted object looks lit by the page's own light. */
+@utility elevate {
+  box-shadow:
+    0 2px 6px rgba(3, 4, 7, 0.4),
+    0 18px 40px rgba(3, 4, 7, 0.45),
+    inset 0 1px 0 rgba(172, 170, 166, 0.06);
+}
+
+@utility elevate-high {
+  box-shadow:
+    0 4px 10px rgba(3, 4, 7, 0.45),
+    0 40px 90px rgba(3, 4, 7, 0.55),
+    0 0 60px rgba(146, 135, 105, 0.07),
+    inset 0 1px 0 rgba(172, 170, 166, 0.08);
+}
+
+/* A soft pool of the accent behind a lifted object — not a glow on the object,
+   light it is sitting in. */
+@utility pool-light {
+  position: absolute;
+  inset: -10% -6% -22%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(146, 135, 105, 0.22),
+    rgba(146, 135, 105, 0) 68%
+  );
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+  pointer-events: none;
+}
+.group:hover .pool-light { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pool-light { transition: none; }
+}
+
+@utility band {
+  background-color: rgba(20, 21, 24, 0.55);
+  backdrop-filter: blur(2px);
 }
 
 /* ============================================================
    ANIMATION
    ============================================================ */
+
 @keyframes drift {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
   50%      { transform: translate3d(0, -16px, 0) scale(1.02); }
 }
 .animate-drift { animation: drift 18s ease-in-out infinite; }
 
-/* Skeleton shimmer. A single band travels across the placeholder so a
-   loading card reads as "working" rather than "broken". The global
-   reduced-motion rule above stops it; the placeholder stays legible. */
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }
@@ -198,31 +376,58 @@
   background-image: linear-gradient(
     90deg,
     transparent,
-    rgba(242, 242, 242, 0.11),
+    rgba(172, 170, 166, 0.13),
     transparent
   );
   animation: shimmer 1.8s var(--ease-out-expo) infinite;
 }
 
-/* The curtain is in the server markup, so its reveal has to be CSS — a
-   framer-motion initial state would leave the name invisible until hydration,
-   and the first paint would be a bare counter on black. */
+/* Marquee. Two identical tracks sit side by side and the pair translates by
+   exactly half its own width, so the seam never lands in view. */
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-left var(--marquee-duration, 38s) linear infinite;
+}
+.marquee-track[data-direction="right"] {
+  animation-name: marquee-right;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* The rotating seal in the corner of the opening. */
+@keyframes seal-spin {
+  to { transform: rotate(360deg); }
+}
+.animate-seal { animation: seal-spin 24s linear infinite; }
+
+/* Preloader. Kept in CSS rather than framer-motion because the curtain
+   ships in the server markup — a motion `initial` would leave the mark
+   invisible until hydration, so first paint would be a bare counter. */
 @keyframes preloader-rise {
-  from { transform: translateY(100%); opacity: 0; }
+  from { transform: translateY(110%); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
 }
 .preloader-rise {
-  animation: preloader-rise 0.8s var(--ease-out-expo) both;
+  animation: preloader-rise 0.9s var(--ease-out-expo) both;
 }
 
-/* Failsafe: the preloader is present in the server markup so the page never
-   flashes before the curtain. If JS never runs to remove it, this clears it
-   anyway — a broken script must not lock the site behind a black screen. */
+/* Failsafe: a dead script must not lock the site behind a black screen. */
 @keyframes preloader-failsafe {
   to { opacity: 0; visibility: hidden; pointer-events: none; }
 }
 [data-preloader] {
-  animation: preloader-failsafe 1ms linear 8s forwards;
+  animation: preloader-failsafe 1ms linear 11s forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -234,15 +439,13 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .marquee-track { animation: none !important; }
 }
 
 /* ============================================================
    HOVER SYSTEM
    ============================================================ */
 
-/* The native cursor is only suppressed once Cursor.tsx has mounted and
-   added this class, so a JS failure can never leave the page cursorless.
-   Text inputs keep their caret — you still need to see where you are typing. */
 .has-custom-cursor,
 .has-custom-cursor a,
 .has-custom-cursor button,
@@ -255,8 +458,6 @@
   cursor: auto;
 }
 
-/* Underline that sweeps in from the left and out to the right, so repeated
-   hovers read as direction rather than a blink. */
 @utility link-sweep {
   position: relative;
 }
@@ -268,7 +469,7 @@
   width: 100%;
   transform: scaleX(0);
   transform-origin: right;
-  background-color: var(--color-primary);
+  background-color: currentColor;
   transition: transform 0.45s var(--ease-out-expo);
 }
 .group:hover .link-sweep-line,
@@ -277,8 +478,6 @@ a:hover > .link-sweep-line {
   transform-origin: left;
 }
 
-/* Media hover: settles from slightly desaturated to full colour. Applied to
-   photography so a hover reads as "this is live" rather than as a zoom. */
 @utility media-hover {
   filter: saturate(0.78) brightness(0.92);
   transition:

@@ -82,7 +82,7 @@ function displayColour(hex: string): string {
   const lin = (c: number) =>
     c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-  return L < 0.12 ? "#f2f2f2" : `#${hex}`;
+  return L < 0.12 ? "#acaaa6" : `#${hex}`;
 }
 
 export default function TechIcon({

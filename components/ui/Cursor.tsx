@@ -77,12 +77,15 @@ export default function Cursor() {
             width: label ? 76 : active ? 44 : 26,
             height: label ? 76 : active ? 44 : 26,
             opacity: visible ? 1 : 0,
+            // Inline rather than tokenised: these interpolate between three
+            // states on every pointer move, and framer needs real values to
+            // tween. Kept in step with --color-gold / --color-paper.
             backgroundColor: label
-              ? "rgba(254,176,2,0.92)"
+              ? "rgba(146,135,105,0.94)"
               : active
-                ? "rgba(254,176,2,0.14)"
-                : "rgba(254,176,2,0)",
-            borderColor: active ? "rgba(254,176,2,0.9)" : "rgba(242,242,242,0.45)",
+                ? "rgba(146,135,105,0.16)"
+                : "rgba(146,135,105,0)",
+            borderColor: active ? "rgba(146,135,105,0.9)" : "rgba(172,170,166,0.45)",
           }}
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
           className="grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border"

@@ -40,13 +40,16 @@ export default async function ProjectPage({
   const next = projects[(index + 1) % projects.length];
 
     return (
-    <article className="px-6 pb-24 pt-32 sm:px-8 sm:pt-40">
+    <article
+      data-band="dark"
+      className="bg-ink px-6 pb-24 pt-32 sm:px-8 sm:pt-40"
+    >
       <div className="mx-auto max-w-5xl">
         {/* Back */}
         <Reveal>
           <Link
             href="/#projects"
-            className="group mb-14 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.16em] text-text-muted transition-colors hover:text-text-primary"
+            className="group mb-14 inline-flex items-center gap-2 meta text-text-muted transition-colors hover:text-text-primary"
           >
             <ArrowLeft
               size={14}
@@ -60,10 +63,11 @@ export default async function ProjectPage({
         <header>
           <Reveal>
             <div className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2">
-              <span className="font-sans text-[10px] uppercase tracking-[0.18em] text-text-muted">
+              <span className="meta text-text-muted">
                 {project.year}
               </span>
-              <span className="font-sans text-[10px] uppercase tracking-[0.18em] text-text-secondary">
+              <span className="meta flex items-center gap-2 text-text-secondary">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 {statusCopy[project.status]}
               </span>
             </div>
@@ -80,7 +84,7 @@ export default async function ProjectPage({
               {project.categories.map((c) => (
                 <span
                   key={c}
-                  className="rounded-full border border-line-strong px-3 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-text"
+                  className="meta rounded-full border border-line-strong px-3.5 py-1.5 text-primary"
                 >
                   {c}
                 </span>
@@ -112,10 +116,10 @@ export default async function ProjectPage({
             <div className="mt-14 grid grid-cols-2 gap-8 border-y border-line py-10 sm:grid-cols-4">
               {project.stats.map((s) => (
                 <div key={s.label}>
-                  <p className="font-sans text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  <p className="meta text-text-muted">
                     {s.label}
                   </p>
-                  <p className="text-display mt-2 text-3xl text-text-primary">
+                  <p className="text-display mt-2.5 text-3xl text-primary">
                     {s.value}
                   </p>
                 </div>
@@ -153,7 +157,7 @@ export default async function ProjectPage({
               {project.stack.map((t) => (
                 <li
                   key={t}
-                  className="rounded-full border border-line-strong px-4 py-2.5 font-sans text-xs text-text-secondary"
+                  className="rounded-full border border-line-strong px-4 py-2.5 text-xs text-text-secondary"
                 >
                   {t}
                 </li>
