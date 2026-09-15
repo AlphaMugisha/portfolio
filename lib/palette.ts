@@ -1,5 +1,5 @@
 /**
- * The measured palette, in a form WebGL can use.
+ * The palette, in a form WebGL can use.
  *
  * `app/globals.css` is the source of truth: it declares these as Tailwind v4
  * `@theme` tokens, which is what every CSS rule and utility resolves against.
@@ -12,28 +12,32 @@
  *   - `assertPaletteInSync()` re-reads the real custom properties in the
  *     browser during development and warns if any pair disagrees.
  *
- * Every value was sampled from the reference recording with colour histograms
- * rather than picked, which is why they are odd numbers. Do not round them.
+ * The two lights have fixed roles, and the scenes are where the rule bites:
+ * CYAN is the accent ink — attention, hover, the constellation's signal.
+ * EMBER is never an ink; it exists only as light in the depth — the bounce
+ * inside the hero cut, the key light riding the rack, a few warm motes.
  */
 
 /** Hex strings, for CSS-side use and for `new THREE.Color()`. */
 export const PALETTE = {
   /** --color-ink — the ground under every dark section. */
-  ink: "#141518",
+  ink: "#0B0E14",
   /** --color-void — the full-screen menu, and nothing else. */
-  void: "#030407",
+  void: "#04060A",
   /** --color-panel — case-study cards, which sit on the ground. */
-  panel: "#303233",
+  panel: "#242B3A",
   /** --color-panel-mid — the statement card. */
-  panelMid: "#74767a",
+  panelMid: "#6E7A8E",
   /** --color-paper — the light band's fill AND the light type on dark. */
-  paper: "#acaaa6",
-  /** --color-primary — the single accent. */
-  gold: "#928769",
-  /** --color-primary-light — the same gold lifted. */
-  goldLight: "#a29d85",
+  paper: "#B9C7D2",
+  /** --color-primary — instrument cyan, the accent ink. */
+  cyan: "#54D1DB",
+  /** --color-primary-light — the lifted cyan. */
+  cyanLight: "#8BE0E8",
+  /** --color-ember — tungsten counterlight. Light only, never an ink. */
+  ember: "#FFB466",
   /** --color-on-band — ink on the light band. */
-  onBand: "#16171a",
+  onBand: "#0E1319",
 } as const;
 
 export type PaletteKey = keyof typeof PALETTE;
@@ -50,8 +54,9 @@ const MIRRORS: Record<PaletteKey, string> = {
   panel: "--color-panel",
   panelMid: "--color-panel-mid",
   paper: "--color-paper",
-  gold: "--color-primary",
-  goldLight: "--color-primary-light",
+  cyan: "--color-primary",
+  cyanLight: "--color-primary-light",
+  ember: "--color-ember",
   onBand: "--color-on-band",
 };
 

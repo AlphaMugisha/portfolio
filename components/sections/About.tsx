@@ -48,6 +48,13 @@ export default function About() {
       data-band="dark"
       className="relative scroll-mt-24 overflow-hidden bg-ink px-6 py-24 sm:px-10 sm:py-32"
     >
+      {/* Light from the band above spills through the cut into the room, so
+          the crossing from porcelain to ink is a doorway rather than a seam.
+          Thin and vertical only — a haze, never a surface. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[24svh] bg-gradient-to-b from-band-light/10 via-band-light/[0.04] to-transparent"
+      />
       <Approach>
         <Deep tilt={1.1} className="relative mx-auto max-w-[1600px]">
           {/* The fixture on the far wall. */}

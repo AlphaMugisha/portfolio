@@ -84,6 +84,7 @@ const fragment = /* glsl */ `
   uniform highp float uTime;
   uniform float uFade;
   uniform vec3  uColor;
+  uniform vec3  uEmber;
   varying float vNear;
   varying float vPhase;
 
@@ -93,8 +94,11 @@ const fragment = /* glsl */ `
     // A slow individual breath per mote, so the field shimmers rather than
     // strobing in unison.
     float breathe = 0.7 + 0.3 * sin(uTime * 0.5 + vPhase * 6.2831);
+    // One mote in ten has crossed the tungsten light somewhere in the room.
+    // The rest are cold — the air carries the grade, not just the walls.
+    vec3 tone = mix(uColor, uEmber, step(0.9, fract(vPhase * 7.31)));
     float alpha = disc * breathe * mix(0.045, 0.16, vNear) * uFade;
-    gl_FragColor = vec4(uColor, alpha);
+    gl_FragColor = vec4(tone, alpha);
   }
 `;
 
@@ -140,6 +144,7 @@ function DustField() {
       uDpr: { value: 1 },
       uFade: { value: 0 },
       uColor: { value: new THREE.Color(PALETTE.paper) },
+      uEmber: { value: new THREE.Color(PALETTE.ember) },
     }),
     []
   );

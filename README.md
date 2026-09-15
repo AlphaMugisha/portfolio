@@ -24,30 +24,32 @@ npm run lint    # eslint
 
 ## Design system
 
-The current design was measured off a reference reel (`inspo.mp4`), not
-guessed — every palette value, type ratio and motion curve in the code
-carries a comment saying where it came from. `app/globals.css` is the source
+The design's structure was measured off a reference reel (`inspo.mp4`) —
+type ratios, motion curves, the palette's contrast architecture — and its
+hues were then re-graded into the site's own look; every value in the code
+carries a comment saying which of the two it is. `app/globals.css` is the source
 of truth for tokens; Tailwind v4 is CSS-first, so there is **no
 `tailwind.config.js`** — everything lives in the `@theme` block there.
 
 ### Palette
 
-Colour histograms over whole reel frames (single pixels lie in a re-recorded
-screen capture; dominant buckets do not):
+The reel supplied the structure (one ground, one void, one double-duty light
+value, one accent, and the contrast floors); the hues are this site's own
+grade — a machine hall at night:
 
 | Token | Hex | Role |
 |---|---|---|
-| `ink` / `bg` | `#141518` | The page ground |
-| `void` | `#030407` | Menu overlay — the only thing deeper than the ground |
-| `panel` | `#303233` | Case-study panels, sitting ON the ground |
-| `paper` / `band-light` | `#acaaa6` | One value, two roles: the opening band's fill AND the light type on the dark ground |
-| `gold` / `primary` | `#928769` | Links, fills, active states |
-| `gold-light` / `accent` | `#a29d85` | The quieter gold — small marks, counters |
+| `ink` / `bg` | `#0B0E14` | The page ground — charcoal pulled toward blue |
+| `void` | `#04060A` | Menu overlay — the only thing deeper than the ground |
+| `panel` | `#242B3A` | Case-study panels, sitting ON the ground |
+| `paper` / `band-light` | `#B9C7D2` | Porcelain, two roles: the opening band's fill AND the light type on the dark ground |
+| `cyan` / `primary` | `#54D1DB` | Instrument cyan — the one accent ink. Links, active states, the constellation |
+| `ember` | `#FFB466` | Tungsten counterlight. Never an ink — it exists only as light inside the WebGL depth |
 
 Contrast rules that shape the layout: the lightest text permitted on any
-ground is `text-muted #8a8985` at **5.21:1**; the gold clears **5.12:1** on
-the ground but sits at **1.55:1** on the light band — so the band carries
-black type only (`on-band #16171a`), exactly as the reel does.
+ground is `text-muted #7A8892` at **5.30:1**; the cyan clears **10.6:1** on
+the ground but sits at **1.06:1** on the light band — so the band carries
+dark type only (`on-band #0E1319`), the same rule as the reel, harder.
 
 ### Typography
 
@@ -104,8 +106,14 @@ offscreen, and survives context loss. The scenes:
 - `PlateRack` (driven by `sections/ProjectRack`) — the gallery as mounted
   plates receding into the dark; each photograph sits oversized *behind* a
   real aperture, so the parallax is geometry, not a transform faking it.
+  The hall around it is drawn with a floor grid that pools around the
+  camera and a tungsten halo that blooms behind the plate being read.
 - `SkillField` — the skill groups as constellations strung into depth along
-  the same aisle the rack uses.
+  the same aisle the rack uses, joined hub to hub by a sagging cyan
+  filament that brightens on the leg being travelled.
+
+The Journey dolly stays pure CSS, but its ground is real: the footer's
+floor grid, streaming toward the camera at dolly speed.
 
 The division of labour is fixed: **WebGL carries photography and space, the
 DOM carries every word.** Headings, summaries and links are real, selectable,

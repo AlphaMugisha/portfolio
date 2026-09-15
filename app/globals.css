@@ -3,93 +3,96 @@
 /* ============================================================
    DESIGN TOKENS
 
-   Every value below was measured off inspo.mp4 rather than guessed. The
-   reel is a screen recording of a screen recording, so single pixels lie —
-   these come from colour histograms over whole frames, where a flat UI fill
-   is the dominant bucket and reads the same at every timestamp it appears.
+   The reel (inspo.mp4) supplied the STRUCTURE of this palette — one ground,
+   one deeper void, panels that sit on the ground, one light value doing
+   double duty as band fill and light type, one accent — and the contrast
+   ratios every pairing has to clear. The hues are this site's own grade:
+   a machine hall at night. Blue-black ground, an ice-porcelain sheet, and
+   two lights with fixed roles:
 
-     #141518  the page ground (t=3, 10, 58, 69, 77 — identical each time)
-     #030407  the menu overlay, the only thing deeper than the ground
-     #303233  the case-study panels, which sit ON the ground rather than
-              replacing it — the reference has no light card
-     #acaaa6  a warm grey doing double duty: it is BOTH the fill of the
-              opening band AND the light type on the dark ground. One value,
-              two roles — that is what makes the palette read as tight
-     #928769  the gold, measured on the poured WORK title (13% of frame)
-     #a29d85  the same gold lifted, used on small marks and the counter
+     #0B0E14  the page ground — charcoal pulled toward blue, not black
+     #04060A  the menu overlay, the only thing deeper than the ground
+     #242B3A  the case-study panels, which sit ON the ground rather than
+              replacing it — there is still no light card
+     #B9C7D2  porcelain doing double duty: BOTH the fill of the opening
+              band AND the light type on the dark ground. One value, two
+              roles — that is what keeps the palette tight
+     #54D1DB  instrument cyan — the one accent ink. Attention, links,
+              active states, focus. If it glows, the machine is on
+     #FFB466  tungsten ember — never an ink. It exists only as light inside
+              the WebGL depth: the bounce in the hero cut, the key light
+              riding the rack, a few warm motes in the dust
 
-   Contrast was checked against every pairing actually used; the lightest
-   text permitted on any ground is 5.2:1 and the gold clears 5.1:1.
-   Deliberate consequence: the gold is near-invisible on the light band
-   (1.55:1), so the band carries black type only — exactly as the reel does.
+   Contrast still checked against every pairing actually used; the lightest
+   text permitted on any ground is 5.0:1 and the cyan clears 10.6:1.
+   Deliberate consequence: the cyan is invisible on the light band (1.06:1),
+   so the band carries dark type only — same rule as before, harder.
 
    Tailwind v4 is CSS-first: @theme generates the utilities.
    ============================================================ */
 @theme {
-  /* -- measured core -------------------------------------- */
-  --color-ink: #141518;
-  --color-void: #030407;
-  --color-panel: #303233;
-  --color-paper: #acaaa6;
-  --color-gold: #928769;
-  --color-gold-light: #a29d85;
+  /* -- core ------------------------------------------------ */
+  --color-ink: #0B0E14;
+  --color-void: #04060A;
+  --color-panel: #242B3A;
+  --color-paper: #B9C7D2;
+  --color-cyan: #54D1DB;
+  --color-ember: #FFB466;
 
   /* -- semantic surfaces ---------------------------------- */
-  --color-bg: #141518;
-  --color-bg-raised: #191a1e;
-  --color-surface: #25262b;
-  --color-surface-raised: #34343b;
-  --color-bg-invert: #030407;
-  --color-surface-invert: #25262b;
+  --color-bg: #0B0E14;
+  --color-bg-raised: #10141C;
+  --color-surface: #1A202C;
+  --color-surface-raised: #2B3242;
+  --color-bg-invert: #04060A;
+  --color-surface-invert: #1A202C;
 
-  /* The opening band. The reference's warm grey, unmodified. */
-  --color-band-light: #acaaa6;
-  --color-band-deep: #9d9b97;
+  /* The opening band. Porcelain — an ice sheet, not a warm grey. */
+  --color-band-light: #B9C7D2;
+  --color-band-deep: #A7B6C3;
 
   /* -- text on the dark ground ---------------------------- */
-  --color-text-primary: #acaaa6;   /* 7.87:1 */
-  --color-text-secondary: #9b9a96; /* 6.48:1 */
-  --color-text-muted: #8a8985;     /* 5.21:1 — lightest permitted */
-  --color-text-invert: #acaaa6;
-  --color-text-invert-muted: #9b9a96;
+  --color-text-primary: #B9C7D2;   /* 11.19:1 */
+  --color-text-secondary: #93A2AF; /* 7.38:1 */
+  --color-text-muted: #7A8892;     /* 5.30:1 — lightest permitted */
+  --color-text-invert: #B9C7D2;
+  --color-text-invert-muted: #93A2AF;
 
   /* -- text on the light band ----------------------------- */
-  --color-on-band: #16171a;        /* 7.73:1 */
-  --color-on-band-muted: #3c3d40;  /* 4.68:1 */
+  --color-on-band: #0E1319;        /* 10.80:1 */
+  --color-on-band-muted: #39434D;  /* 5.84:1 */
 
   /* -- text on a case-study panel ------------------------- */
-  --color-on-panel: #c6c5c1;       /* 7.46:1 */
-  --color-on-panel-muted: #9b9a96; /* 4.58:1 */
+  --color-on-panel: #C7D1DB;       /* 9.16:1 */
+  --color-on-panel-muted: #94A0AC; /* 5.32:1 */
 
   /* The statement card is the one surface carrying BOTH near-black and
-     near-white type at once — the reel sets its frame words in black and the
-     cycling project name in white on the same panel. Measured, that panel
-     comes back around #303233, where black would sit at 1.39:1. Since both
-     inks have to work, the panel is lifted to a true mid-tone: black lands at
-     3.94:1 and the lifted ink at 3.61:1, both clear of the 3:1 floor for
-     display type, and the composition is unchanged. */
-  --color-panel-mid: #74767a;
-  --color-on-panel-mid: #16171a;      /* 3.94:1 — the frame words */
-  --color-on-panel-mid-lift: #e9e8e4; /* 3.61:1 — the cycling name */
+     near-white type at once — the frame words in dark ink and the cycling
+     project name in light on the same panel. Since both inks have to work,
+     the panel is a true mid-tone: the dark ink lands at 4.22:1 and the
+     lifted ink at 3.68:1, both clear of the 3:1 floor for display type. */
+  --color-panel-mid: #6E7A8E;
+  --color-on-panel-mid: #10151C;      /* 4.22:1 — the frame words */
+  --color-on-panel-mid-lift: #E7EDF2; /* 3.68:1 — the cycling name */
 
   /* -- interactive ---------------------------------------- */
-  --color-primary: #928769;        /* 5.12:1 on the ground */
-  --color-primary-hover: #a29d85;
-  --color-primary-light: #a29d85;  /* 6.69:1 — the quieter gold */
-  --color-on-primary: #141518;     /* 5.12:1 on the gold fill */
+  --color-primary: #54D1DB;        /* 10.60:1 on the ground */
+  --color-primary-hover: #8BE0E8;
+  --color-primary-light: #8BE0E8;  /* 12.81:1 — the lifted cyan */
+  --color-on-primary: #0B0E14;     /* 10.60:1 on the cyan fill */
 
   /* -- accent --------------------------------------------- */
-  --color-accent: #a29d85;
-  --color-accent-text: #a29d85;
+  --color-accent: #8BE0E8;
+  --color-accent-text: #8BE0E8;
 
   /* -- lines ----------------------------------------------
-     Tinted with the warm grey rather than pure white, so a hairline on the
+     Tinted with the porcelain rather than pure white, so a hairline on the
      ground stays in the same family as the type sitting next to it. */
-  --color-line: rgba(172, 170, 166, 0.13);
-  --color-line-strong: rgba(172, 170, 166, 0.26);
-  --color-line-invert: rgba(172, 170, 166, 0.17);
-  --color-line-band: rgba(22, 23, 26, 0.2);
-  --color-line-panel: rgba(198, 197, 193, 0.16);
+  --color-line: rgba(185, 199, 210, 0.13);
+  --color-line-strong: rgba(185, 199, 210, 0.26);
+  --color-line-invert: rgba(185, 199, 210, 0.17);
+  --color-line-band: rgba(14, 19, 25, 0.2);
+  --color-line-panel: rgba(199, 209, 219, 0.16);
 
   /* -- type ----------------------------------------------- */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -132,7 +135,7 @@
   html {
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
-    background-color: #141518;
+    background-color: #0B0E14;
   }
 
   body {
@@ -140,12 +143,12 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "ss03";
     overflow-x: clip;
-    background-color: #141518;
+    background-color: #0B0E14;
   }
 
   ::selection {
-    background-color: #928769;
-    color: #141518;
+    background-color: #54D1DB;
+    color: #0B0E14;
   }
 
   :focus-visible {
@@ -155,13 +158,13 @@
   }
 
   ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #141518; }
+  ::-webkit-scrollbar-track { background: #0B0E14; }
   ::-webkit-scrollbar-thumb {
-    background: #34343b;
+    background: #2B3242;
     border-radius: 99px;
-    border: 2px solid #141518;
+    border: 2px solid #0B0E14;
   }
-  ::-webkit-scrollbar-thumb:hover { background: #4c4d52; }
+  ::-webkit-scrollbar-thumb:hover { background: #3A4356; }
 }
 
 /* ============================================================
@@ -294,34 +297,34 @@
    frosted panel on this palette reads as a different site; tinting with the
    ground keeps it inside the identity and stops the blur turning milky. */
 @utility glass {
-  background-color: rgba(20, 21, 24, 0.55);
+  background-color: rgba(11, 14, 20, 0.55);
   backdrop-filter: blur(14px) saturate(1.1);
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  border: 1px solid rgba(172, 170, 166, 0.1);
+  border: 1px solid rgba(185, 199, 210, 0.1);
 }
 
 @utility glass-band {
-  background-color: rgba(172, 170, 166, 0.5);
+  background-color: rgba(185, 199, 210, 0.5);
   backdrop-filter: blur(14px) saturate(1.05);
   -webkit-backdrop-filter: blur(14px) saturate(1.05);
-  border: 1px solid rgba(22, 23, 26, 0.12);
+  border: 1px solid rgba(14, 19, 25, 0.12);
 }
 
 /* Elevation. The shadow is warmed toward the gold rather than neutral black,
    so a lifted object looks lit by the page's own light. */
 @utility elevate {
   box-shadow:
-    0 2px 6px rgba(3, 4, 7, 0.4),
-    0 18px 40px rgba(3, 4, 7, 0.45),
-    inset 0 1px 0 rgba(172, 170, 166, 0.06);
+    0 2px 6px rgba(4, 6, 10, 0.4),
+    0 18px 40px rgba(4, 6, 10, 0.45),
+    inset 0 1px 0 rgba(185, 199, 210, 0.06);
 }
 
 @utility elevate-high {
   box-shadow:
-    0 4px 10px rgba(3, 4, 7, 0.45),
-    0 40px 90px rgba(3, 4, 7, 0.55),
-    0 0 60px rgba(146, 135, 105, 0.07),
-    inset 0 1px 0 rgba(172, 170, 166, 0.08);
+    0 4px 10px rgba(4, 6, 10, 0.45),
+    0 40px 90px rgba(4, 6, 10, 0.55),
+    0 0 60px rgba(84, 209, 219, 0.06),
+    inset 0 1px 0 rgba(185, 199, 210, 0.08);
 }
 
 /* A soft pool of the accent behind a lifted object — not a glow on the object,
@@ -333,8 +336,8 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at 50% 60%,
-    rgba(146, 135, 105, 0.22),
-    rgba(146, 135, 105, 0) 68%
+    rgba(84, 209, 219, 0.16),
+    rgba(84, 209, 219, 0) 68%
   );
   opacity: 0;
   transition: opacity 0.6s var(--ease-out-expo);
@@ -358,7 +361,7 @@
 }
 
 @utility band {
-  background-color: rgba(20, 21, 24, 0.55);
+  background-color: rgba(11, 14, 20, 0.55);
   backdrop-filter: blur(2px);
 }
 
@@ -367,7 +370,7 @@
    these sit inside 3D-transformed stages, where backdrop-filter is the one
    effect browsers still disagree about. `glass` remains for flat chrome. */
 @utility plate {
-  background-color: rgba(37, 38, 43, 0.6);
+  background-color: rgba(26, 32, 44, 0.6);
   border: 1px solid var(--color-line);
   border-radius: 2px;
 }
@@ -387,14 +390,14 @@
 .btn-depth:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 4px 10px rgba(3, 4, 7, 0.45),
-    0 22px 48px rgba(3, 4, 7, 0.5),
-    0 0 34px rgba(146, 135, 105, 0.1);
+    0 4px 10px rgba(4, 6, 10, 0.45),
+    0 22px 48px rgba(4, 6, 10, 0.5),
+    0 0 34px rgba(84, 209, 219, 0.1);
 }
 .btn-depth:active {
   transform: translateY(0) scale(0.985);
   transition-duration: 0.12s;
-  box-shadow: 0 1px 3px rgba(3, 4, 7, 0.5);
+  box-shadow: 0 1px 3px rgba(4, 6, 10, 0.5);
 }
 @media (prefers-reduced-motion: reduce) {
   .btn-depth,
@@ -418,12 +421,12 @@
   background-image:
     repeating-linear-gradient(
       to top,
-      rgba(172, 170, 166, 0.13) 0 1px,
+      rgba(185, 199, 210, 0.13) 0 1px,
       transparent 1px 76px
     ),
     repeating-linear-gradient(
       90deg,
-      rgba(172, 170, 166, 0.1) 0 1px,
+      rgba(185, 199, 210, 0.1) 0 1px,
       transparent 1px 76px
     );
   mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent 80%);
@@ -460,7 +463,7 @@
   background-image: linear-gradient(
     90deg,
     transparent,
-    rgba(172, 170, 166, 0.13),
+    rgba(185, 199, 210, 0.13),
     transparent
   );
   animation: shimmer 1.8s var(--ease-out-expo) infinite;

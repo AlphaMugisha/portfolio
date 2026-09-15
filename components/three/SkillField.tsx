@@ -25,6 +25,10 @@ import { PALETTE, HEX } from "@/lib/palette";
  * Determinism matters: node positions come from a hash of their index, not
  * Math.random, so the constellation is the same shape on every visit. A
  * constellation that rearranged itself nightly would stop being a map.
+ *
+ * The clusters are not islands: a sagging cyan filament runs hub to hub down
+ * the aisle, brightest on the leg the camera is travelling. The disciplines
+ * are one connected system, and the line you ride between them says so.
  */
 
 export interface HoverTarget {
@@ -42,6 +46,9 @@ const CLUSTERS = [
 ];
 
 const PITCH = 7;
+
+/** The hub's focus colour, hoisted so the frame loop never allocates. */
+const HUB_ACCENT = new THREE.Color(PALETTE.cyan);
 
 /** Deterministic 0..1 from an integer. */
 const hash = (n: number) => {
@@ -70,7 +77,7 @@ const nodeVertex = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
     // Perspective-attenuated, boosted by focus and again by hover.
-    float size = 3.2 + uFocus * 1.6 + vHover * 4.0;
+    float size = 5.2 + uFocus * 2.4 + vHover * 4.5;
     gl_PointSize = uDpr * size * (5.5 / -mv.z);
   }
 `;
@@ -82,7 +89,7 @@ const nodeFragment = /* glsl */ `
   uniform highp float uTime;
   uniform float uAlpha;
   uniform vec3 uPaper;
-  uniform vec3 uGold;
+  uniform vec3 uAccent;
   varying float vIndex;
   varying float vHover;
 
@@ -90,13 +97,132 @@ const nodeFragment = /* glsl */ `
     float d = length(gl_PointCoord - 0.5);
     float disc = smoothstep(0.5, 0.18, d);
     float breathe = 0.75 + 0.25 * sin(uTime * 0.7 + vIndex * 2.9);
-    // The hovered node takes the accent; the rest stay paper. Gold is
+    // The hovered node takes the accent; the rest stay paper. Cyan is
     // attention, here as everywhere on the site.
-    vec3 tone = mix(uPaper, uGold * 1.35, vHover);
+    vec3 tone = mix(uPaper, uAccent * 1.25, vHover);
     float alpha = disc * breathe * uAlpha * (1.0 + vHover * 0.9);
     gl_FragColor = vec4(tone, alpha);
   }
 `;
+
+/* ---- The halo ----
+   A soft pool of the cold light behind whichever hub is being read. Additive
+   and radial, so over the ground it reads as a lamp coming up, not a disc. */
+
+const haloVertex = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const haloFragment = /* glsl */ `
+  uniform vec3  uColor;
+  uniform float uFade;
+  varying vec2 vUv;
+  void main() {
+    float r = length(vUv - 0.5) * 2.0;
+    float a = pow(max(1.0 - r, 0.0), 2.6);
+    gl_FragColor = vec4(uColor, a * 0.45 * uFade);
+  }
+`;
+
+/* ---- The filament ----
+   One sagging line, hub to hub, drawn as short segments with a per-vertex
+   leg index so a single draw call can brighten just the leg being travelled. */
+
+const linkVertex = /* glsl */ `
+  attribute float aLeg;
+  varying float vLeg;
+  void main() {
+    vLeg = aLeg;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const linkFragment = /* glsl */ `
+  uniform float uActive;
+  uniform float uFade;
+  uniform vec3  uColor;
+  varying float vLeg;
+  void main() {
+    float focus = max(0.0, 1.0 - abs((vLeg + 0.5) - uActive));
+    float alpha = (0.09 + 0.40 * pow(focus, 1.5)) * uFade;
+    gl_FragColor = vec4(uColor, alpha);
+  }
+`;
+
+function AisleLinks({
+  count,
+  active,
+  reduced,
+}: {
+  count: number;
+  active: number;
+  reduced: boolean;
+}) {
+  const mat = useRef<THREE.ShaderMaterial>(null);
+
+  const geometry = useMemo(() => {
+    const SUB = 12;
+    const pts: number[] = [];
+    const legs: number[] = [];
+    for (let i = 0; i < count - 1; i++) {
+      const a = CLUSTERS[i % CLUSTERS.length];
+      const b = CLUSTERS[(i + 1) % CLUSTERS.length];
+      const p = (t: number) => [
+        THREE.MathUtils.lerp(a.x, b.x, t),
+        // The sag is what makes it a filament under gravity rather than a
+        // diagram edge.
+        THREE.MathUtils.lerp(a.y, b.y, t) - Math.sin(t * Math.PI) * 0.6,
+        -THREE.MathUtils.lerp(i, i + 1, t) * PITCH,
+      ];
+      for (let s = 0; s < SUB; s++) {
+        pts.push(...p(s / SUB), ...p((s + 1) / SUB));
+        legs.push(i, i);
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts), 3));
+    geo.setAttribute("aLeg", new THREE.BufferAttribute(new Float32Array(legs), 1));
+    return geo;
+  }, [count]);
+
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
+  const uniforms = useMemo(
+    () => ({
+      uActive: { value: 0 },
+      uFade: { value: 0 },
+      uColor: { value: new THREE.Color(PALETTE.cyan) },
+    }),
+    []
+  );
+
+  useFrame((_, dt) => {
+    const u = mat.current?.uniforms;
+    if (!u) return;
+    const step = Math.min(dt, 0.05);
+    u.uActive.value = active;
+    u.uFade.value = reduced
+      ? 1
+      : u.uFade.value + (1 - u.uFade.value) * (1 - Math.exp(-step / 0.6));
+  });
+
+  return (
+    <lineSegments geometry={geometry} frustumCulled={false} renderOrder={-1}>
+      <shaderMaterial
+        ref={mat}
+        vertexShader={linkVertex}
+        fragmentShader={linkFragment}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+      />
+    </lineSegments>
+  );
+}
 
 function Cluster({
   group,
@@ -112,9 +238,19 @@ function Cluster({
   reduced: boolean;
 }) {
   const spokeMat = useRef<THREE.LineBasicMaterial>(null);
+  const linkMat = useRef<THREE.LineBasicMaterial>(null);
   const hubMat = useRef<THREE.LineBasicMaterial>(null);
   const hub = useRef<THREE.LineSegments>(null);
   const hubColor = useRef({ t: 0 });
+  const haloMat = useRef<THREE.ShaderMaterial>(null);
+
+  const haloUniforms = useMemo(
+    () => ({
+      uColor: { value: new THREE.Color(PALETTE.cyan) },
+      uFade: { value: 0 },
+    }),
+    []
+  );
 
   const centre = CLUSTERS[index % CLUSTERS.length];
   const n = group.skills.length;
@@ -122,7 +258,7 @@ function Cluster({
   /* Node positions: a flattened shell around the hub. Radius keeps every
      node clear of the hub glyph; the z-flattening keeps the cluster legible
      from down the aisle rather than smeared along it. */
-  const { nodes, spokes } = useMemo(() => {
+  const { nodes, spokes, links } = useMemo(() => {
     const pos = new Float32Array(n * 3);
     const idx = new Float32Array(n);
     const line = new Float32Array(n * 6);
@@ -151,15 +287,50 @@ function Cluster({
     nodes.setAttribute("aIndex", new THREE.BufferAttribute(idx, 1));
     const spokes = new THREE.BufferGeometry();
     spokes.setAttribute("position", new THREE.BufferAttribute(line, 3));
-    return { nodes, spokes };
+
+    /* Constellation edges: each star to its nearest neighbour, deduped. The
+       spokes say "these belong to the hub"; these say "they belong to each
+       other" — and that second statement is what makes it read as a
+       constellation rather than scattered dust. Deterministic like the
+       positions, so the figure never redraws itself between visits. */
+    const pairs = new Set<string>();
+    const edge: number[] = [];
+    for (let i = 0; i < n; i++) {
+      let best = -1;
+      let bestD = Infinity;
+      for (let j = 0; j < n; j++) {
+        if (j === i) continue;
+        const dx = pos[i * 3] - pos[j * 3];
+        const dy = pos[i * 3 + 1] - pos[j * 3 + 1];
+        const dz = pos[i * 3 + 2] - pos[j * 3 + 2];
+        const d = dx * dx + dy * dy + dz * dz;
+        if (d < bestD) {
+          bestD = d;
+          best = j;
+        }
+      }
+      if (best < 0) continue;
+      const key = i < best ? `${i}-${best}` : `${best}-${i}`;
+      if (pairs.has(key)) continue;
+      pairs.add(key);
+      edge.push(
+        pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2],
+        pos[best * 3], pos[best * 3 + 1], pos[best * 3 + 2]
+      );
+    }
+    const links = new THREE.BufferGeometry();
+    links.setAttribute("position", new THREE.BufferAttribute(new Float32Array(edge), 3));
+
+    return { nodes, spokes, links };
   }, [index, n]);
 
   useEffect(
     () => () => {
       nodes.dispose();
       spokes.dispose();
+      links.dispose();
     },
-    [nodes, spokes]
+    [nodes, spokes, links]
   );
 
   const hubGeo = useMemo(
@@ -176,7 +347,7 @@ function Cluster({
       uFocus: { value: 0 },
       uAlpha: { value: 0 },
       uPaper: { value: new THREE.Color(PALETTE.paper) },
-      uGold: { value: new THREE.Color(PALETTE.gold) },
+      uAccent: { value: new THREE.Color(PALETTE.cyan) },
     }),
     []
   );
@@ -197,13 +368,29 @@ function Cluster({
     u.uDpr.value = state.viewport.dpr;
     u.uHover.value = hover;
     u.uFocus.value = ease(u.uFocus.value, focus, 0.3);
-    u.uAlpha.value = ease(u.uAlpha.value, (0.3 + 0.6 * focus) * vis, 0.3);
+    u.uAlpha.value = ease(u.uAlpha.value, (0.42 + 0.55 * focus) * vis, 0.3);
 
     if (spokeMat.current) {
       spokeMat.current.opacity = ease(
         spokeMat.current.opacity,
-        (0.05 + 0.17 * focus) * vis,
+        (0.08 + 0.24 * focus) * vis,
         0.3
+      );
+    }
+    if (linkMat.current) {
+      // Dimmer than the spokes: the figure's own lines are secondary to its
+      // stars, and both stay quieter than the hub.
+      linkMat.current.opacity = ease(
+        linkMat.current.opacity,
+        (0.05 + 0.16 * focus) * vis,
+        0.3
+      );
+    }
+    if (haloMat.current) {
+      haloMat.current.uniforms.uFade.value = ease(
+        haloMat.current.uniforms.uFade.value,
+        focus * vis,
+        0.35
       );
     }
     if (hubMat.current && hub.current) {
@@ -212,11 +399,11 @@ function Cluster({
         (0.25 + 0.55 * focus) * vis,
         0.3
       );
-      // The hub takes the gold exactly as it takes the reader's attention.
+      // The hub takes the cyan exactly as it takes the reader's attention.
       hubColor.current.t = ease(hubColor.current.t, focus, 0.35);
       hubMat.current.color
         .setHex(HEX.panelMid)
-        .lerp(new THREE.Color(PALETTE.gold), hubColor.current.t);
+        .lerp(HUB_ACCENT, hubColor.current.t);
       if (!reduced) {
         hub.current.rotation.y += step * (0.12 + focus * 0.3);
         hub.current.rotation.x += step * 0.05;
@@ -226,6 +413,20 @@ function Cluster({
 
   return (
     <group position={[centre.x, centre.y, -index * PITCH]}>
+      <mesh renderOrder={-1} frustumCulled={false}>
+        <planeGeometry args={[4.2, 4.2]} />
+        <shaderMaterial
+          ref={haloMat}
+          vertexShader={haloVertex}
+          fragmentShader={haloFragment}
+          uniforms={haloUniforms}
+          transparent
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          depthTest={false}
+        />
+      </mesh>
+
       <lineSegments ref={hub} geometry={hubGeo}>
         <lineBasicMaterial ref={hubMat} transparent opacity={0} depthWrite={false} />
       </lineSegments>
@@ -233,6 +434,16 @@ function Cluster({
       <lineSegments geometry={spokes}>
         <lineBasicMaterial
           ref={spokeMat}
+          color={HEX.paper}
+          transparent
+          opacity={0}
+          depthWrite={false}
+        />
+      </lineSegments>
+
+      <lineSegments geometry={links}>
+        <lineBasicMaterial
+          ref={linkMat}
           color={HEX.paper}
           transparent
           opacity={0}
@@ -303,6 +514,8 @@ export default function SkillField({
 
   return (
     <>
+      <AisleLinks count={groups.length} active={active} reduced={reduced} />
+
       {groups.map((g, i) => (
         <Cluster
           key={g.id}

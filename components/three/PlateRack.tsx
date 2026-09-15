@@ -17,19 +17,23 @@ import { PALETTE, HEX } from "@/lib/palette";
  *
  * Two decisions that are load-bearing:
  *
- * LIGHTING IS WHITE, AND BRIGHT. Three's diffuse term is irradiance × albedo/π,
- * so tinting the lights with the palette and running them at "sensible"
- * intensities lands #303233 mounts at roughly #111 — darker than the ground
- * they sit on, which is the opposite of the intent. The lights are therefore
- * white with a combined irradiance near π, which makes each material render at
- * its own named value. Colour comes from the materials; the lights only shape.
+ * THE SHAPE LIGHTS ARE WHITE, THE WARMTH IS PLACED. White ambient + key give
+ * every mount its own blue-steel value and a legible bevel; the ember enters
+ * only where the fiction puts a lamp — a whisper of point light and a wide
+ * additive halo BEHIND the plate being read. Tinting the main lights instead
+ * would warm every frame in the hall and read as wood, not steel.
  *
  * PHOTOGRAPHS ARE PULLED INTO THE PALETTE. The covers are not neutral — two of
  * the eight are distinctly green — and dropping raw imagery into a five-value
  * scheme is what makes a careful palette look accidental. Every plate is
- * desaturated and tinted toward the warm grey before it is shown, so any image,
+ * desaturated and tinted toward the porcelain before it is shown, so any image,
  * including whatever real photography replaces these, arrives inside the
  * identity.
+ *
+ * The hall itself is drawn with two strokes: a floor grid that fades in a
+ * pool around wherever the camera is (the same grid the footer stands on, met
+ * here in real 3D), and a tungsten halo behind the plate being read — the
+ * ember light of the site, placed as a physical lamp in the aisle.
  */
 
 export interface Plate {
@@ -86,7 +90,7 @@ const photoFragment = /* glsl */ `
     // photographs — two of them frankly green — inside a palette that has no
     // green at all. The tint is applied after desaturation so it colours the
     // luminance rather than fighting the original hue.
-    c = mix(c, vec3(l) * uPaper * 1.35, 0.46);
+    c = mix(c, vec3(l) * uPaper * 1.25, 0.34);
 
     // The upward unmask, matching RevealImage's clip-path wipe.
     float m = smoothstep(uReveal, uReveal - 0.04, vUv.y);
@@ -196,8 +200,17 @@ function PlateMesh({
     // Distance dissolve. Alpha, not fog: fog interpolates RGB at full opacity,
     // which would punch opaque rectangles through the DOM word behind the
     // canvas. Fading alpha lets the plates dissolve onto the real page.
+    //
+    // Two different laws, because the two directions mean different things:
+    // ahead is the gallery receding into the dark (a slow gaussian, each
+    // plate dimmer than the one before), behind is a plate the camera is
+    // about to pass THROUGH — it must be gone before it fills the lens, or
+    // the whole frame washes out with one oversized photograph.
     const d = Math.abs(index - active) * PITCH;
-    const fade = Math.exp(-Math.pow(0.030 * d * 1.9, 2));
+    const ahead = Math.exp(-Math.pow(0.12 * d, 2));
+    const passed = active - index;
+    const exit = 1 - THREE.MathUtils.smoothstep(passed, 0.28, 0.72);
+    const fade = ahead * exit;
 
     if (photoMat.current) {
       const u = photoMat.current.uniforms;
@@ -205,14 +218,19 @@ function PlateMesh({
       u.uReveal.value = ease(u.uReveal.value, progress > 0.02 ? 1.05 : 0, 0.5);
       // Capped well below 1: the plate under attention gains chroma, but never
       // enough to reintroduce a hue the palette does not contain.
-      u.uSat.value = ease(u.uSat.value, 0.30 + focus * 0.22 + lift * 0.14, 0.3);
-      u.uBright.value = ease(u.uBright.value, 0.92 + focus * 0.08 + lift * 0.06, 0.3);
+      u.uSat.value = ease(u.uSat.value, 0.34 + focus * 0.38 + lift * 0.14, 0.3);
+      u.uBright.value = ease(u.uBright.value, 0.95 + focus * 0.12 + lift * 0.06, 0.3);
     }
     if (mountMat.current) {
       mountMat.current.opacity = ease(mountMat.current.opacity, fade, 0.25);
+      /* The focus lift must not carry a hue. The mount's albedo is so dark
+         (~0.017 linear in red) that even a trace of ember emissive doubles
+         the red channel and turns every steel frame brown — so the emissive
+         is the cool paper tone, a plain brightening, and ALL warmth comes
+         from the lamp: the ember point light and the halo behind the plate. */
       mountMat.current.emissiveIntensity = ease(
         mountMat.current.emissiveIntensity,
-        focus * 0.06 + lift * 0.1,
+        focus * 0.03 + lift * 0.06,
         0.3
       );
     }
@@ -245,7 +263,7 @@ function PlateMesh({
           color={HEX.panel}
           roughness={0.82}
           metalness={0}
-          emissive={HEX.gold}
+          emissive={HEX.paper}
           emissiveIntensity={0}
           transparent
           opacity={0}
@@ -268,6 +286,121 @@ function PlateMesh({
   );
 }
 
+/* ---- The hall floor ----
+   Long rails down the aisle and cross-ties every half plate-pitch, alive only
+   in a pool around the camera: the fade keys off distance to the plate being
+   read, so the grid travels with the reader instead of piling up at the
+   horizon. Alpha, not fog, for the same compositing reason as the plates. */
+
+const gridVertex = /* glsl */ `
+  varying float vZ;
+  void main() {
+    vZ = position.z;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const gridFragment = /* glsl */ `
+  uniform vec3  uColor;
+  uniform float uCamZ;
+  uniform float uFade;
+  varying float vZ;
+  void main() {
+    float pool = exp(-pow(abs(vZ - uCamZ) / 10.0, 2.0));
+    gl_FragColor = vec4(uColor, 0.14 * pool * uFade);
+  }
+`;
+
+function FloorGrid({
+  count,
+  active,
+  progress,
+  reduced,
+}: {
+  count: number;
+  active: number;
+  progress: number;
+  reduced: boolean;
+}) {
+  const mat = useRef<THREE.ShaderMaterial>(null);
+
+  const geometry = useMemo(() => {
+    const far = -(count - 1) * PITCH - 10;
+    const pts: number[] = [];
+    const Y = -3.9;
+    // Rails, running the length of the aisle.
+    for (let x = -4.8; x <= 4.81; x += 1.6) {
+      pts.push(x, Y, 6, x, Y, far);
+    }
+    // Cross-ties.
+    for (let z = 4; z >= far; z -= PITCH / 2) {
+      pts.push(-4.8, Y, z, 4.8, Y, z);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts), 3));
+    return geo;
+  }, [count]);
+
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
+  const uniforms = useMemo(
+    () => ({
+      uColor: { value: new THREE.Color(PALETTE.paper) },
+      uCamZ: { value: 0 },
+      uFade: { value: 0 },
+    }),
+    []
+  );
+
+  useFrame((_, dt) => {
+    const u = mat.current?.uniforms;
+    if (!u) return;
+    const step = Math.min(dt, 0.05);
+    const ease = (cur: number, to: number, tau: number) =>
+      reduced ? to : cur + (to - cur) * (1 - Math.exp(-step / tau));
+    u.uCamZ.value = -active * PITCH;
+    u.uFade.value = ease(u.uFade.value, progress > 0.02 ? 1 : 0, 0.5);
+  });
+
+  return (
+    <lineSegments geometry={geometry} renderOrder={-1} frustumCulled={false}>
+      <shaderMaterial
+        ref={mat}
+        vertexShader={gridVertex}
+        fragmentShader={gridFragment}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+        depthTest={false}
+      />
+    </lineSegments>
+  );
+}
+
+/* ---- The lamp ----
+   A radial billow of the ember light behind the plate being read. It sits
+   BEHIND the mount, so the plates in front occlude its core and what survives
+   is a rim — a backlight, not a lens flare. */
+
+const haloVertex = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const haloFragment = /* glsl */ `
+  uniform vec3  uColor;
+  uniform float uFade;
+  varying vec2 vUv;
+  void main() {
+    float r = length(vUv - 0.5) * 2.0;
+    float a = pow(max(1.0 - r, 0.0), 2.4);
+    gl_FragColor = vec4(uColor, a * 0.45 * uFade);
+  }
+`;
+
 export default function PlateRack({
   plates,
   active,
@@ -281,8 +414,18 @@ export default function PlateRack({
   progress: number;
   reduced: boolean;
 }) {
-  const gold = useRef<THREE.PointLight>(null);
+  const ember = useRef<THREE.PointLight>(null);
+  const halo = useRef<THREE.Mesh>(null);
+  const haloMat = useRef<THREE.ShaderMaterial>(null);
   const invalidate = useThree((state) => state.invalidate);
+
+  const haloUniforms = useMemo(
+    () => ({
+      uColor: { value: new THREE.Color(PALETTE.ember) },
+      uFade: { value: 0 },
+    }),
+    []
+  );
 
   // Same reason as the plates: on demand, each new target has to buy itself the
   // one frame that applies it.
@@ -319,22 +462,61 @@ export default function PlateRack({
     c.position.z += (z - c.position.z) * k;
     c.lookAt(x, y, -i * PITCH);
 
-    // The accent rides with the reader: the plate being read is fractionally
-    // warmer than the rest of the run, so the gold IS attention.
-    if (gold.current) {
-      gold.current.position.set(x, y + 0.9, -i * PITCH + 1.6);
+    // The warmth rides with the reader: the plate being read is fractionally
+    // warmer than the rest of the run, so the ember IS attention.
+    if (ember.current) {
+      ember.current.position.set(x, y + 0.9, -i * PITCH + 1.6);
+    }
+    if (halo.current) {
+      // Deep behind the mount, not just off its back: the plates in front are
+      // translucent while they travel, and a close halo shines straight
+      // through them — pale frames, washed prints. Distance keeps it a room
+      // glow that the plate silhouettes against.
+      halo.current.position.set(x, y + 0.35, -i * PITCH - 4.0);
+    }
+    if (haloMat.current) {
+      const u = haloMat.current.uniforms;
+      // The lamp comes up when the camera ARRIVES at a plate and falls while
+      // travelling — light as punctuation, not a constant.
+      const settle = 1 - Math.min(1, Math.abs(i - Math.round(i)) * 2.5);
+      const to = (progress > 0.02 ? 1 : 0) * (0.3 + 0.7 * settle);
+      u.uFade.value = reduced
+        ? to
+        : u.uFade.value + (to - u.uFade.value) * (1 - Math.exp(-step / 0.5));
     }
   });
 
   return (
     <>
-      {/* White and bright on purpose. Three's diffuse is irradiance × albedo/π,
-          so palette-tinted lights at ordinary intensities render #303233 near
-          black. At roughly π of total irradiance each material shows its own
-          named value, and colour stays a property of the material. */}
-      <ambientLight intensity={1.0} />
-      <directionalLight position={[2.6, 4.2, 3.0]} intensity={2.6} />
-      <pointLight ref={gold} color={HEX.gold} intensity={2.4} distance={7.5} decay={2} />
+      {/* The whites are shape, the ember is warmth. White ambient+key sit
+          deliberately below the material-accurate π so the mounts render a
+          step DARKER than their named value — frames in shadow, prints lit —
+          and the tungsten point riding the reader is what lifts the one
+          being read. */}
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[2.6, 4.2, 3.0]} intensity={1.6} />
+      <pointLight ref={ember} color={HEX.ember} intensity={0.55} distance={6.5} decay={2} />
+
+      <FloorGrid
+        count={plates.length}
+        active={active}
+        progress={progress}
+        reduced={reduced}
+      />
+
+      <mesh ref={halo} frustumCulled={false} renderOrder={-2}>
+        <planeGeometry args={[9, 9]} />
+        <shaderMaterial
+          ref={haloMat}
+          vertexShader={haloVertex}
+          fragmentShader={haloFragment}
+          uniforms={haloUniforms}
+          transparent
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          depthTest={false}
+        />
+      </mesh>
 
       {plates.map((p, i) => (
         <PlateMesh

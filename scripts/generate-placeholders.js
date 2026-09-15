@@ -13,18 +13,20 @@ const fs = require("fs");
 const OUT = path.join(__dirname, "..", "public", "images");
 fs.mkdirSync(OUT, { recursive: true });
 
-// Palette-adjacent tones. Cool institutional greens/blues with warm relief.
+// The machine-hall grade: blue-charcoal bases, cold cyan/teal light, one
+// deliberately ember-warm plate (payment) so the rack keeps a single warm
+// beat — the same role the tungsten key light plays in the 3D scene.
 const SCHEMES = {
-  portrait:   ["#0e0e0e", "#2a2418", "#6b5522", "#c9a24a"],
-  hero:       ["#0c0c0c", "#242424", "#4a4034", "#a98a3e"],
-  rwasport:   ["#0e0e0e", "#2b2410", "#7a6020", "#feb002"],
-  greenhouse: ["#0d0f0a", "#20290f", "#4e6b1e", "#8fdc3c"],
-  cleankigali:["#0c0e0d", "#1e2a22", "#3f5c3a", "#7fae52"],
-  tembera:    ["#0e0d0a", "#2a2415", "#635123", "#d2a534"],
-  transiteco: ["#0b0c0d", "#20262b", "#465360", "#9aa7b4"],
-  payment:    ["#0e0d0a", "#292213", "#6d5722", "#e8a92e"],
-  ikibina:    ["#0f0d0b", "#2d2418", "#705a30", "#c99a45"],
-  school:     ["#0c0d0e", "#232629", "#4b5257", "#a2a8ad"],
+  portrait:   ["#0B0E14", "#1B2433", "#31506B", "#7FB4CF"],
+  hero:       ["#0A0D12", "#182130", "#2E4C66", "#6FA9C9"],
+  rwasport:   ["#0C1220", "#1B3450", "#2B6E8C", "#54D1DB"],
+  greenhouse: ["#0C1314", "#183E3A", "#297065", "#43C6B0"],
+  cleankigali:["#0D1317", "#204046", "#387173", "#5BC8C0"],
+  tembera:    ["#101019", "#2B2D4A", "#4E5188", "#8D8FD1"],
+  transiteco: ["#0D1016", "#243040", "#465C72", "#93AFC7"],
+  payment:    ["#0E0C0A", "#2B2013", "#6B4A1F", "#FFB466"],
+  ikibina:    ["#100F17", "#2B2740", "#554E78", "#9A93C9"],
+  school:     ["#0D1013", "#273340", "#4D667E", "#9FB9CE"],
 };
 
 /** Soft blurred blobs over a base wash — reads as depth-of-field photography. */

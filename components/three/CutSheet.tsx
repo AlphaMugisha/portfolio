@@ -24,10 +24,12 @@ import { PALETTE } from "@/lib/palette";
  * computed per pixel against the distance field. The aperture stays pixel-
  * registered to the type at every frame.
  *
- * Gold appears here for the first time on the light band. On the band itself it
- * measures 1.55:1 and is therefore forbidden — but the room behind the sheet is
- * dark, so the accent is admissible exactly where it becomes legible: as bounce
- * light inside the cut.
+ * Both of the site's lights appear here for the first time, inside the cut.
+ * On the band itself the cyan measures 1.06:1 and is forbidden — but the room
+ * behind the sheet is dark, so light is admissible exactly where it becomes
+ * legible: a tungsten ember bounce on the wall away from the sun, and a cold
+ * cyan rim where the cut edge faces it. Warm against cold in every letter is
+ * the site's whole grade, stated in the first frame.
  */
 
 const vertex = /* glsl */ `
@@ -55,7 +57,8 @@ const fragment = /* glsl */ `
   uniform vec3  uPaper;       // the sheet
   uniform vec3  uRoom;        // the ground behind it
   uniform vec3  uDeep;        // the room's far corner
-  uniform vec3  uGold;        // bounce inside the cut
+  uniform vec3  uEmber;       // tungsten bounce inside the cut
+  uniform vec3  uCyan;        // the room's cold light, on the opposite lip
 
   uniform float uChamfer;     // CSS px — the bevel on the paper side
   uniform float uThickness;   // CSS px — the sheet's own depth
@@ -140,7 +143,10 @@ const fragment = /* glsl */ `
     float spec = pow(max(dot(reflect(-sun, nrm), vec3(0.0, 0.0, 1.0)), 0.0), 24.0);
     // Kept close to the paper's own value: the bevel is a change of angle, not
     // a change of material, and a bright rim reads as a glow rather than a cut.
-    vec3 chamfer = uPaper * (0.62 + 0.50 * lambert) + spec * 0.10;
+    // The highlight leans faintly toward the room's cold light, the way a
+    // polished edge takes the colour of whatever is shining on it.
+    vec3 chamfer = uPaper * (0.62 + 0.50 * lambert)
+                 + mix(vec3(1.0), uCyan, 0.4) * spec * 0.10;
 
     // Room: the dark space behind the sheet. Deepens toward the far corner and
     // toward the aperture's centre, and picks up a little gold on the wall
@@ -148,8 +154,12 @@ const fragment = /* glsl */ `
     float inside = max(d, 0.0);
     float fall = 1.0 - 0.55 * exp(-inside / max(uDepth, 1.0));
     vec3 room = mix(uRoom, uDeep, clamp(uv.y * 0.5 + 0.15, 0.0, 1.0)) * fall;
+    // Two lights inside every letter: the tungsten bounce on the wall away
+    // from the sun, and the room's own cold cyan on the wall that faces it.
     float bounce = clamp(-dot(grad, sun.xy), 0.0, 1.0) * edgeness * 0.16;
-    room = mix(room, uGold, bounce);
+    float coldRim = clamp(dot(grad, sun.xy), 0.0, 1.0) * edgeness * 0.09;
+    room = mix(room, uEmber, bounce);
+    room = mix(room, uCyan, coldRim);
 
     // The cut wall: the sheet's own thickness, visible just inside the
     // aperture, with a burnished hairline where it meets the chamfer. That
@@ -243,7 +253,8 @@ export default function CutSheet({
       uPaper: { value: new THREE.Color(PALETTE.paper) },
       uRoom: { value: new THREE.Color(PALETTE.ink) },
       uDeep: { value: new THREE.Color(PALETTE.void) },
-      uGold: { value: new THREE.Color(PALETTE.gold) },
+      uEmber: { value: new THREE.Color(PALETTE.ember) },
+      uCyan: { value: new THREE.Color(PALETTE.cyan) },
       uChamfer: { value: 2.4 },
       uThickness: { value: 7.0 },
       uDepth: { value: depth },
@@ -347,7 +358,7 @@ const dustFragment = /* glsl */ `
   uniform highp float uTime;
   uniform float uOpen;
   uniform vec3 uPaper;
-  uniform vec3 uGold;
+  uniform vec3 uEmber;
   in vec3 vSeed;
   out vec4 outColor;
 
@@ -355,8 +366,8 @@ const dustFragment = /* glsl */ `
     float d = length(gl_PointCoord - 0.5);
     float disc = smoothstep(0.5, 0.15, d);
     float breathe = 0.65 + 0.35 * sin(uTime * 0.6 + vSeed.y * 6.2831);
-    // A few motes catch the gold bounce; most are pale room-dust.
-    vec3 tone = mix(uPaper * 1.3, uGold * 1.4, step(0.86, vSeed.z));
+    // A few motes catch the ember bounce; most are pale room-dust.
+    vec3 tone = mix(uPaper * 1.15, uEmber * 1.2, step(0.86, vSeed.z));
     float alpha = disc * breathe * mix(0.2, 0.45, vSeed.z) * uOpen;
     outColor = vec4(tone, alpha);
   }
@@ -409,7 +420,7 @@ export function CutDust({
       uOpen: { value: 0 },
       uDpr: { value: 1 },
       uPaper: { value: new THREE.Color(PALETTE.paper) },
-      uGold: { value: new THREE.Color(PALETTE.gold) },
+      uEmber: { value: new THREE.Color(PALETTE.ember) },
     }),
     []
   );

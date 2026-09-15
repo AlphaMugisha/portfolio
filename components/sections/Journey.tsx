@@ -71,11 +71,14 @@ function windowRamp(p: number[], v: number[]) {
 function ramps(i: number, n: number) {
   const span = 1 / Math.max(1, n - 1);
   const at = (d: number) => (i + d) * span; // d in STEP units, + = ahead
-  const p = [at(-2.3), at(-1.15), at(0), at(0.34)];
+  /* A plateau around arrival, not a single point: the reader is rarely parked
+     on the exact stop, so focus has to hold for a fifth of a step either side
+     or every card is read through a slight blur. */
+  const p = [at(-2.3), at(-1.15), at(-0.2), at(0.2), at(0.34)];
   return {
-    // Resolves out of the deep, fully present on arrival, gone once passed.
-    opacity: windowRamp(p, [0, 0.5, 1, 0]),
-    blur: windowRamp(p, [7, 3, 0, 5]),
+    // Resolves out of the deep, held present around arrival, gone once passed.
+    opacity: windowRamp(p, [0, 0.55, 1, 1, 0]),
+    blur: windowRamp(p, [7, 3, 0, 0, 5]),
   };
 }
 
@@ -103,6 +106,10 @@ function Milestone({
   // the centre line, so the dolly is always turning slightly.
   const lateral = index % 2 ? "9vw" : "-9vw";
   const rise = index % 2 ? "-3svh" : "2svh";
+  // A plate standing beside a path faces the path, not the horizon: a few
+  // degrees of yaw toward the centre line, and the perspective container
+  // turns that into real foreshortening.
+  const yaw = index % 2 ? -6 : 6;
 
   return (
     <motion.div
@@ -113,7 +120,11 @@ function Milestone({
           : { z: -index * STEP, opacity }
       }
     >
-      <div style={{ transform: `translate(${lateral}, ${rise})` }}>
+      <div
+        style={{
+          transform: `translate(${lateral}, ${rise}) rotateY(${yaw}deg)`,
+        }}
+      >
         <article className="plate elevate-high relative max-w-xl p-7 sm:p-9">
           {/* The post that grounds the plate on the path. */}
           <span
@@ -174,6 +185,12 @@ function JourneyPath() {
 
   const n = journey.length;
   const trackZ = useTransform(scrollYProgress, [0, 1], [0, (n - 1) * STEP]);
+  // The ground streams toward the camera at a fraction of dolly speed —
+  // enough that the floor is unmistakably being travelled over, not enough
+  // to strobe the grid.
+  const floorY = useTransform(scrollYProgress, (p) =>
+    `${(p * (n - 1) * STEP * 0.5).toFixed(1)}px`
+  );
 
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     setActive(Math.max(0, Math.min(n - 1, Math.round(p * (n - 1)))));
@@ -219,6 +236,14 @@ function JourneyPath() {
                 {journey[active].period}
               </span>
             </div>
+
+            {/* The path underfoot. The same grid the footer stands on, here
+                actually moving — travelled ground, not a backdrop. */}
+            <motion.div
+              aria-hidden="true"
+              className="floor z-[1]"
+              style={{ backgroundPositionY: floorY }}
+            />
 
             <motion.div
               className="absolute inset-0 z-10"

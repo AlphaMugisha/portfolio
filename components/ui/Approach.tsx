@@ -46,20 +46,25 @@ export default function Approach({
     offset: ["end 0.58", "end start"],
   });
 
+  /* Every exit ramp starts at 0.12, not 0. The last section on the page
+     parks with its tail just past the exit threshold and can never leave,
+     so without the dead zone it would sit dimmed and fractionally blurred
+     forever — a page that ends out of focus. Passing sections sweep through
+     the whole range in under a second; the missing first 12% is invisible. */
   const eScale = useTransform(enter, [0, 1], [0.955, 1]);
-  const xScale = useTransform(exit, [0, 1], [1, 1.03]);
+  const xScale = useTransform(exit, [0.12, 1], [1, 1.03]);
   const scale = useTransform(() => eScale.get() * xScale.get());
 
   const eY = useTransform(enter, [0, 1], [64, 0]);
-  const xY = useTransform(exit, [0, 1], [0, -44]);
+  const xY = useTransform(exit, [0.12, 1], [0, -44]);
   const y = useTransform(() => eY.get() + xY.get());
 
   const eO = useTransform(enter, [0, 1], [0.42, 1]);
-  const xO = useTransform(exit, [0, 1], [1, 0.5]);
+  const xO = useTransform(exit, [0.12, 1], [1, 0.5]);
   const opacity = useTransform(() => eO.get() * xO.get());
 
   const eB = useTransform(enter, [0, 1], [9, 0]);
-  const xB = useTransform(exit, [0, 1], [0, 5]);
+  const xB = useTransform(exit, [0.12, 1], [0, 5]);
   const filter = useTransform(() => {
     const b = eB.get() + xB.get();
     return b < 0.08 ? "none" : `blur(${b.toFixed(2)}px)`;

@@ -7,9 +7,9 @@ import { site } from "@/lib/site";
  * The social card, set as the site's opening frame: the compressed display
  * word in near-black on the warm-grey band, name above, disciplines below.
  *
- * Colours are the measured band tokens from `app/globals.css` — the gold is
- * deliberately absent because it sits at 1.55:1 on the band; the band
- * carries black type only, exactly as the hero does.
+ * Colours are the band tokens from `app/globals.css` — the cyan is
+ * deliberately absent because it sits at 1.06:1 on the band; the band
+ * carries dark type only, exactly as the hero does.
  *
  * The two faces are vendored TTFs in `lib/og-fonts/` (both OFL) because
  * satori cannot reuse `next/font`'s woff2 pipeline and the build must not
@@ -20,9 +20,9 @@ export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const BAND = "#acaaa6"; /* --color-band-light */
-const INK = "#16171a"; /* --color-on-band    */
-const MUTED = "#3c3d40"; /* --color-on-band-muted */
+const BAND = "#B9C7D2"; /* --color-band-light */
+const INK = "#0E1319"; /* --color-on-band    */
+const MUTED = "#39434D"; /* --color-on-band-muted */
 
 export default async function OpenGraphImage() {
   const [anton, inter] = await Promise.all([
