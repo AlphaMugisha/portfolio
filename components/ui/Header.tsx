@@ -11,6 +11,7 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
+import Magnetic from "@/components/ui/Magnetic";
 import { site, navItems } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -157,12 +158,13 @@ export default function Header() {
             </ul>
           </nav>
 
+          <Magnetic pull={7} contentPull={4} radius={70} className="relative z-50">
           <button
             type="button"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
             aria-controls="site-menu"
-            className={`meta relative z-50 flex items-center gap-3 transition-colors duration-300 hover:text-primary ${
+            className={`meta flex items-center gap-3 transition-colors duration-300 hover:text-primary ${
               open ? "text-text-primary" : ink
             }`}
           >
@@ -180,6 +182,7 @@ export default function Header() {
               />
             </span>
           </button>
+          </Magnetic>
         </div>
       </motion.header>
 

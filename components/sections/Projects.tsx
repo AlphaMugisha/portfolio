@@ -8,6 +8,7 @@ import {
   Stagger,
   StaggerItem,
 } from "@/components/ui/motion-primitives";
+import TiltCard from "@/components/ui/TiltCard";
 import { projects, coverFor, statusCopy } from "@/lib/projects";
 
 /**
@@ -41,7 +42,8 @@ export default function Projects() {
 
         <Stagger className="mt-12 grid gap-6 sm:grid-cols-2" stagger={0.1}>
           {projects.map((p, i) => (
-            <StaggerItem key={p.slug}>
+            <StaggerItem key={p.slug} className="h-full">
+              <TiltCard tilt={4} className="h-full">
               <Link
                 href={`/projects/${p.slug}`}
                 className="plate btn-depth group block h-full p-2.5 transition-colors hover:border-primary"
@@ -95,6 +97,7 @@ export default function Projects() {
                   </ul>
                 </div>
               </Link>
+              </TiltCard>
             </StaggerItem>
           ))}
         </Stagger>

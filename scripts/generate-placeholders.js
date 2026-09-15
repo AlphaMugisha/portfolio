@@ -27,6 +27,13 @@ const SCHEMES = {
   payment:    ["#0E0C0A", "#2B2013", "#6B4A1F", "#FFB466"],
   ikibina:    ["#100F17", "#2B2740", "#554E78", "#9A93C9"],
   school:     ["#0D1013", "#273340", "#4D667E", "#9FB9CE"],
+
+  // The journey strip reads left to right as a colour progression: tungsten
+  // workbench -> teal server era -> instrument cyan -> AI violet.
+  jFoundation:["#0F0C0A", "#2E2214", "#71512A", "#FFB466"],
+  jEarly:     ["#0C1214", "#1B3A3C", "#2F6B66", "#4FC4B5"],
+  jCurrent:   ["#0C1220", "#1C3550", "#2E6F8E", "#54D1DB"],
+  jOngoing:   ["#0E0D16", "#282442", "#524B85", "#9A93D6"],
 };
 
 /** Soft blurred blobs over a base wash — reads as depth-of-field photography. */
@@ -77,10 +84,15 @@ const JOBS = [
   ["projects/payment-system.jpg", 1600, 1200, SCHEMES.payment, 91],
   ["projects/digital-ikibina.jpg", 1600, 1200, SCHEMES.ikibina, 103],
   ["projects/school-systems.jpg", 1600, 1200, SCHEMES.school, 117],
+  ["journey/foundation.jpg", 1600, 1000, SCHEMES.jFoundation, 131],
+  ["journey/early-work.jpg", 1600, 1000, SCHEMES.jEarly, 149],
+  ["journey/current.jpg", 1600, 1000, SCHEMES.jCurrent, 163],
+  ["journey/ongoing.jpg", 1600, 1000, SCHEMES.jOngoing, 177],
 ];
 
 (async () => {
   fs.mkdirSync(path.join(OUT, "projects"), { recursive: true });
+  fs.mkdirSync(path.join(OUT, "journey"), { recursive: true });
 
   for (const [name, w, h, colors, seed] of JOBS) {
     const dest = path.join(OUT, name);

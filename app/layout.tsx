@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Anton, Mrs_Saint_Delafield } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/ui/Header";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
 
 /* Three roles, three faces.
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${anton.variable} ${script.variable} h-full antialiased`}
     >
       <body className="relative min-h-full">
+        <ScrollProgress />
         <Header />
         <main id="main" className="relative">
           {children}

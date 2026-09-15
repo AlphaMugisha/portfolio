@@ -10,6 +10,7 @@ import {
   Counter,
   EASE,
 } from "@/components/ui/motion-primitives";
+import TiltCard from "@/components/ui/TiltCard";
 import { site } from "@/lib/site";
 
 /**
@@ -60,7 +61,7 @@ export default function About() {
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] lg:gap-16">
           <div>
-            <div className="plate p-2.5">
+            <TiltCard tilt={3} className="plate p-2.5">
               <motion.div
                 initial={
                   reduced ? undefined : { clipPath: "inset(100% 0% 0% 0%)" }
@@ -80,7 +81,7 @@ export default function About() {
                   className="aspect-4/5 w-full object-cover"
                 />
               </motion.div>
-            </div>
+            </TiltCard>
             <Reveal delay={0.2}>
               <div className="mt-4 flex items-center justify-between">
                 <span className="meta text-text-muted">Kigali · RW</span>
@@ -124,13 +125,15 @@ export default function About() {
 
             <Stagger className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {FACTS.map((f) => (
-                <StaggerItem key={f.label}>
-                  <div className="plate h-full px-4 py-3.5 transition-colors duration-300 hover:border-primary">
-                    <p className="meta text-text-muted">{f.label}</p>
-                    <p className="mt-2.5 text-sm leading-snug text-text-primary">
-                      {f.value}
-                    </p>
-                  </div>
+                <StaggerItem key={f.label} className="h-full">
+                  <TiltCard tilt={0} glow={170} className="h-full">
+                    <div className="plate h-full px-4 py-3.5 transition-colors duration-300 hover:border-primary">
+                      <p className="meta text-text-muted">{f.label}</p>
+                      <p className="mt-2.5 text-sm leading-snug text-text-primary">
+                        {f.value}
+                      </p>
+                    </div>
+                  </TiltCard>
                 </StaggerItem>
               ))}
             </Stagger>

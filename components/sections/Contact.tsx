@@ -5,6 +5,8 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
 import { Reveal } from "@/components/ui/motion-primitives";
 import SplitText from "@/components/ui/SplitText";
 import Marquee from "@/components/ui/Marquee";
+import Magnetic from "@/components/ui/Magnetic";
+import TiltCard from "@/components/ui/TiltCard";
 import { site, navItems } from "@/lib/site";
 
 const social = [
@@ -49,9 +51,10 @@ export default function Contact() {
               </Reveal>
 
               <Reveal delay={0.1}>
+                <Magnetic pull={9} contentPull={5} radius={110} className="mt-10 inline-block">
                 <a
                   href={`mailto:${site.email}`}
-                  className="plate btn-depth group mt-10 inline-flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:border-primary"
+                  className="plate btn-depth group inline-flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:border-primary"
                 >
                   <span className="text-editorial text-[clamp(1.15rem,3vw,2rem)] font-medium text-text-primary transition-colors group-hover:text-primary">
                     {site.email}
@@ -62,26 +65,31 @@ export default function Contact() {
                     className="text-text-muted transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary"
                   />
                 </a>
+                </Magnetic>
               </Reveal>
             </div>
 
             <Reveal delay={0.14}>
               <dl className="space-y-6">
-                <div className="plate px-5 py-4 transition-colors duration-300 hover:border-primary">
-                  <dt className="meta text-text-muted">Location</dt>
-                  <dd className="mt-2.5 text-text-primary">{site.location}</dd>
-                </div>
+                <TiltCard tilt={0} glow={190}>
+                  <div className="plate px-5 py-4 transition-colors duration-300 hover:border-primary">
+                    <dt className="meta text-text-muted">Location</dt>
+                    <dd className="mt-2.5 text-text-primary">{site.location}</dd>
+                  </div>
+                </TiltCard>
 
-                <div className="plate px-5 py-4 transition-colors duration-300 hover:border-primary">
-                  <dt className="meta text-text-muted">Availability</dt>
-                  <dd className="mt-2.5 flex items-center gap-2.5 text-text-primary">
-                    <span
-                      aria-hidden="true"
-                      className="h-1.5 w-1.5 rounded-full bg-accent"
-                    />
-                    Open to new work
-                  </dd>
-                </div>
+                <TiltCard tilt={0} glow={190}>
+                  <div className="plate px-5 py-4 transition-colors duration-300 hover:border-primary">
+                    <dt className="meta text-text-muted">Availability</dt>
+                    <dd className="mt-2.5 flex items-center gap-2.5 text-text-primary">
+                      <span
+                        aria-hidden="true"
+                        className="h-1.5 w-1.5 rounded-full bg-accent"
+                      />
+                      Open to new work
+                    </dd>
+                  </div>
+                </TiltCard>
 
                 <div>
                   <dt className="meta mb-3 text-text-muted">Elsewhere</dt>

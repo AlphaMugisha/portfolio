@@ -5,6 +5,7 @@ import { ArrowDown } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import SplitText from "@/components/ui/SplitText";
 import Marquee from "@/components/ui/Marquee";
+import Magnetic from "@/components/ui/Magnetic";
 import { site } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -77,26 +78,30 @@ export default function Hero() {
         </Enter>
 
         <Enter delay={0.9} className="mt-10 flex flex-wrap items-center gap-4">
-          <Link
-            href="#projects"
-            className="btn-depth group inline-flex items-center gap-2.5 rounded-sm bg-on-band px-6 py-3.5 text-sm font-medium text-band-light"
-          >
-            See my work
-            <motion.span
-              aria-hidden="true"
-              animate={reduced ? undefined : { y: [0, 3, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-flex"
+          <Magnetic pull={8} contentPull={4} radius={90}>
+            <Link
+              href="#projects"
+              className="btn-depth group inline-flex items-center gap-2.5 rounded-sm bg-on-band px-6 py-3.5 text-sm font-medium text-band-light"
             >
-              <ArrowDown size={15} />
-            </motion.span>
-          </Link>
-          <Link
-            href="#contact"
-            className="btn-depth inline-flex items-center rounded-sm border border-line-band px-6 py-3.5 text-sm font-medium text-on-band"
-          >
-            Get in touch
-          </Link>
+              See my work
+              <motion.span
+                aria-hidden="true"
+                animate={reduced ? undefined : { y: [0, 3, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                className="inline-flex"
+              >
+                <ArrowDown size={15} />
+              </motion.span>
+            </Link>
+          </Magnetic>
+          <Magnetic pull={8} contentPull={4} radius={90}>
+            <Link
+              href="#contact"
+              className="btn-depth inline-flex items-center rounded-sm border border-line-band px-6 py-3.5 text-sm font-medium text-on-band"
+            >
+              Get in touch
+            </Link>
+          </Magnetic>
         </Enter>
       </div>
 

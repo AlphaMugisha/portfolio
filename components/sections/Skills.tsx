@@ -6,6 +6,7 @@ import {
   StaggerItem,
 } from "@/components/ui/motion-primitives";
 import TechIcon from "@/components/ui/TechIcon";
+import TiltCard from "@/components/ui/TiltCard";
 import { skillGroups } from "@/lib/skills";
 
 /**
@@ -37,7 +38,8 @@ export default function Skills() {
 
         <Stagger className="mt-12 grid gap-5 md:grid-cols-2" stagger={0.12}>
           {skillGroups.map((group) => (
-            <StaggerItem key={group.id}>
+            <StaggerItem key={group.id} className="h-full">
+              <TiltCard tilt={2.5} className="h-full">
               <article className="plate h-full p-6 transition-colors duration-300 hover:border-primary sm:p-7">
                 <div className="flex items-baseline justify-between">
                   <span className="meta text-primary">{group.index}</span>
@@ -59,7 +61,7 @@ export default function Skills() {
                     <StaggerItem key={s.name}>
                       <span
                         title={s.detail}
-                        className="plate flex items-center gap-2 px-3 py-1.5 text-[11px] text-text-secondary transition-colors duration-300 hover:border-primary hover:text-primary"
+                        className="plate flex -translate-y-0 items-center gap-2 px-3 py-1.5 text-[11px] text-text-secondary transition-[color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary"
                       >
                         <TechIcon name={s.name} size={12} />
                         {s.name}
@@ -68,6 +70,7 @@ export default function Skills() {
                   ))}
                 </Stagger>
               </article>
+              </TiltCard>
             </StaggerItem>
           ))}
         </Stagger>

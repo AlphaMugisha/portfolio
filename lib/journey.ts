@@ -13,11 +13,14 @@ export interface JourneyEntry {
   discipline: string;
   body: string;
   highlights: string[];
+  /** Decorative stage image; the entry's text carries all the information. */
+  image: string;
 }
 
 export const journey: JourneyEntry[] = [
   {
     period: "Foundation",
+    image: "/images/journey/foundation.jpg",
     title: "Electronics and embedded systems",
     discipline: "Hardware",
     body: "Began with microcontrollers and physical circuits — reading sensors, driving actuators, and learning to diagnose a system that gives no error message. This is where the habit of changing one variable at a time came from.",
@@ -25,6 +28,7 @@ export const journey: JourneyEntry[] = [
   },
   {
     period: "Early work",
+    image: "/images/journey/early-work.jpg",
     title: "Server-rendered web applications",
     discipline: "Software",
     body: "Moved into full applications with PHP and MySQL: authentication, role separation, administrative interfaces and reporting. Several were built for real institutions — schools, a library, a church, a restaurant.",
@@ -32,6 +36,7 @@ export const journey: JourneyEntry[] = [
   },
   {
     period: "Current",
+    image: "/images/journey/current.jpg",
     title: "Modern platforms and APIs",
     discipline: "Engineering",
     body: "Now working primarily in TypeScript across React, Next.js, Node and Laravel, over PostgreSQL with Prisma. Larger systems with proper data models, versioned APIs, role-scoped access and multilingual interfaces.",
@@ -39,6 +44,7 @@ export const journey: JourneyEntry[] = [
   },
   {
     period: "Ongoing",
+    image: "/images/journey/ongoing.jpg",
     title: "Applied AI and automation",
     discipline: "Practice",
     body: "Using models as engineering tools rather than as a subject: API integration, coding agents, local inference and tool protocols such as MCP, applied to real workflows inside the projects above.",
