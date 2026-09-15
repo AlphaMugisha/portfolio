@@ -57,16 +57,15 @@ function probeWebGL(): boolean {
   if (typeof document === "undefined") return false;
   const canvas = document.createElement("canvas");
   try {
-    const gl =
-      canvas.getContext("webgl2") ??
-      canvas.getContext("webgl") ??
-      canvas.getContext("experimental-webgl");
+    // WebGL2 specifically. three 0.185 asks for "webgl2" and nothing else
+    // (WebGLRenderer.js:393), so probing webgl1 would pass devices through this
+    // gate that the renderer then refuses — a black canvas instead of the
+    // designed fallback.
+    const gl = canvas.getContext("webgl2");
     if (!gl) return false;
     // Hand the context back rather than waiting for GC: browsers cap how many
     // can be live at once, and probes should never spend one of them.
-    (gl as WebGLRenderingContext)
-      .getExtension("WEBGL_lose_context")
-      ?.loseContext();
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
     return true;
   } catch {
     return false;

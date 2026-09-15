@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  useVelocity,
+} from "framer-motion";
+import Magnetic from "@/components/ui/Magnetic";
 import { navItems, site } from "@/lib/site";
 
 /**
@@ -22,12 +32,29 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [tone, setTone] = useState<"light" | "dark">("light");
   const [hidden, setHidden] = useState(false);
+  // Once the reader has left the top, the centred nav condenses into a glass
+  // plate — the header stops being ink printed on the page and becomes an
+  // object floating in front of it.
+  const [afloat, setAfloat] = useState(false);
   const [active, setActive] = useState("");
+  const reduced = useReducedMotion();
   const { scrollY } = useScroll();
+
+  /* The float: the bar carries a little inertia against scroll velocity, so
+     it reads as a physical object suspended in the scene rather than pixels
+     nailed to the viewport. Springed, clamped to a few px, and disabled under
+     reduced motion. */
+  const vel = useVelocity(scrollY);
+  const floatY = useSpring(useTransform(vel, [-1600, 1600], [7, -7]), {
+    stiffness: 130,
+    damping: 15,
+    mass: 0.5,
+  });
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
     setHidden(y > 400 && y > prev && !open);
+    setAfloat(y > 140);
   });
 
   // Which band is under the header right now.
@@ -111,7 +138,10 @@ export default function Header() {
            stacking context. */
         className={`fixed inset-x-0 top-0 ${open ? "z-60" : "z-50"}`}
       >
-        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-6 sm:px-10">
+        <motion.div
+          style={{ y: reduced ? 0 : floatY }}
+          className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-6 sm:px-10"
+        >
           {/* Wordmark. Hidden while the overlay is up — the reel's menu is a
               bare field, and leaving the mark and the small nav on top of it
               would print the same five words twice on one screen. */}
@@ -135,7 +165,16 @@ export default function Header() {
               open ? "pointer-events-none opacity-0" : "opacity-100"
             }`}
           >
-            <ul className="flex items-center gap-10">
+            {/* Bare type at the top of the page; a floating glass plate once
+                scrolled. The border is present in both states so the plate
+                condenses around the links without shifting them. */}
+            <ul
+              className={`flex items-center gap-10 border transition-all duration-700 ${
+                afloat
+                  ? "glass elevate rounded-full px-7 py-2.5"
+                  : "border-transparent px-0 py-0"
+              }`}
+            >
               {navItems.map((item) => {
                 const id = item.href.replace("/#", "").replace("#", "");
                 const isActive = active === id;
@@ -144,7 +183,7 @@ export default function Header() {
                     <Link
                       href={item.href}
                       tabIndex={open ? -1 : undefined}
-                      className={`group relative block meta transition-colors duration-500 ${
+                      className={`group relative block meta transition-[color,transform] duration-500 hover:-translate-y-0.5 ${
                         isActive ? "text-primary" : ink
                       }`}
                     >
@@ -161,7 +200,9 @@ export default function Header() {
             </ul>
           </nav>
 
-          {/* Menu control */}
+          {/* Menu control — magnetic, so approaching it feels like entering
+              its field rather than hunting a hotspot. */}
+          <Magnetic pull={7} contentPull={4} radius={70}>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -189,7 +230,8 @@ export default function Header() {
               />
             </span>
           </button>
-        </div>
+          </Magnetic>
+        </motion.div>
       </motion.header>
 
       {/* ---- Full-screen menu ----

@@ -10,6 +10,7 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import RotatingSeal from "@/components/ui/RotatingSeal";
+import Tilt, { TiltLayer } from "@/components/ui/Tilt";
 import { projects, coverFor } from "@/lib/projects";
 
 /**
@@ -67,15 +68,24 @@ export default function WorkStatement() {
 
   return (
     <div ref={ref} className="relative h-[320svh]" data-band="dark">
-      <div className="sticky top-0 flex h-svh flex-col items-center justify-center px-4 sm:px-8">
+      <div className="stage-near sticky top-0 flex h-svh flex-col items-center justify-center px-4 sm:px-8">
         <p className="text-display mb-6 text-center text-sm text-primary-light sm:mb-8 sm:text-base">
           My work
         </p>
 
-        <article className="relative w-full max-w-[1400px] overflow-hidden rounded-sm bg-panel-mid text-on-panel-mid">
+        {/* The card is a mounted object, not a printed panel: it tilts a
+            couple of degrees to meet the pointer, and its sentence, plate
+            and seal ride at separate depths so the turn has parallax inside
+            it. The name-swap mechanic is untouched — this is the same card,
+            picked up off the page. */}
+        <Tilt max={2.4} lift={8} className="w-full max-w-[1400px]">
+        <article className="relative w-full overflow-hidden rounded-sm bg-panel-mid text-on-panel-mid elevate-high">
           <div className="relative grid min-h-[62svh] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]">
             {/* ---- The sentence ---- */}
-            <div className="relative z-10 flex flex-col justify-center p-7 sm:p-10 lg:p-12">
+            <TiltLayer
+              depth={0.3}
+              className="relative z-10 flex flex-col justify-center p-7 sm:p-10 lg:p-12"
+            >
               <p className="meta text-on-panel-mid/70">
                 Selected work — {String(index + 1).padStart(2, "0")} /{" "}
                 {String(projects.length).padStart(2, "0")}
@@ -144,7 +154,7 @@ export default function WorkStatement() {
                   </span>
                 ))}
               </div>
-            </div>
+            </TiltLayer>
 
             {/* ---- The plate ---- */}
             <div className="relative hidden overflow-hidden lg:block">
@@ -176,13 +186,16 @@ export default function WorkStatement() {
           </div>
 
           <div className="absolute bottom-5 right-5 sm:bottom-7 sm:right-7">
-            <RotatingSeal
-              tone="light"
-              text="Scroll on"
-              className="h-[68px] w-[68px] sm:h-[92px] sm:w-[92px]"
-            />
+            <TiltLayer depth={0.55}>
+              <RotatingSeal
+                tone="light"
+                text="Scroll on"
+                className="h-[68px] w-[68px] sm:h-[92px] sm:w-[92px]"
+              />
+            </TiltLayer>
           </div>
         </article>
+        </Tilt>
 
         {/* Position within the run, as ticks rather than a number. */}
         <div

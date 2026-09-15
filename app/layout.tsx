@@ -7,6 +7,7 @@ import { ScrollProgress } from "@/components/ui/Chrome";
 import Preloader from "@/components/ui/Preloader";
 import Cursor from "@/components/ui/Cursor";
 import PageTransition from "@/components/ui/PageTransition";
+import Atmosphere from "@/components/three/AtmosphereLazy";
 import { site } from "@/lib/site";
 
 /* Three roles, three faces.
@@ -104,6 +105,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="main" className="relative z-10">
           <PageTransition>{children}</PageTransition>
         </main>
+        {/* The room's air: one persistent dust field over the whole page,
+            in front of the content at whisper alpha, behind all chrome. Its
+            being fixed and never remounting is what stitches the sections
+            into one continuous space. */}
+        <Atmosphere />
       </body>
     </html>
   );

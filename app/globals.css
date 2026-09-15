@@ -346,9 +346,93 @@
   .pool-light { transition: none; }
 }
 
+/* The hero word once the WebGL cut has opened behind it.
+
+   `color: transparent` rather than `visibility` or `opacity`: the text must
+   remain in the accessibility tree, selectable, and findable with the browser's
+   own find-in-page, because the shader draws a shape and not a word. Only the
+   ink goes; the type is still there. */
+.word-cut {
+  color: transparent !important;
+  transition: color 0.5s var(--ease-out-expo);
+}
+
 @utility band {
   background-color: rgba(20, 21, 24, 0.55);
   backdrop-filter: blur(2px);
+}
+
+/* A mounted-plate surface — the material every 3D object in the site is made
+   of, in its CSS form. Solid-tinted rather than backdrop-blurred on purpose:
+   these sit inside 3D-transformed stages, where backdrop-filter is the one
+   effect browsers still disagree about. `glass` remains for flat chrome. */
+@utility plate {
+  background-color: rgba(37, 38, 43, 0.6);
+  border: 1px solid var(--color-line);
+  border-radius: 2px;
+}
+
+/* Dimensional buttons and interactive plates. Rest → lift toward the viewer
+   with a warmed shadow → press back down. The transform is the depth; the
+   shadow is the light noticing. */
+.btn-depth {
+  transition:
+    transform 0.4s var(--ease-out-expo),
+    box-shadow 0.4s var(--ease-out-expo),
+    border-color 0.4s var(--ease-out-expo),
+    background-color 0.4s var(--ease-out-expo),
+    color 0.4s var(--ease-out-expo);
+  will-change: transform;
+}
+.btn-depth:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 10px rgba(3, 4, 7, 0.45),
+    0 22px 48px rgba(3, 4, 7, 0.5),
+    0 0 34px rgba(146, 135, 105, 0.1);
+}
+.btn-depth:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 0.12s;
+  box-shadow: 0 1px 3px rgba(3, 4, 7, 0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-depth,
+  .btn-depth:hover,
+  .btn-depth:active {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The footer's ground plane: a receding grid the closing chrome stands on.
+   Needs a `stage-near` ancestor for its foreshortening. The mask dissolves it
+   toward a horizon rather than letting it end at a hard edge. */
+.floor {
+  position: absolute;
+  inset-inline: -14%;
+  bottom: 0;
+  height: 46svh;
+  transform-origin: 50% 100%;
+  transform: rotateX(76deg);
+  background-image:
+    repeating-linear-gradient(
+      to top,
+      rgba(172, 170, 166, 0.13) 0 1px,
+      transparent 1px 76px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(172, 170, 166, 0.1) 0 1px,
+      transparent 1px 76px
+    );
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent 80%);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9),
+    transparent 80%
+  );
+  pointer-events: none;
 }
 
 /* ============================================================

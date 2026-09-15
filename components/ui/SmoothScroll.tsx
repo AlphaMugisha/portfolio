@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { assertPaletteInSync } from "@/lib/palette";
 
 /**
  * Lenis-driven smooth scrolling.
@@ -10,6 +11,14 @@ import Lenis from "lenis";
  * scroll is exactly the kind of thing that setting is asking us not to do.
  */
 export default function SmoothScroll() {
+  // Development-only: the WebGL layer mirrors the palette in TypeScript because
+  // Three.js needs numbers at construction time. This warns if that mirror and
+  // globals.css have drifted apart, which is otherwise invisible until the two
+  // are side by side on screen.
+  useEffect(() => {
+    assertPaletteInSync();
+  }, []);
+
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduced.matches) return;

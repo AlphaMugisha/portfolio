@@ -59,12 +59,16 @@ export default function LiquidText({
   wavelength = 0.5,
   /** How much narrower the features are across than down. */
   anisotropy = 2.2,
+  /** Stand down entirely. Used when a WebGL treatment has taken over the melt,
+      so the filter is not run over text that is no longer visible. */
+  disabled = false,
 }: {
   children: ReactNode;
   className?: string;
   intensity?: number;
   wavelength?: number;
   anisotropy?: number;
+  disabled?: boolean;
 }) {
   const rawId = useId();
   const filterId = `liquid-${rawId.replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -86,11 +90,15 @@ export default function LiquidText({
   const lastTime = useRef(0);
 
   useEffect(() => {
+    if (disabled) {
+      setEnabled(false);
+      return;
+    }
     const fine = window.matchMedia("(pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!fine || reduced) return;
     setEnabled(true);
-  }, []);
+  }, [disabled]);
 
   // Measure the rendered type. The clamp means this changes with the
   // viewport, and every filter value below is derived from it.

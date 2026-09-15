@@ -1,21 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  type MotionValue,
-} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import GooText from "@/components/ui/GooText";
 import Marquee from "@/components/ui/Marquee";
-import RotatingSeal from "@/components/ui/RotatingSeal";
+import Approach from "@/components/ui/Approach";
+import Deep, { DeepLayer } from "@/components/ui/Deep";
 import WorkStatement from "@/components/sections/WorkStatement";
-import { projects, statusCopy, coverFor, type Project } from "@/lib/projects";
+import ProjectRack from "@/components/sections/ProjectRack";
 import { skillGroups } from "@/lib/skills";
 
 /**
@@ -78,143 +70,42 @@ const DISCIPLINES = [
   "Data Modelling",
 ];
 
-function Card({
-  project,
-  index,
-  total,
-  progress,
-}: {
-  project: Project;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-}) {
-  const reduced = useReducedMotion();
-
-  // Each card shrinks only across the span in which it is being covered.
-  const targetScale = 1 - (total - index) * 0.02;
-  const scale = useTransform(progress, [index / total, 1], [1, targetScale]);
-
-  return (
-    <div
-      className="sticky flex h-svh items-center justify-center px-4 sm:px-8"
-      style={{ top: `calc(-3vh + ${index * 20}px)` }}
-    >
-      <motion.article
-        style={reduced ? undefined : { scale }}
-        className="group relative grid h-[74svh] w-full max-w-[1400px] origin-top overflow-hidden rounded-sm bg-panel text-on-panel shadow-2xl shadow-black/50 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]"
-      >
-        {/* ---- Copy ---- */}
-        {/* Everything grouped in the upper portion of the card, which is where
-            the reference puts it — the lower third is deliberately empty. Both
-            spreading the blocks evenly and pinning them to the foot leave a
-            void through the middle of a card this tall. */}
-        <div className="relative z-10 flex flex-col justify-start p-7 sm:p-10 lg:p-12">
-          <div className="flex items-center justify-between">
-            <span className="meta text-on-panel-muted">
-              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-              <span className="mx-3 opacity-40">—</span>
-              {project.year}
-            </span>
-            <span className="meta flex items-center gap-2 text-on-panel-muted">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              {statusCopy[project.status]}
-            </span>
-          </div>
-
-          <div className="mt-[7svh]">
-            <h3 className="text-editorial text-[clamp(1.9rem,4.4vw,3.6rem)] font-medium text-on-panel">
-              <Link href={`/projects/${project.slug}`} data-cursor="Read">
-                <span className="absolute inset-0 z-20" aria-hidden="true" />
-                {project.name}
-              </Link>
-            </h3>
-
-            <p className="mt-5 max-w-lg text-pretty leading-relaxed text-on-panel-muted">
-              {project.summary}
-            </p>
-
-            <div className="mt-7 flex flex-wrap items-center gap-2">
-              {project.stack.slice(0, 5).map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-line-panel px-3.5 py-1.5 text-[11px] text-on-panel-muted"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ---- Plate ---- */}
-        <div className="relative hidden overflow-hidden lg:block">
-          <Image
-            src={coverFor(project.slug)}
-            alt=""
-            fill
-            sizes="(max-width: 1024px) 0px, 45vw"
-            className="media-hover object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
-          />
-          {/* Feathers the plate into the card so it reads as one surface. */}
-          <span
-            aria-hidden="true"
-            className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-panel to-transparent"
-          />
-        </div>
-
-        {/* The plate also runs behind the copy on small screens, where there
-            is no second column for it to live in. */}
-        <div className="absolute inset-0 lg:hidden">
-          <Image
-            src={coverFor(project.slug)}
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover opacity-20"
-          />
-          <span className="absolute inset-0 bg-panel/75" />
-        </div>
-
-        {/* ---- Badge ---- */}
-        <div className="absolute bottom-5 right-5 z-10 sm:bottom-7 sm:right-7">
-          <RotatingSeal
-            tone="panel"
-            text="View project"
-            className="h-[76px] w-[76px] sm:h-[104px] sm:w-[104px]"
-          />
-        </div>
-      </motion.article>
-    </div>
-  );
-}
 
 export default function Projects() {
-  const stackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: stackRef,
-    offset: ["start start", "end end"],
-  });
 
   return (
     <section id="projects" className="relative scroll-mt-24">
       {/* ---------- Movement one: the word ---------- */}
       <div
         data-band="dark"
-        className="relative flex min-h-svh flex-col justify-between overflow-hidden bg-ink"
+        className="relative min-h-svh overflow-hidden bg-ink"
       >
-        {/* The strips carry no rules in the reference — type on bare ground. */}
-        <Marquee
-          items={TECHNOLOGIES}
-          direction="left"
-          duration={46}
-          className="mt-[4.4svh]"
-          itemClassName="meta text-primary/60"
-        />
+        <Approach>
+        <Deep
+          tilt={1.0}
+          innerClassName="flex min-h-svh flex-col justify-between"
+        >
+        {/* The strips are ribbons in the room now — each tipped a few degrees
+            out of the page plane and set at its own depth, so the pair reads
+            as bands the word hangs between rather than printed rules. */}
+        <DeepLayer depth={110} drift={0.45}>
+          <div style={{ transform: "rotateX(-7deg)" }}>
+            <Marquee
+              items={TECHNOLOGIES}
+              direction="left"
+              duration={46}
+              className="mt-[4.4svh]"
+              itemClassName="meta text-primary/60"
+            />
+          </div>
+        </DeepLayer>
 
-        <div className="flex flex-1 flex-col items-center justify-start pt-[7svh]">
+        <DeepLayer
+          depth={34}
+          drift={0.25}
+          className="flex flex-1 flex-col items-center justify-start pt-[7svh]"
+        >
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -257,36 +148,28 @@ export default function Projects() {
               }}
             />
           </motion.div>
-        </div>
+        </DeepLayer>
 
-        <Marquee
-          items={DISCIPLINES}
-          direction="left"
-          duration={80}
-          className="mb-[4.4svh]"
-          itemClassName="meta text-text-primary"
-        />
+        <DeepLayer depth={-30} drift={-0.2}>
+          <div style={{ transform: "rotateX(7deg)" }}>
+            <Marquee
+              items={DISCIPLINES}
+              direction="left"
+              duration={80}
+              className="mb-[4.4svh]"
+              itemClassName="meta text-text-primary"
+            />
+          </div>
+        </DeepLayer>
+        </Deep>
+        </Approach>
       </div>
 
       {/* ---------- Movement two: the statement ---------- */}
       <WorkStatement />
 
-      {/* ---------- Movement three: the stack ---------- */}
-      <div
-        ref={stackRef}
-        data-band="dark"
-        className="relative bg-ink pb-[18vh]"
-      >
-        {projects.map((project, i) => (
-          <Card
-            key={project.slug}
-            project={project}
-            index={i}
-            total={projects.length}
-            progress={scrollYProgress}
-          />
-        ))}
-      </div>
+      {/* ---------- Movement three: the rack ---------- */}
+      <ProjectRack />
     </section>
   );
 }

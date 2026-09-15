@@ -1,11 +1,18 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import LiquidText from "@/components/ui/LiquidText";
 import SplitText from "@/components/ui/SplitText";
 import RotatingSeal from "@/components/ui/RotatingSeal";
+import HeroCutScene from "@/components/three/HeroCutScene";
 import { site } from "@/lib/site";
 
 /**
@@ -95,6 +102,11 @@ const ARC = [0, -2.9, 0];
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+  // How far the hero has scrolled away, as a plain number. The cut reads it to
+  // deepen its room, so the word has become the ground by the time it releases.
+  const [scrolled, setScrolled] = useState(0);
+  // True once the WebGL cut has taken over the word.
+  const [cut, setCut] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -105,6 +117,8 @@ export default function Hero() {
   const chromeY = useTransform(scrollYProgress, [0, 1], ["0%", "70%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
+  useMotionValueEvent(scrollYProgress, "change", setScrolled);
+
   const s = <T,>(v: T): T | undefined => (reduced ? undefined : v);
 
   return (
@@ -114,7 +128,15 @@ export default function Hero() {
       data-band="light"
       className="relative min-h-svh overflow-hidden bg-band-light text-on-band"
     >
-      <motion.div style={{ opacity: s(opacity) }} className="relative min-h-svh">
+      {/* The word, shaded as an aperture cut through the band. Sits behind all
+          the copy; the flat word above it is both the entrance and the
+          no-WebGL fallback. */}
+      <HeroCutScene hostRef={ref} scrolled={scrolled} onActive={setCut} />
+
+      <motion.div
+        style={{ opacity: s(opacity) }}
+        className="relative z-10 min-h-svh"
+      >
         {/* ---- The word ----
             Pinned to the top of the schedule rather than centred. `line-height`
             is set to the cap ratio so the line box IS the cap height, which is
@@ -127,7 +149,10 @@ export default function Hero() {
               stays razor sharp at the exact instant the big one is torn apart —
               that contrast between the one unstable element and everything
               stable around it IS the effect. */}
-          <LiquidText className="relative flex select-none justify-center">
+          <LiquidText
+            disabled={cut}
+            className="relative flex select-none justify-center"
+          >
             <SplitText
               as="h1"
               data-liquid-target

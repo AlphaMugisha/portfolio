@@ -1,10 +1,11 @@
 # Portfolio — Alpha Mugisha
 
-Professional personal portfolio for a software engineer — conventional
-structure, agency-grade motion.
+Personal portfolio for a software engineer — conventional structure,
+agency-grade motion, and a WebGL depth layer that degrades to a designed
+flat composition rather than an empty box.
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
-Framer Motion · Lenis.
+Framer Motion · Lenis · Three.js (React Three Fiber + drei).
 
 ```bash
 npm run dev     # dev server (Turbopack)
@@ -23,110 +24,99 @@ npm run lint    # eslint
 
 ## Design system
 
+The current design was measured off a reference reel (`inspo.mp4`), not
+guessed — every palette value, type ratio and motion curve in the code
+carries a comment saying where it came from. `app/globals.css` is the source
+of truth for tokens; Tailwind v4 is CSS-first, so there is **no
+`tailwind.config.js`** — everything lives in the `@theme` block there.
+
 ### Palette
 
-Referenced from [tuyishimireeric.github.io](https://tuyishimireeric.github.io/),
-whose own CSS variables are:
-
-```css
---main-color:   #f2f2f2;   /* off-white text   */
---third-color:  #828282;   /* muted grey       */
---fith-color:   #FEB002;   /* amber            */
---second-color: #70ff00;   /* lime             */
---dark-color:   #161616;   /* near-black       */
-body: linear-gradient(130deg, #000, #272727 58%, #727272);
-```
-
-**Kept:** the diagonal charcoal-to-grey ground, the off-white text, the muted
-grey, and amber as the accent that carries the page.
-
-**Changed:** amber leads instead of the lime, and the lime is toned to
-`#8FDC3C` for small marks only. At full `#70ff00` it reads as the neon hacker
-look this site is deliberately not. The gradient is also pulled back (ending
-at `#303030` rather than `#727272`) so text at the foot of a long page keeps
-its contrast, and it is `background-attachment: fixed` so it reads as a ground
-the content moves over rather than a band that scrolls along with it.
-
-Tailwind v4 is CSS-first, so there is **no `tailwind.config.js`**. All tokens
-live in the `@theme` block at the top of `app/globals.css`.
+Colour histograms over whole reel frames (single pixels lie in a re-recorded
+screen capture; dominant buckets do not):
 
 | Token | Hex | Role |
 |---|---|---|
-| `ink` / `bg` | `#0E0E0E` | Deepest ground |
-| `bg-raised` | `#191919` | Alternating band |
-| `surface` | `#232323` | Cards and panels |
-| `paper` | `#F2F2F2` | Light pills, text over imagery |
-| `primary` / `amber` | `#FEB002` | Links, fills, active states |
-| `on-primary` | `#0E0E0E` | Text sitting **on** an amber fill |
-| `accent` / `lime` | `#8FDC3C` | Secondary marks |
-| `text-primary` | `#F2F2F2` | Headings and body |
-| `text-secondary` | `#B4B4B4` | Secondary copy |
-| `text-muted` | `#828282` | Metadata — lightest text permitted |
+| `ink` / `bg` | `#141518` | The page ground |
+| `void` | `#030407` | Menu overlay — the only thing deeper than the ground |
+| `panel` | `#303233` | Case-study panels, sitting ON the ground |
+| `paper` / `band-light` | `#acaaa6` | One value, two roles: the opening band's fill AND the light type on the dark ground |
+| `gold` / `primary` | `#928769` | Links, fills, active states |
+| `gold-light` / `accent` | `#a29d85` | The quieter gold — small marks, counters |
 
-Contrast measured against `#0E0E0E`:
-
-- `text-primary #F2F2F2` → **17.3:1**
-- `text-secondary #B4B4B4` → **9.2:1**
-- `text-muted #828282` → **5.0:1**. Nothing lighter is used for text.
-- `primary #FEB002` → **10.5:1**, and `#0E0E0E` on an amber fill → **10.5:1**.
-- `accent #8FDC3C` → **10.6:1**.
-
-Sections that need separation use the `band` utility — a translucent panel
-rather than an opaque fill, so the gradient ground still shows through.
+Contrast rules that shape the layout: the lightest text permitted on any
+ground is `text-muted #8a8985` at **5.21:1**; the gold clears **5.12:1** on
+the ground but sits at **1.55:1** on the light band — so the band carries
+black type only (`on-band #16171a`), exactly as the reel does.
 
 ### Typography
 
-**Inter, throughout.** One family covering three roles, separated by weight,
-size and tracking rather than by typeface:
+Four faces, each earning its slot:
 
-| Role | Treatment |
+| Face | Role |
 |---|---|
-| Display | `text-display` — 600, `-0.028em` tracking, 1.04 leading |
-| Body | 400, default tracking |
-| Label | `eyebrow` — 600, uppercase, `0.16em` tracking, 11px |
+| **Inter** | Body, navigation, every small tracked label (`meta`, 0.2em tracking, uppercase) |
+| **Anton** | The display face — `text-mega`, uppercase, 0.78 leading. The opening word is set enormous and compressed with a measured `scaleX`; no Inter weight survives at 20vw |
+| **Poppins 700** | The menu overlay only — a different voice from both, and the overlay is prominent enough to justify the one extra weight |
+| **Mrs Saint Delafield** | The signature: wordmark, corner credit, preloader greeting |
 
-Loaded via `next/font`, self-hosted, no runtime network request. Headings
-scale with `clamp()` rather than breakpoints.
-
-A single-family system needs the weight and tracking steps to do all the work
-the second typeface used to, which is why the display tracking is negative and
-the label tracking strongly positive — that contrast is what keeps hierarchy
-legible without a contrasting face.
+All loaded via `next/font`, self-hosted, no runtime network request.
 
 ### Motion
 
-Four rules, applied everywhere, so the animation reads as one system rather
-than a collection of effects:
+Canonical values live in `lib/motion.ts` so no component retypes a duration.
+Two curves, both measured off the reel:
 
-1. Everything **eases out** (`cubic-bezier(0.16, 1, 0.3, 1)`). Content arrives
-   and settles — it never bounces or springs past.
-2. Motion enters from **below** or fades. Never sideways, never rotating.
-3. Durations sit between **0.6s and 1.6s** — deliberate, never a wait.
-4. Every primitive returns a **static element** under `prefers-reduced-motion`.
+- **SETTLE** — everything that arrives. Eases out and comes to rest; never
+  bounces or springs past. This is the site's voice.
+- **CURTAIN** — things that cover and uncover: the menu, the preloader wipe.
 
 Reduced motion is honoured in three layers: the CSS media query cancels
-keyframes, each component checks `useReducedMotion()`, and Lenis smooth-scroll
-never initialises at all.
+keyframes, each component checks `useReducedMotion()`, and Lenis
+smooth-scroll never initialises at all. The WebGL layer adds a fourth:
+`useCapability` reports the lowest tier until the client has measured, so
+the server render and the first paint always agree.
 
-### The signature: `RevealImage`
+### The depth system
 
-Every photograph performs the same three-part move, which is what makes the
-page read as one idea rather than a catalogue of effects:
+The page is staged as one room the camera travels through, built from two
+cooperating halves:
 
-1. the frame **unmasks upward** behind a `clip-path` wipe,
-2. the photograph **settles** from a slight overscale, and
-3. thereafter it **drifts** against the scroll inside the fixed frame.
+**DOM depth** — `Deep` establishes a real CSS perspective stage and each
+`DeepLayer` sits at a true `translateZ`, so the browser's own projection does
+the physics: deeper layers render smaller and travel less per pixel of
+parallax, automatically. `Approach` wraps every non-pinned section so content
+dollies up from behind the focal plane instead of fading in — the
+section-to-section grammar.
 
-The drift is what sells depth — the frame holds still while its contents move,
-which is how a real parallax plate behaves.
+**WebGL depth** — every scene mounts inside `Stage`
+(`components/three/Stage.tsx`), which decides whether the device earned a
+canvas at all (everyone else gets a designed flat fallback), pauses rendering
+offscreen, and survives context loss. The scenes:
 
-### Structure
+- `HeroCutScene` + `CutSheet` — the opening word shaded as an aperture cut
+  through the light band. The letterforms come from a signed distance field
+  (`lib/sdf.ts`) rasterised from the **live heading** — same face, same
+  clamp, same compression — with the expensive exact distance transform
+  (`lib/edt.ts`, 8SSEDT) run in a Worker (`lib/sdf.worker.ts`).
+- `Atmosphere` — a fixed, full-viewport dust field that persists from the
+  hero cut to the foot of the page. Sections come and go; the air stays.
+- `PlateRack` (driven by `sections/ProjectRack`) — the gallery as mounted
+  plates receding into the dark; each photograph sits oversized *behind* a
+  real aperture, so the parallax is geometry, not a transform faking it.
+- `SkillField` — the skill groups as constellations strung into depth along
+  the same aisle the rack uses.
 
-Section numbering was removed. The sections are not a sequence a reader must
-follow in order, so numbering them decorated rather than informed. Numbers
-survive in exactly two places, both carrying real information: the Journey
-timeline (chronological) and the project index (`03 / 08` — position in a
-curated set).
+The division of labour is fixed: **WebGL carries photography and space, the
+DOM carries every word.** Headings, summaries and links are real, selectable,
+crawlable markup in all of these; the canvas can be removed and the page
+still reads.
+
+One pointer serves all of it: `lib/pointer.ts` attaches a single listener
+and publishes MotionValues; anything that leans, tilts or glows toward the
+cursor subscribes without a React re-render. `lib/palette.ts` mirrors the
+CSS tokens for Three.js materials and asserts in development that the mirror
+has not drifted from `globals.css`.
 
 ---
 
@@ -134,33 +124,59 @@ curated set).
 
 ```
 app/
-  layout.tsx              fonts, metadata/SEO, global chrome
-  page.tsx                Hero > About > Skills > Projects > Journey > Contact
-  globals.css             @theme tokens + custom utilities
-  not-found.tsx           404
-  global-error.tsx        root error boundary (inline styles by necessity)
+  layout.tsx                fonts, metadata/SEO, global chrome, Atmosphere
+  page.tsx                  Hero > About > Skills > Projects > Journey > Contact
+  globals.css               @theme tokens + custom utilities (source of truth)
+  opengraph-image.tsx       social card, generated at build (fonts: lib/og-fonts)
+  not-found.tsx             404
+  global-error.tsx          root error boundary (inline styles by necessity)
   projects/[slug]/page.tsx  case studies (SSG, one per project)
 
 components/
+  three/
+    Stage.tsx               the shell every scene mounts in (gating, pausing)
+    HeroCutScene.tsx        drives the hero cut: measuring, handoff, quality
+    CutSheet.tsx            the word as an aperture, shaded not modelled
+    Atmosphere.tsx (+Lazy)  the persistent dust field
+    PlateRack.tsx           project covers as plates with real apertures
+    SkillField.tsx          skills as constellations in depth
   ui/
-    Nav.tsx               scroll-aware bar, hides down / returns up
-    Preloader.tsx         opening curtain, once per session
-    PageTransition.tsx    route enter transition
-    Chrome.tsx            reading-progress rail
-    SmoothScroll.tsx      Lenis
-    RevealImage.tsx       the signature image treatment
-    motion-primitives.tsx Reveal / Stagger / Parallax / MediaParallax /
-                          TextReveal / Counter
-    SectionHeading.tsx    eyebrow + self-drawing rule
-    BrandIcons.tsx        GitHub / LinkedIn SVGs
+    Header.tsx              floating band-aware header (ink follows the page)
+    Preloader.tsx           opening curtain, once per session
+    PageTransition.tsx      route enter transition
+    Chrome.tsx              reading-progress rail
+    SmoothScroll.tsx        Lenis
+    Cursor.tsx              dot + lagging ring, data-cursor labels
+    Deep.tsx                true CSS perspective stages (Deep/DeepLayer/DeepWord)
+    Approach.tsx            the section-to-section approach grammar
+    RevealImage.tsx         the flat image signature (unmask, settle, drift)
+    LiquidText.tsx          the melting headline (SVG displacement on live text)
+    SplitText.tsx           per-letter entrance for the display type
+    GooText.tsx             the poured WORK title (metaball filter, lower quarter)
+    Tilt.tsx                pointer tilt with per-child depth separation
+    Magnetic.tsx            magnetic pull, label travels further than hit area
+    Marquee.tsx             seamless ticker (same direction, 1.7:1 speeds)
+    HoverPreview.tsx        cursor-tethered preview plate
+    RotatingSeal.tsx        circular set type around a fixed glyph
+    TechIcon.tsx            simple-icons brands + lucide fallbacks
+    motion-primitives.tsx   Reveal / Stagger / Parallax / TextReveal / Counter
+    BrandIcons.tsx          GitHub / LinkedIn SVGs
+    useCapability.ts        one decision: canWebGL, tier, reducedMotion, pointer
   sections/
     Hero / About / Skills / Projects / Journey / Contact (+ footer)
+    WorkStatement.tsx       the pinned statement card with the turning name
+    ProjectRack.tsx         scroll -> one number -> camera + DOM copy
 
 lib/
-  site.ts                 identity + links
-  projects.ts             project data + coverFor()
-  skills.ts               technology groups
-  journey.ts              progression entries
+  site.ts                   identity + links
+  projects.ts               project data + coverFor()
+  skills.ts                 technology groups
+  journey.ts                progression entries
+  motion.ts                 the canonical curves and durations
+  palette.ts                CSS tokens mirrored for WebGL, with a drift assert
+  pointer.ts                one shared pointer as MotionValues
+  sdf.ts / edt.ts / sdf.worker.ts   the hero word's distance field
+  og-fonts/                 vendored TTFs for the OpenGraph card (OFL)
 
 scripts/
   generate-placeholders.js  regenerates public/images
@@ -172,11 +188,11 @@ scripts/
 `Github` and `Linkedin` are no longer exported, so they are inlined as SVG
 paths taking the same `size`/`className` props.
 
-**The projects gallery switches layout in CSS, not JavaScript.** Desktop pins
-the section and slides the row horizontally; touch gets a native snap
-carousel. Switching on a media-query state would serve the carousel and then
-snap to the pinned layout after mount — a visible jump on every desktop load.
-Here the DOM is identical either way and only the transform value changes.
+**Scroll drives one number in the pinned scenes.** In `ProjectRack` the
+scroll position resolves to "which plate is being read", and the camera, the
+lighting, the saturation and the DOM copy are all derived from that single
+value — so the 3D and the text can never disagree about what the reader is
+looking at.
 
 **Page transitions are enter-only.** A true exit animation needs the outgoing
 route to stay mounted, which the App Router will not do without holding
@@ -205,8 +221,8 @@ Regenerate with `node scripts/generate-placeholders.js` (uses `sharp`, already
 a Next.js dependency).
 
 **Replacing them with real photographs:** keep the filenames and aspect ratios
-and everything else follows — `RevealImage` and the card grid size them by
-CSS, not by intrinsic dimensions.
+and everything else follows — `RevealImage` and the rack size them by CSS and
+texture cover math, not by intrinsic dimensions.
 
 ---
 
@@ -217,9 +233,9 @@ testimonials or skill percentages — proficiency bars were deliberately left
 out because any number on them would be made up.
 
 Project statistics were read off the running systems, and each case study
-carries an `evidence` line naming where its numbers came from. The three
-figures in About are countable from this portfolio itself; there is no
-invented "years of experience" number anywhere.
+carries an `evidence` line naming where its numbers came from. The figures in
+About are countable from this portfolio itself; there is no invented "years
+of experience" number anywhere.
 
 `lib/journey.ts` describes the *progression* of the work rather than listing
 employers, job titles or institutions, because none were supplied. Add real
@@ -235,6 +251,6 @@ Values in `lib/site.ts` marked `PLACEHOLDER`:
 - `url` — `https://alphamugisha.dev`; update to the real domain so canonical
   and OpenGraph URLs resolve.
 
-Replace the placeholder imagery (above), and optionally add an OpenGraph image
-at `app/opengraph-image.png` (1200x630) — the metadata already declares
-`summary_large_image`.
+Replace the placeholder imagery (above). The OpenGraph card is generated at
+build time from `app/opengraph-image.tsx` — it picks up `lib/site.ts`
+automatically, so it needs no edits when the values above change.

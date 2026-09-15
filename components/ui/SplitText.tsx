@@ -30,6 +30,7 @@ export default function SplitText({
   trigger = "mount",
   style,
   as: Tag = "span",
+  ...rest
 }: {
   text: string;
   className?: string;
@@ -40,7 +41,12 @@ export default function SplitText({
   /** For geometry that has to be computed rather than named in a class. */
   style?: React.CSSProperties;
   as?: "h1" | "h2" | "h3" | "span" | "div";
-}) {
+  /* Anything else — notably `data-*` hooks — reaches the rendered element.
+     Without this the component silently swallows unknown props, which is how
+     `data-liquid-target` went missing and took the melt effect with it: the
+     attribute was in the source, never in the DOM, and the effect that looks
+     for it simply never engaged. */
+} & Omit<React.HTMLAttributes<HTMLElement>, "style" | "className">) {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-90px" });
@@ -48,7 +54,7 @@ export default function SplitText({
 
   if (reduced) {
     return (
-      <Tag className={className} style={style}>
+      <Tag className={className} style={style} {...rest}>
         {text}
       </Tag>
     );
@@ -62,6 +68,7 @@ export default function SplitText({
       className={className}
       style={style}
       aria-label={text}
+      {...rest}
     >
       {letters.map((char, i) => (
         <span
