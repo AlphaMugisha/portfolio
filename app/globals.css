@@ -106,22 +106,6 @@
   /* -- motion --------------------------------------------- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
-
-  /* -- depth ----------------------------------------------
-     A short, deliberate elevation scale. Depth here is a structural
-     property — how far a thing sits from the page — not a decoration,
-     so there are five steps and no more. Perspective comes in two
-     strengths: `near` for a single card under the pointer, `far` for a
-     whole section's layers, where a short perspective would distort the
-     outer edges into a fisheye. */
-  --perspective-near: 900px;
-  --perspective-far: 2400px;
-
-  --z-recessed: -60px;
-  --z-flat: 0px;
-  --z-raised: 40px;
-  --z-lifted: 90px;
-  --z-front: 160px;
 }
 
 /* ============================================================
@@ -217,14 +201,6 @@
   color: var(--color-primary);
 }
 
-@utility eyebrow-invert {
-  font-size: 0.625rem;
-  font-weight: 500;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--color-primary-light);
-}
-
 /* Small tracked meta label — the workhorse of both bands. */
 @utility meta {
   font-family: var(--font-sans);
@@ -234,65 +210,10 @@
   text-transform: uppercase;
 }
 
-/* The full-screen menu. Measured off the reel: cap height 4.6% of viewport
-   height, baseline pitch 2.67x the cap (line-height ~1.9), and tracking that
-   is visibly POSITIVE — every letter in WORK and CONTACT is separated. It is
-   a small, airy, centred column, not a display slab: the widest word occupies
-   only a fifth of the viewport. */
-@utility menu-link {
-  font-family: var(--font-geometric);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  line-height: 1.9;
-}
-
-/* The opening's absolute vertical schedule only holds at the reference's own
-   aspect (1.629). Narrower than that, the display type becomes width-bound and
-   far shorter than its reserved 56.3svh, so a fixed caption offset strands it
-   halfway down an empty screen. Below the reference aspect the caption simply
-   follows the word instead. */
-.hero-caption {
-  margin-top: 10svh;
-}
-@media (min-aspect-ratio: 1629 / 1000) {
-  .hero-caption {
-    position: absolute;
-    inset-inline: 0;
-    top: 80.5svh;
-    margin-top: 0;
-  }
-}
-
-/* ============================================================
-   DEPTH
-
-   The site reads as spatial whether or not WebGL is available, so the
-   flat fallback is built here in CSS rather than being an absence.
-   ============================================================ */
-
 /* Establishes a shared perspective for a group of layered children. Put this
    on the section, not on each card: perspective on every card individually
    gives each its own vanishing point and the group stops reading as one
    space. */
-@utility stage {
-  perspective: var(--perspective-far);
-  perspective-origin: 50% 50%;
-  transform-style: preserve-3d;
-}
-
-@utility stage-near {
-  perspective: var(--perspective-near);
-  perspective-origin: 50% 50%;
-  transform-style: preserve-3d;
-}
-
-/* Children that hold their own depth inside a stage. */
-@utility layer {
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
 /* Glass, derived from the ground rather than from white. A white-tinted
    frosted panel on this palette reads as a different site; tinting with the
    ground keeps it inside the identity and stops the blur turning milky. */
@@ -301,68 +222,6 @@
   backdrop-filter: blur(14px) saturate(1.1);
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
   border: 1px solid rgba(185, 199, 210, 0.1);
-}
-
-@utility glass-band {
-  background-color: rgba(185, 199, 210, 0.5);
-  backdrop-filter: blur(14px) saturate(1.05);
-  -webkit-backdrop-filter: blur(14px) saturate(1.05);
-  border: 1px solid rgba(14, 19, 25, 0.12);
-}
-
-/* Elevation. The shadow is warmed toward the gold rather than neutral black,
-   so a lifted object looks lit by the page's own light. */
-@utility elevate {
-  box-shadow:
-    0 2px 6px rgba(4, 6, 10, 0.4),
-    0 18px 40px rgba(4, 6, 10, 0.45),
-    inset 0 1px 0 rgba(185, 199, 210, 0.06);
-}
-
-@utility elevate-high {
-  box-shadow:
-    0 4px 10px rgba(4, 6, 10, 0.45),
-    0 40px 90px rgba(4, 6, 10, 0.55),
-    0 0 60px rgba(84, 209, 219, 0.06),
-    inset 0 1px 0 rgba(185, 199, 210, 0.08);
-}
-
-/* A soft pool of the accent behind a lifted object — not a glow on the object,
-   light it is sitting in. */
-@utility pool-light {
-  position: absolute;
-  inset: -10% -6% -22%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at 50% 60%,
-    rgba(84, 209, 219, 0.16),
-    rgba(84, 209, 219, 0) 68%
-  );
-  opacity: 0;
-  transition: opacity 0.6s var(--ease-out-expo);
-  pointer-events: none;
-}
-.group:hover .pool-light { opacity: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  .pool-light { transition: none; }
-}
-
-/* The hero word once the WebGL cut has opened behind it.
-
-   `color: transparent` rather than `visibility` or `opacity`: the text must
-   remain in the accessibility tree, selectable, and findable with the browser's
-   own find-in-page, because the shader draws a shape and not a word. Only the
-   ink goes; the type is still there. */
-.word-cut {
-  color: transparent !important;
-  transition: color 0.5s var(--ease-out-expo);
-}
-
-@utility band {
-  background-color: rgba(11, 14, 20, 0.55);
-  backdrop-filter: blur(2px);
 }
 
 /* A mounted-plate surface — the material every 3D object in the site is made
@@ -408,45 +267,9 @@
   }
 }
 
-/* The footer's ground plane: a receding grid the closing chrome stands on.
-   Needs a `stage-near` ancestor for its foreshortening. The mask dissolves it
-   toward a horizon rather than letting it end at a hard edge. */
-.floor {
-  position: absolute;
-  inset-inline: -14%;
-  bottom: 0;
-  height: 46svh;
-  transform-origin: 50% 100%;
-  transform: rotateX(76deg);
-  background-image:
-    repeating-linear-gradient(
-      to top,
-      rgba(185, 199, 210, 0.13) 0 1px,
-      transparent 1px 76px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(185, 199, 210, 0.1) 0 1px,
-      transparent 1px 76px
-    );
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent 80%);
-  -webkit-mask-image: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.9),
-    transparent 80%
-  );
-  pointer-events: none;
-}
-
 /* ============================================================
    ANIMATION
    ============================================================ */
-
-@keyframes drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50%      { transform: translate3d(0, -16px, 0) scale(1.02); }
-}
-.animate-drift { animation: drift 18s ease-in-out infinite; }
 
 @keyframes shimmer {
   100% { transform: translateX(100%); }
@@ -469,54 +292,6 @@
   animation: shimmer 1.8s var(--ease-out-expo) infinite;
 }
 
-/* Marquee. Two identical tracks sit side by side and the pair translates by
-   exactly half its own width, so the seam never lands in view. */
-@keyframes marquee-left {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
-}
-@keyframes marquee-right {
-  from { transform: translate3d(-50%, 0, 0); }
-  to   { transform: translate3d(0, 0, 0); }
-}
-.marquee-track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-  animation: marquee-left var(--marquee-duration, 38s) linear infinite;
-}
-.marquee-track[data-direction="right"] {
-  animation-name: marquee-right;
-}
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-/* The rotating seal in the corner of the opening. */
-@keyframes seal-spin {
-  to { transform: rotate(360deg); }
-}
-.animate-seal { animation: seal-spin 24s linear infinite; }
-
-/* Preloader. Kept in CSS rather than framer-motion because the curtain
-   ships in the server markup — a motion `initial` would leave the mark
-   invisible until hydration, so first paint would be a bare counter. */
-@keyframes preloader-rise {
-  from { transform: translateY(110%); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-.preloader-rise {
-  animation: preloader-rise 0.9s var(--ease-out-expo) both;
-}
-
-/* Failsafe: a dead script must not lock the site behind a black screen. */
-@keyframes preloader-failsafe {
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
-}
-[data-preloader] {
-  animation: preloader-failsafe 1ms linear 11s forwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -526,43 +301,6 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .marquee-track { animation: none !important; }
-}
-
-/* ============================================================
-   HOVER SYSTEM
-   ============================================================ */
-
-.has-custom-cursor,
-.has-custom-cursor a,
-.has-custom-cursor button,
-.has-custom-cursor [role="tab"] {
-  cursor: none;
-}
-.has-custom-cursor input,
-.has-custom-cursor textarea,
-.has-custom-cursor select {
-  cursor: auto;
-}
-
-@utility link-sweep {
-  position: relative;
-}
-@utility link-sweep-line {
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  height: 1px;
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: right;
-  background-color: currentColor;
-  transition: transform 0.45s var(--ease-out-expo);
-}
-.group:hover .link-sweep-line,
-a:hover > .link-sweep-line {
-  transform: scaleX(1);
-  transform-origin: left;
 }
 
 @utility media-hover {
