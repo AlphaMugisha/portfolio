@@ -271,6 +271,29 @@
    ANIMATION
    ============================================================ */
 
+/* Marquee. Two identical tracks sit side by side and the pair translates by
+   exactly half its own width, so the seam never lands in view. */
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-left var(--marquee-duration, 38s) linear infinite;
+}
+.marquee-track[data-direction="right"] {
+  animation-name: marquee-right;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }
@@ -301,6 +324,7 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .marquee-track { animation: none !important; }
 }
 
 @utility media-hover {

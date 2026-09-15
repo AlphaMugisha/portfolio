@@ -1,47 +1,95 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowDown } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import SplitText from "@/components/ui/SplitText";
+import Marquee from "@/components/ui/Marquee";
 import { site } from "@/lib/site";
 
-/**
- * Hero — one light panel, one big statement, two doors.
- *
- * The porcelain band carries the site's identity: dark type only (the cyan
- * accent fails contrast on this fill, so it never appears here). Everything
- * is static and server-rendered; the page opens instantly.
- */
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-const DISCIPLINES = ["Software", "Hardware", "Applied AI"];
+/**
+ * Hero — the porcelain band, opened with a per-letter rise.
+ *
+ * The headline builds itself letter by letter on load; everything else
+ * follows it in one settled sequence. The band still carries dark type only.
+ */
+const TICKER = [
+  "Software",
+  "Hardware",
+  "Applied AI",
+  "Web platforms",
+  "Embedded systems",
+  "Kigali, Rwanda",
+];
+
+function Enter({
+  children,
+  delay,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay: number;
+  className?: string;
+}) {
+  const reduced = useReducedMotion();
+  if (reduced) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 22 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.85, delay, ease: EASE }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function Hero() {
+  const reduced = useReducedMotion();
+
   return (
     <section
       id="hero"
       data-band="light"
-      className="bg-band-light px-6 pb-16 pt-32 text-on-band sm:px-10 sm:pb-20 sm:pt-40"
+      className="bg-band-light pt-32 text-on-band sm:pt-40"
     >
-      <div className="mx-auto max-w-5xl">
-        <p className="meta text-on-band-muted">
-          {site.name} — {site.location}
-        </p>
+      <div className="mx-auto max-w-5xl px-6 sm:px-10">
+        <Enter delay={0.05}>
+          <p className="meta text-on-band-muted">
+            {site.name} — {site.location}
+          </p>
+        </Enter>
 
         <h1 className="text-mega mt-6 text-[clamp(3rem,12vw,9rem)]">
-          Software
+          <SplitText text="Software" delay={0.15} stagger={0.045} />
           <br />
-          Engineer
+          <SplitText text="Engineer" delay={0.5} stagger={0.045} />
         </h1>
 
-        <p className="mt-8 max-w-xl text-pretty text-lg leading-relaxed text-on-band-muted">
-          {site.tagline} I build web platforms, embedded electronics and
-          applied AI systems from {site.location}.
-        </p>
+        <Enter delay={0.75}>
+          <p className="mt-8 max-w-xl text-pretty text-lg leading-relaxed text-on-band-muted">
+            {site.tagline} I build web platforms, embedded electronics and
+            applied AI systems from {site.location}.
+          </p>
+        </Enter>
 
-        <div className="mt-10 flex flex-wrap items-center gap-4">
+        <Enter delay={0.9} className="mt-10 flex flex-wrap items-center gap-4">
           <Link
             href="#projects"
-            className="btn-depth inline-flex items-center gap-2.5 rounded-sm bg-on-band px-6 py-3.5 text-sm font-medium text-band-light"
+            className="btn-depth group inline-flex items-center gap-2.5 rounded-sm bg-on-band px-6 py-3.5 text-sm font-medium text-band-light"
           >
             See my work
-            <ArrowDown size={15} aria-hidden="true" />
+            <motion.span
+              aria-hidden="true"
+              animate={reduced ? undefined : { y: [0, 3, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex"
+            >
+              <ArrowDown size={15} />
+            </motion.span>
           </Link>
           <Link
             href="#contact"
@@ -49,16 +97,17 @@ export default function Hero() {
           >
             Get in touch
           </Link>
-        </div>
-
-        <ul className="mt-14 flex flex-wrap gap-x-8 gap-y-2 border-t border-line-band pt-6">
-          {DISCIPLINES.map((d) => (
-            <li key={d} className="meta text-on-band-muted">
-              {d}
-            </li>
-          ))}
-        </ul>
+        </Enter>
       </div>
+
+      <Enter delay={1.05} className="mt-14">
+        <Marquee
+          items={TICKER}
+          duration={34}
+          className="border-t border-line-band py-4"
+          itemClassName="meta text-on-band-muted"
+        />
+      </Enter>
     </section>
   );
 }

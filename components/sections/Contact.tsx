@@ -1,5 +1,10 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
+import { Reveal } from "@/components/ui/motion-primitives";
+import SplitText from "@/components/ui/SplitText";
+import Marquee from "@/components/ui/Marquee";
 import { site, navItems } from "@/lib/site";
 
 const social = [
@@ -8,8 +13,9 @@ const social = [
 ];
 
 /**
- * Contact + footer. The email address is the one control that matters, so it
- * is the biggest thing here.
+ * Contact + footer. The page closes the way it opened: one big word building
+ * itself letter by letter. The email address is the one control that
+ * matters, so it is the biggest thing here.
  */
 export default function Contact() {
   return (
@@ -20,95 +26,117 @@ export default function Contact() {
         className="scroll-mt-24 bg-ink px-6 py-24 sm:px-10 sm:py-28"
       >
         <div className="mx-auto max-w-5xl">
-          <p className="meta flex items-center gap-3 text-text-muted">
-            <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
-            05 — What happens next
-          </p>
+          <Reveal>
+            <p className="meta flex items-center gap-3 text-text-muted">
+              <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
+              05 — What happens next
+            </p>
+          </Reveal>
 
-          <h2 className="text-display mt-6 text-[clamp(2.4rem,9vw,6.5rem)] text-text-primary">
-            Let&apos;s talk
+          <h2 className="text-mega mt-6 text-[clamp(2.4rem,9vw,6.5rem)] text-text-primary">
+            <SplitText text="Let's talk" trigger="view" stagger={0.04} />
           </h2>
 
           <div className="mt-12 grid gap-12 border-t border-line pt-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-20">
             <div>
-              <p className="max-w-xl text-pretty text-lg leading-relaxed text-text-secondary">
-                I am open to freelance work, full-time roles and collaboration
-                — particularly on systems that serve organisations and
-                communities in Rwanda and the wider region.
-              </p>
+              <Reveal>
+                <p className="max-w-xl text-pretty text-lg leading-relaxed text-text-secondary">
+                  I am open to freelance work, full-time roles and
+                  collaboration — particularly on systems that serve
+                  organisations and communities in Rwanda and the wider
+                  region.
+                </p>
+              </Reveal>
 
-              <a
-                href={`mailto:${site.email}`}
-                className="plate btn-depth group mt-10 inline-flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:border-primary"
-              >
-                <span className="text-editorial text-[clamp(1.15rem,3vw,2rem)] font-medium text-text-primary transition-colors group-hover:text-primary">
-                  {site.email}
-                </span>
-                <ArrowUpRight
-                  size={20}
-                  aria-hidden="true"
-                  className="text-text-muted transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary"
-                />
-              </a>
+              <Reveal delay={0.1}>
+                <a
+                  href={`mailto:${site.email}`}
+                  className="plate btn-depth group mt-10 inline-flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:border-primary"
+                >
+                  <span className="text-editorial text-[clamp(1.15rem,3vw,2rem)] font-medium text-text-primary transition-colors group-hover:text-primary">
+                    {site.email}
+                  </span>
+                  <ArrowUpRight
+                    size={20}
+                    aria-hidden="true"
+                    className="text-text-muted transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary"
+                  />
+                </a>
+              </Reveal>
             </div>
 
-            <dl className="space-y-6">
-              <div className="plate px-5 py-4">
-                <dt className="meta text-text-muted">Location</dt>
-                <dd className="mt-2.5 text-text-primary">{site.location}</dd>
-              </div>
+            <Reveal delay={0.14}>
+              <dl className="space-y-6">
+                <div className="plate px-5 py-4 transition-colors duration-300 hover:border-primary">
+                  <dt className="meta text-text-muted">Location</dt>
+                  <dd className="mt-2.5 text-text-primary">{site.location}</dd>
+                </div>
 
-              <div className="plate px-5 py-4">
-                <dt className="meta text-text-muted">Availability</dt>
-                <dd className="mt-2.5 flex items-center gap-2.5 text-text-primary">
-                  <span
-                    aria-hidden="true"
-                    className="h-1.5 w-1.5 rounded-full bg-accent"
-                  />
-                  Open to new work
-                </dd>
-              </div>
+                <div className="plate px-5 py-4 transition-colors duration-300 hover:border-primary">
+                  <dt className="meta text-text-muted">Availability</dt>
+                  <dd className="mt-2.5 flex items-center gap-2.5 text-text-primary">
+                    <span
+                      aria-hidden="true"
+                      className="h-1.5 w-1.5 rounded-full bg-accent"
+                    />
+                    Open to new work
+                  </dd>
+                </div>
 
-              <div>
-                <dt className="meta mb-3 text-text-muted">Elsewhere</dt>
-                <dd className="space-y-3">
-                  {social.map((s) => {
-                    const Icon = s.icon;
-                    return (
-                      <a
-                        key={s.label}
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="plate btn-depth group flex items-center justify-between px-5 py-3.5 transition-colors hover:border-primary"
-                      >
-                        <span className="flex items-center gap-3">
-                          <Icon
-                            size={14}
-                            className="text-text-muted transition-colors group-hover:text-primary"
-                          />
-                          <span className="text-sm text-text-secondary transition-colors group-hover:text-text-primary">
-                            {s.label}
+                <div>
+                  <dt className="meta mb-3 text-text-muted">Elsewhere</dt>
+                  <dd className="space-y-3">
+                    {social.map((s) => {
+                      const Icon = s.icon;
+                      return (
+                        <a
+                          key={s.label}
+                          href={s.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="plate btn-depth group flex items-center justify-between px-5 py-3.5 transition-colors hover:border-primary"
+                        >
+                          <span className="flex items-center gap-3">
+                            <Icon
+                              size={14}
+                              className="text-text-muted transition-colors group-hover:text-primary"
+                            />
+                            <span className="text-sm text-text-secondary transition-colors group-hover:text-text-primary">
+                              {s.label}
+                            </span>
                           </span>
-                        </span>
-                        <ArrowUpRight
-                          size={14}
-                          aria-hidden="true"
-                          className="text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                        />
-                      </a>
-                    );
-                  })}
-                </dd>
-              </div>
-            </dl>
+                          <ArrowUpRight
+                            size={14}
+                            aria-hidden="true"
+                            className="text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+                          />
+                        </a>
+                      );
+                    })}
+                  </dd>
+                </div>
+              </dl>
+            </Reveal>
           </div>
         </div>
       </section>
 
       <footer data-band="dark" className="bg-ink">
+        <Marquee
+          items={[
+            "Available for work",
+            site.location,
+            "Web platforms",
+            "Embedded systems",
+            "Applied AI",
+          ]}
+          duration={40}
+          className="border-y border-line py-4"
+          itemClassName="meta text-primary"
+        />
+
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
-          <div className="grid gap-10 border-t border-line pt-10 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+          <div className="grid gap-10 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
             <div>
               <p className="script text-3xl leading-none text-text-primary">
                 {site.shortName.toLowerCase()}
@@ -124,7 +152,7 @@ export default function Contact() {
                   <li key={item.href}>
                     <a
                       href={item.href}
-                      className="meta inline-block text-text-secondary transition-colors hover:text-primary"
+                      className="meta inline-block text-text-secondary transition-[color,transform] duration-300 hover:-translate-y-0.5 hover:text-primary"
                     >
                       {item.label}
                     </a>
