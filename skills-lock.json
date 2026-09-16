@@ -31,6 +31,12 @@
       "skillPath": "skills/glassmorphism/SKILL.md",
       "computedHash": "c4324b3381b3252afb6644a4ad12facc2226d51a47778fa7f1bb6a1cb800cc2b"
     },
+    "gsap-frontend": {
+      "source": "CybertronianKelvin/gsap-frontend-skill",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-frontend/SKILL.md",
+      "computedHash": "6fc9f1fcd23c4545defff6b559bf4855ed228ba1dd295d12bce270e6835a8e7e"
+    },
     "gsap-web": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
