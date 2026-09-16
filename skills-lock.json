@@ -25,6 +25,12 @@
       "skillPath": "skills/ascii-animation/SKILL.md",
       "computedHash": "0e4fa3f778c41e372cdcc1895fb206d0886c4fd5de221f69bfd12788920e8e3a"
     },
+    "framer-motion": {
+      "source": "schoepplake/framer-motion-skill",
+      "sourceType": "github",
+      "skillPath": "skills/framer-motion/SKILL.md",
+      "computedHash": "9904c5d7e71bfba58b8896c07a862c32ec2c04f8a832d399a380749f071e28cc"
+    },
     "glassmorphism": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
