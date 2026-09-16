@@ -147,13 +147,15 @@ function usePointerDrift(enabled: boolean) {
 /**
  * The depth behind the type: a tonal wash and a fine survey grid, both
  * inked from the band rather than from white so the porcelain never goes
- * milky. Oversized by 12% on every side — parallax translates it, and an
- * exactly-sized layer would slide its own edge into view.
+ * milky. Oversized by 25% on every side — parallax translates it, and an
+ * exactly-sized layer would slide its own edge into view. The overscan has
+ * to stay ahead of the travel in `backdropY`, or the top edge surfaces at
+ * the end of the scroll.
  */
 function Backdrop() {
   return (
     <div
-      className="absolute inset-[-12%]"
+      className="absolute inset-[-25%]"
       style={{
         maskImage:
           "radial-gradient(ellipse 78% 68% at 50% 42%, #000 38%, transparent 76%)",
@@ -225,29 +227,33 @@ export default function Hero() {
 
   // Layers, back to front. Positive y lags behind the scroll and reads as
   // depth; negative y leads it and reads as foreground.
-  const backdropY = useTransform(p, [0, 1], [0, 108]);
-  const backdropScale = useTransform(p, [0, 1], [1, 1.08]);
-  const contentY = useTransform(p, [0, 1], [0, -84]);
-  const headlineY = useTransform(p, [0, 1], [0, -38]);
-  const marqueeY = useTransform(p, [0, 1], [0, 46]);
+  const backdropY = useTransform(p, [0, 1], [0, 210]);
+  const backdropScale = useTransform(p, [0, 1], [1, 1.16]);
+  const contentY = useTransform(p, [0, 1], [0, -158]);
+  const headlineY = useTransform(p, [0, 1], [0, -72]);
+  // Deliberately the mildest layer. The ticker sits on the band's bottom
+  // edge, so travel here is clipped away by the section rather than read as
+  // depth — push it as hard as the rest and it just vanishes, leaving a
+  // dead strip of empty porcelain behind it.
+  const marqueeY = useTransform(p, [0, 1], [0, 58]);
 
   // The band clears out well before it has finished leaving. The header is
   // fixed, so anything still lit as it passes underneath ghosts across the
   // nav; finishing the fade early keeps that overlap to a moment.
   const contentFade = useTransform(p, [0, 0.58], [1, 0]);
-  const marqueeFade = useTransform(p, [0, 0.7], [1, 0]);
+  const marqueeFade = useTransform(p, [0, 0.82], [1, 0]);
 
   // Faded-out is not gone: an opacity-0 button still takes clicks, still
   // takes tab focus, and is still announced. Flipping visibility at the end
   // of the fade retires the whole block from all three at once, and scroll
   // position restores it — so tabbing back to the top brings the links back.
   const departed = useTransform(p, (v) => (v >= 0.58 ? "hidden" : "visible"));
-  const marqueeGone = useTransform(p, (v) => (v >= 0.7 ? "hidden" : "visible"));
+  const marqueeGone = useTransform(p, (v) => (v >= 0.82 ? "hidden" : "visible"));
 
   const { px, py } = usePointerDrift(!reduced);
-  const driftX = useTransform(px, [-1, 1], [16, -16]);
-  const driftY = useTransform(py, [-1, 1], [12, -12]);
-  const typeDriftX = useTransform(px, [-1, 1], [-5, 5]);
+  const driftX = useTransform(px, [-1, 1], [30, -30]);
+  const driftY = useTransform(py, [-1, 1], [22, -22]);
+  const typeDriftX = useTransform(px, [-1, 1], [-9, 9]);
 
   return (
     <section
