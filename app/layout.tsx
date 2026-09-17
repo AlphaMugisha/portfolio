@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Anton, Mrs_Saint_Delafield, Poppins } from "next/font/google";
+import {
+  Inter,
+  Space_Grotesk,
+  Mrs_Saint_Delafield,
+  Poppins,
+} from "next/font/google";
 import "./globals.css";
 import Header from "@/components/ui/Header";
 import ScrollProgress from "@/components/ui/ScrollProgress";
@@ -16,10 +21,15 @@ const inter = Inter({
   display: "swap",
 });
 
-const anton = Anton({
-  variable: "--font-anton",
+/* The display face. Anton was an ultra-compressed all-caps grotesque, which
+   meant every heading on the site had to shout in capitals. Space Grotesk
+   carries weight at mixed case, so a headline can be large and heavy without
+   being a wall of uppercase — and it keeps enough character not to read as a
+   system font. */
+const display = Space_Grotesk({
+  variable: "--font-display-face",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -85,7 +95,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${anton.variable} ${script.variable} ${poppins.variable} h-full antialiased`}
+      className={`${inter.variable} ${display.variable} ${script.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="relative min-h-full">
         <ScrollProgress />

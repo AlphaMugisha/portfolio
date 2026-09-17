@@ -1,78 +1,81 @@
 "use client";
 
-import { Reveal } from "@/components/ui/motion-primitives";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion-primitives";
 import Section from "@/components/ui/Section";
 import TechIcon from "@/components/ui/TechIcon";
 import { skillGroups } from "@/lib/skills";
 
 /**
- * Expertise — a ruled list, not a grid of cards.
+ * Expertise — a tool wall.
  *
- * Four boxed cards gave four capabilities equal visual weight and turned the
- * section into a wall. A list avoids exactly that: a row is only as tall as
- * its content needs, the rules line everything up, and the eye runs down one
- * column instead of ping-ponging around a 2×2.
+ * Two earlier attempts failed for the same underlying reason: they made the
+ * PROSE the subject. Four boxed cards gave four sentences equal weight and
+ * built a wall of copy; a ruled list did the same thing taller. Nobody reads
+ * four paragraphs about categories — they scan for logos they recognise.
  *
- * Each row is the group's number and name on the left, its sentence and its
- * tools on the right. Every chip's `title` says what the technology is used
- * for; there are no proficiency bars, because any number on them would be
- * invented.
+ * So the logos are the content now. Each layer is a small accent label and a
+ * grid of square tiles, and the sentence that used to headline the card is
+ * demoted to one quiet line beside the label, where it can be read or
+ * skipped without costing anything.
+ *
+ * The tile is deliberately square and generous. A logo needs room around it
+ * to be recognisable at a glance, which is the entire point of showing a
+ * logo rather than a word — and the name still sits underneath, because a
+ * mark you do not recognise is useless without one.
  */
 export default function Skills() {
+  const total = skillGroups.reduce((n, g) => n + g.skills.length, 0);
+
   return (
     <Section
       id="skills"
       index="02"
       label="Expertise"
       description="Four layers of the same craft, from the schema underneath to the board on the bench."
-      aside={
-        <p className="meta text-text-muted">
-          {skillGroups.reduce((n, g) => n + g.skills.length, 0)} tools
-        </p>
-      }
+      aside={<p className="meta text-text-muted">{total} tools</p>}
       className="bg-ink"
     >
-      <ul className="border-t border-line">
-        {skillGroups.map((group, i) => (
-          <li key={group.id}>
-            <Reveal delay={i * 0.06} y={18}>
-              {/* The row is one group, so the number and the name both light
-                  up when the pointer is anywhere along it — not only when it
-                  happens to be over the words. */}
-              <div className="group grid gap-x-10 gap-y-5 border-b border-line py-8 sm:grid-cols-[minmax(0,0.34fr)_minmax(0,1fr)] sm:py-10">
-                <div className="flex items-baseline gap-4">
-                  <span className="meta shrink-0 text-primary-strong">
-                    {group.index}
-                  </span>
-                  <h3 className="text-display text-[clamp(1.3rem,2.4vw,1.85rem)] text-text-primary transition-colors duration-300 group-hover:text-primary-strong">
-                    {group.title}
-                  </h3>
-                </div>
+      <Reveal>
+        <p className="max-w-2xl text-pretty text-[clamp(1.15rem,2.2vw,1.6rem)] font-light leading-snug text-text-secondary">
+          {total} technologies across the stack —{" "}
+          <span className="font-medium text-text-primary">
+            every one of them used in something on this page
+          </span>
+          , not collected.
+        </p>
+      </Reveal>
 
-                <div>
-                  <p className="max-w-xl text-pretty leading-relaxed text-text-secondary">
-                    {group.blurb}
-                  </p>
+      <div className="mt-14 space-y-12">
+        {skillGroups.map((group, gi) => (
+          <Reveal key={group.id} delay={gi * 0.05} y={18}>
+            <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+              <h3 className="meta text-primary-strong">{group.title}</h3>
+              <p className="text-sm text-text-muted">{group.blurb}</p>
+            </div>
 
-                  <ul className="mt-5 flex flex-wrap gap-2">
-                    {group.skills.map((s) => (
-                      <li key={s.name}>
-                        <span
-                          title={s.detail}
-                          className="chip flex items-center gap-2 px-3 py-1.5 font-geometric text-[11px] text-text-secondary transition-[color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary-strong"
-                        >
-                          <TechIcon name={s.name} size={12} />
-                          {s.name}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </Reveal>
-          </li>
+            <Stagger
+              className="mt-5 grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-8"
+              stagger={0.03}
+            >
+              {group.skills.map((s) => (
+                <StaggerItem key={s.name}>
+                  {/* `title` carries what the tool is actually used for —
+                      the detail that used to be buried in a chip tooltip. */}
+                  <div
+                    title={s.detail}
+                    className="group flex aspect-square flex-col items-center justify-center gap-2.5 rounded-tile border border-line bg-surface p-2 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[var(--shadow-card)]"
+                  >
+                    <TechIcon name={s.name} size={24} />
+                    <span className="w-full truncate px-1 text-center font-geometric text-[10.5px] leading-none text-text-muted transition-colors duration-300 group-hover:text-text-primary">
+                      {s.name}
+                    </span>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </Reveal>
         ))}
-      </ul>
+      </div>
     </Section>
   );
 }

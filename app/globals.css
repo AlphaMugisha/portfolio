@@ -105,7 +105,7 @@
      Inter stays on running paragraphs, where a geometric face at length
      gets tiring, and Anton stays on the display headline. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-anton), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
   --font-script: var(--font-delafield), cursive;
   --font-geometric: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 
@@ -219,22 +219,22 @@
    TYPE UTILITIES
    ============================================================ */
 
-/* An ultra-heavy grotesque set enormous and compressed until the counters
-   close up and the word reads as a block. */
+/* The headline. Heavy and tightly tracked, but MIXED CASE — the previous
+   face only worked in capitals, which forced every heading on the site to
+   shout. Negative tracking at this size is what stops a bold grotesque
+   reading as loose. */
 @utility text-mega {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.012em;
-  line-height: 0.78;
-  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: -0.038em;
+  line-height: 0.92;
 }
 
 @utility text-display {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: 0.002em;
-  line-height: 1.02;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
   text-wrap: balance;
 }
 
