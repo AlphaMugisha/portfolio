@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Anton, Mrs_Saint_Delafield, Poppins } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/ui/Sidebar";
+import Header from "@/components/ui/Header";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
 import { THEME_SCRIPT } from "@/lib/theme";
 
@@ -97,13 +98,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="relative min-h-full">
-        {/* Reading progress lives in the rail now, not as a bar across the
-            top — there is no longer a top edge for it to belong to. */}
-        <Sidebar />
-        {/* The rail is fixed, so the page is inset by exactly its collapsed
-            width. It widens over the content on hover rather than pushing
-            it, which is what keeps the expansion from reflowing the page. */}
-        <main id="main" className="relative pl-16 md:pl-[76px]">
+        <ScrollProgress />
+        <Header />
+        <main id="main" className="relative">
           {children}
         </main>
       </body>

@@ -32,17 +32,15 @@ export default function Projects() {
         </Reveal>
 
         <Reveal delay={0.06}>
-          <div className="panel-head mt-6">
+          <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-display text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
               My <span className="text-primary">work</span>
             </h2>
-            <p className="chip meta px-3 py-1.5 text-text-muted">
-              {projects.length} projects
-            </p>
+            <p className="meta text-text-muted">{projects.length} projects</p>
           </div>
         </Reveal>
 
-        <Stagger className="mt-10 grid gap-6 sm:grid-cols-2" stagger={0.1}>
+        <Stagger className="mt-12 grid gap-6 sm:grid-cols-2" stagger={0.1}>
           {projects.map((p, i) => (
             <StaggerItem key={p.slug} className="h-full">
               <TiltCard tilt={4} className="h-full">

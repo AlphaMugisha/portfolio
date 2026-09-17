@@ -305,18 +305,6 @@
   .lift:active { transform: none; transition: none; }
 }
 
-/* A panel header: the eyebrow, the title, and a meta chip on the right,
-   sitting on a hairline. The dashboard rhythm every section now shares. */
-@utility panel-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--color-line);
-}
-
 /* ============================================================
    TYPE UTILITIES
    ============================================================ */

@@ -31,17 +31,12 @@ export default function Skills() {
         </Reveal>
 
         <Reveal delay={0.06}>
-          <div className="panel-head mt-6">
-            <h2 className="text-display text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
-              My <span className="text-primary">expertise</span>
-            </h2>
-            <p className="chip meta px-3 py-1.5 text-text-muted">
-              {skillGroups.reduce((n, g) => n + g.skills.length, 0)} tools
-            </p>
-          </div>
+          <h2 className="text-display mt-6 text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
+            My <span className="text-primary">expertise</span>
+          </h2>
         </Reveal>
 
-        <Stagger className="mt-10 grid gap-5 md:grid-cols-2" stagger={0.12}>
+        <Stagger className="mt-12 grid gap-5 md:grid-cols-2" stagger={0.12}>
           {skillGroups.map((group) => (
             <StaggerItem key={group.id} className="h-full">
               <TiltCard tilt={2.5} className="h-full">

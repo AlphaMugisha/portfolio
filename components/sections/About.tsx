@@ -54,17 +54,12 @@ export default function About() {
         </Reveal>
 
         <Reveal delay={0.06}>
-          <div className="panel-head mt-6">
-            <h2 className="text-display text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
-              About <span className="text-primary">me</span>
-            </h2>
-            <p className="chip meta px-3 py-1.5 text-text-muted">
-              {site.location}
-            </p>
-          </div>
+          <h2 className="text-display mt-6 text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
+            About <span className="text-primary">me</span>
+          </h2>
         </Reveal>
 
-        <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] lg:gap-16">
           <div>
             <TiltCard tilt={3} className="plate p-2.5">
               <motion.div
@@ -144,15 +139,13 @@ export default function About() {
               ))}
             </Stagger>
 
-            <div className="mt-10 grid grid-cols-3 gap-3">
+            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-8">
               {FIGURES.map((f, i) => (
-                <Reveal key={f.label} delay={i * 0.08} className="h-full">
-                  <div className="plate lift h-full px-4 py-4">
-                    <p className="text-display text-[clamp(1.6rem,3.6vw,2.4rem)] text-primary">
-                      <Counter value={f.value} suffix={f.suffix} />
-                    </p>
-                    <p className="meta mt-2 text-text-muted">{f.label}</p>
-                  </div>
+                <Reveal key={f.label} delay={i * 0.08}>
+                  <p className="text-display text-[clamp(1.8rem,4vw,2.8rem)] text-primary">
+                    <Counter value={f.value} suffix={f.suffix} />
+                  </p>
+                  <p className="meta mt-2.5 text-text-muted">{f.label}</p>
                 </Reveal>
               ))}
             </div>
