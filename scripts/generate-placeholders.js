@@ -13,27 +13,29 @@ const fs = require("fs");
 const OUT = path.join(__dirname, "..", "public", "images");
 fs.mkdirSync(OUT, { recursive: true });
 
-// The machine-hall grade: blue-charcoal bases, cold cyan/teal light, one
-// deliberately ember-warm plate (payment) so the rack keeps a single warm
-// beat — the same role the tungsten key light plays in the 3D scene.
+// Re-graded for the light palette sampled from fortosee.mp4. Each scheme is
+// a pale wash with one saturated note, so a cover reads as a soft
+// photographic field sitting ON the page rather than a dark hole punched
+// through it. The veil in `field` darkens toward the bottom, so the base
+// values start lighter than the surface they land on.
 const SCHEMES = {
-  portrait:   ["#0B0E14", "#1B2433", "#31506B", "#7FB4CF"],
-  hero:       ["#0A0D12", "#182130", "#2E4C66", "#6FA9C9"],
-  rwasport:   ["#0C1220", "#1B3450", "#2B6E8C", "#54D1DB"],
-  greenhouse: ["#0C1314", "#183E3A", "#297065", "#43C6B0"],
-  cleankigali:["#0D1317", "#204046", "#387173", "#5BC8C0"],
-  tembera:    ["#101019", "#2B2D4A", "#4E5188", "#8D8FD1"],
-  transiteco: ["#0D1016", "#243040", "#465C72", "#93AFC7"],
-  payment:    ["#0E0C0A", "#2B2013", "#6B4A1F", "#FFB466"],
-  ikibina:    ["#100F17", "#2B2740", "#554E78", "#9A93C9"],
-  school:     ["#0D1013", "#273340", "#4D667E", "#9FB9CE"],
+  portrait:   ["#F2F5F9", "#DEE8F6", "#C2D8F3", "#89B4EE"],
+  hero:       ["#F3F5FA", "#E1E9F6", "#C7D9F1", "#95BCEF"],
+  rwasport:   ["#F0F4FB", "#D8E5F8", "#B5D0F6", "#74ACF2"],
+  greenhouse: ["#EFF6F3", "#D9ECE5", "#B6DCD0", "#7FC5B1"],
+  cleankigali:["#EEF5F7", "#D8EAEE", "#B2D7DF", "#78BDCA"],
+  tembera:    ["#F3F1F9", "#E2DEF4", "#C7BFEA", "#9A90D3"],
+  transiteco: ["#F1F3F8", "#DFE4EE", "#C2CCDC", "#92A0B8"],
+  payment:    ["#F8F4EE", "#F1E6D4", "#E4CCA5", "#D3AC6B"],
+  ikibina:    ["#F3F1F8", "#E2DDF2", "#C9C0E6", "#9F94CF"],
+  school:     ["#F0F2F6", "#DEE3EB", "#BFCAD8", "#92A0B2"],
 
-  // The journey strip reads left to right as a colour progression: tungsten
-  // workbench -> teal server era -> instrument cyan -> AI violet.
-  jFoundation:["#0F0C0A", "#2E2214", "#71512A", "#FFB466"],
-  jEarly:     ["#0C1214", "#1B3A3C", "#2F6B66", "#4FC4B5"],
-  jCurrent:   ["#0C1220", "#1C3550", "#2E6F8E", "#54D1DB"],
-  jOngoing:   ["#0E0D16", "#282442", "#524B85", "#9A93D6"],
+  // The journey strip still reads left to right as a progression: warm
+  // workbench -> teal server era -> the accent blue -> violet.
+  jFoundation:["#F8F4ED", "#F2E7D3", "#E6D0A8", "#D4B070"],
+  jEarly:     ["#EEF6F4", "#D8EDE7", "#B3DDD2", "#7AC6B3"],
+  jCurrent:   ["#EDF3FB", "#D6E4F9", "#AFCEF7", "#6EA9F2"],
+  jOngoing:   ["#F2F1F9", "#E0DEF4", "#C3BEEA", "#9590D3"],
 };
 
 /** Soft blurred blobs over a base wash — reads as depth-of-field photography. */
@@ -64,7 +66,7 @@ function field(w, h, colors, seed) {
     </linearGradient>
     <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="${c0}" stop-opacity="0.05"/>
-      <stop offset="100%" stop-color="${c0}" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="${c0}" stop-opacity="0.28"/>
     </linearGradient>
   </defs>
   <rect width="${w}" height="${h}" fill="url(#base)"/>
@@ -99,7 +101,7 @@ const JOBS = [
     await sharp(field(w, h, colors, seed))
       // Heavy blur turns the hard circles into a soft photographic field.
       .blur(Math.round(Math.min(w, h) / 26))
-      .modulate({ saturation: 0.85 })
+      .modulate({ saturation: 0.92, brightness: 1.02 })
       .jpeg({ quality: 78, mozjpeg: true })
       .toFile(dest);
     const kb = (fs.statSync(dest).size / 1024).toFixed(0);

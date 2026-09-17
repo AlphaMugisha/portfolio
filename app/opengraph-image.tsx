@@ -20,9 +20,9 @@ export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const BAND = "#B9C7D2"; /* --color-band-light */
-const INK = "#0E1319"; /* --color-on-band    */
-const MUTED = "#39434D"; /* --color-on-band-muted */
+const BAND = "#FFFFFF"; /* --color-band-light */
+const INK = "#393A3D"; /* --color-on-band    */
+const MUTED = "#61636A"; /* --color-on-band-muted */
 
 export default async function OpenGraphImage() {
   const [anton, inter] = await Promise.all([

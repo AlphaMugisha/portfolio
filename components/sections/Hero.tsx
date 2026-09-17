@@ -167,16 +167,16 @@ function Backdrop() {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 60% 50% at 30% 32%, rgba(14,19,25,0.07), transparent 70%)," +
-            "radial-gradient(ellipse 50% 46% at 78% 72%, rgba(14,19,25,0.05), transparent 68%)",
+            "radial-gradient(ellipse 60% 50% at 30% 32%, rgba(10,110,250,0.07), transparent 70%)," +
+            "radial-gradient(ellipse 50% 46% at 78% 72%, rgba(57,58,61,0.05), transparent 68%)",
         }}
       />
       <div
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(to right, rgba(14,19,25,0.055) 0 1px, transparent 1px 92px)," +
-            "repeating-linear-gradient(to bottom, rgba(14,19,25,0.042) 0 1px, transparent 1px 92px)",
+            "repeating-linear-gradient(to right, rgba(57,58,61,0.07) 0 1px, transparent 1px 92px)," +
+            "repeating-linear-gradient(to bottom, rgba(57,58,61,0.055) 0 1px, transparent 1px 92px)",
         }}
       />
     </div>
@@ -331,7 +331,7 @@ export default function Hero() {
               <Magnetic pull={8} contentPull={4} radius={90}>
                 <Link
                   href="#projects"
-                  className="btn-depth group inline-flex items-center gap-2.5 rounded-sm bg-on-band px-6 py-3.5 text-sm font-medium text-band-light"
+                  className="btn-depth group inline-flex items-center gap-2.5 rounded-pill bg-primary px-6 py-3.5 font-geometric text-sm font-medium text-on-primary"
                 >
                   See my work
                   <motion.span
@@ -351,7 +351,7 @@ export default function Hero() {
               <Magnetic pull={8} contentPull={4} radius={90}>
                 <Link
                   href="#contact"
-                  className="btn-depth inline-flex items-center rounded-sm border border-line-band px-6 py-3.5 text-sm font-medium text-on-band"
+                  className="btn-depth inline-flex items-center rounded-pill border border-line-strong bg-surface px-6 py-3.5 font-geometric text-sm font-medium text-on-band"
                 >
                   Get in touch
                 </Link>

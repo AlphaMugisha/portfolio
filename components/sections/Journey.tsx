@@ -242,7 +242,7 @@ export default function Journey() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -40 }}
                   transition={{ duration: 0.6, ease: EASE }}
-                  className="text-mega whitespace-nowrap text-panel/50"
+                  className="text-mega whitespace-nowrap text-ghost/70"
                   style={{ fontSize: "min(30svh, 17vw)" }}
                 >
                   {journey[active].period}

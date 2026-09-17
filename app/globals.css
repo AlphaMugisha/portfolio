@@ -3,105 +3,125 @@
 /* ============================================================
    DESIGN TOKENS
 
-   The reel (inspo.mp4) supplied the STRUCTURE of this palette — one ground,
-   one deeper void, panels that sit on the ground, one light value doing
-   double duty as band fill and light type, one accent — and the contrast
-   ratios every pairing has to clear. The hues are this site's own grade:
-   a machine hall at night. Blue-black ground, an ice-porcelain sheet, and
-   two lights with fixed roles:
+   Sampled from fortosee.mp4 — @frontendjoe's hover-expand dashboard
+   sidebar. The palette is lifted from the frames rather than eyeballed:
+   every value below was read straight out of the video.
 
-     #0B0E14  the page ground — charcoal pulled toward blue, not black
-     #04060A  the menu overlay, the only thing deeper than the ground
-     #242B3A  the case-study panels, which sit ON the ground rather than
-              replacing it — there is still no light card
-     #B9C7D2  porcelain doing double duty: BOTH the fill of the opening
-              band AND the light type on the dark ground. One value, two
-              roles — that is what keeps the palette tight
-     #54D1DB  instrument cyan — the one accent ink. Attention, links,
-              active states, focus. If it glows, the machine is on
-     #FFB466  tungsten ember — never an ink. It exists only as light inside
-              the WebGL depth: the bounce in the hero cut, the key light
-              riding the rack, a few warm motes in the dust
+     #FFFFFF  the card. Every block of content sits on one of these,
+              rounded and lifted off the ground by a soft shadow
+     #E6E9EF  the page ground. Never white — the cards need something to
+              sit ON, and that separation is the whole look
+     #E7F0FD  the active pill behind a selected nav row
+     #0A6EFA  the accent. Fills, active icons, borders, large type
+     #393A3D  heading ink
+     #DADBE0  the hairline
 
-   Contrast still checked against every pairing actually used; the lightest
-   text permitted on any ground is 5.0:1 and the cyan clears 10.6:1.
-   Deliberate consequence: the cyan is invisible on the light band (1.06:1),
-   so the band carries dark type only — same rule as before, harder.
+   One value is NOT from the video: #0B5ED1, a darkened step of the same
+   blue. The video only ever sets its accent on white, where #0A6EFA clears
+   4.54:1. On the grey ground it falls to 3.73:1 and on its own active pill
+   to 3.95:1 — both fine for large type, both short of AA for the small
+   tracked labels this site runs everywhere. So small accent text uses the
+   darkened step (4.88:1 on the ground, 5.17:1 on the pill) and everything
+   else keeps the sampled blue.
 
-   Tailwind v4 is CSS-first: @theme generates the utilities.
+   Every pairing actually used is listed with its measured ratio below, and
+   the lightest ink permitted on any surface clears 4.5:1.
+
+   Tailwind v4 is CSS-first: @theme generates the utilities. The token
+   NAMES are unchanged from the previous palette on purpose — the site is
+   written against semantic tokens, so remapping here repaints it.
    ============================================================ */
 @theme {
   /* -- core ------------------------------------------------ */
-  --color-ink: #0B0E14;
-  --color-void: #04060A;
-  --color-panel: #242B3A;
-  --color-paper: #B9C7D2;
-  --color-cyan: #54D1DB;
-  --color-ember: #FFB466;
+  --color-ink: #E6E9EF;      /* the section ground */
+  --color-void: #DDE1E8;     /* the deepest ground — footer, menu */
+  --color-panel: #FFFFFF;    /* the card */
+  --color-paper: #FFFFFF;
+  --color-cyan: #0A6EFA;
+  --color-ember: #0B5ED1;
+  --color-ghost: #CFD5DE;    /* oversized display type used as texture */
 
   /* -- semantic surfaces ---------------------------------- */
-  --color-bg: #0B0E14;
-  --color-bg-raised: #10141C;
-  --color-surface: #1A202C;
-  --color-surface-raised: #2B3242;
-  --color-bg-invert: #04060A;
-  --color-surface-invert: #1A202C;
+  --color-bg: #E6E9EF;
+  --color-bg-raised: #EDEFF4;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-bg-invert: #DDE1E8;
+  --color-surface-invert: #FFFFFF;
 
-  /* The opening band. Porcelain — an ice sheet, not a warm grey. */
-  --color-band-light: #B9C7D2;
-  --color-band-deep: #A7B6C3;
+  /* The hero band is the ground itself now. The old palette made it a
+     porcelain sheet against a dark page; here the page is already light,
+     so the band is defined by its grid and its type, not by a fill. */
+  --color-band-light: #E6E9EF;
+  --color-band-deep: #DDE1E8;
 
-  /* -- text on the dark ground ---------------------------- */
-  --color-text-primary: #B9C7D2;   /* 11.19:1 */
-  --color-text-secondary: #93A2AF; /* 7.38:1 */
-  --color-text-muted: #7A8892;     /* 5.30:1 — lightest permitted */
-  --color-text-invert: #B9C7D2;
-  --color-text-invert-muted: #93A2AF;
+  /* -- ink ------------------------------------------------- */
+  --color-text-primary: #393A3D;   /* 9.35:1 on ground, 11.37:1 on card */
+  --color-text-secondary: #55585E; /* 5.87:1 on ground, 7.13:1 on card */
+  --color-text-muted: #61636A;     /* 4.93:1 on ground — lightest allowed */
+  --color-text-invert: #393A3D;
+  --color-text-invert-muted: #61636A;
 
-  /* -- text on the light band ----------------------------- */
-  --color-on-band: #0E1319;        /* 10.80:1 */
-  --color-on-band-muted: #39434D;  /* 5.84:1 */
+  /* -- ink on the hero band -------------------------------- */
+  --color-on-band: #393A3D;        /* 9.35:1 */
+  --color-on-band-muted: #61636A;  /* 4.93:1 */
 
-  /* -- text on a case-study panel ------------------------- */
-  --color-on-panel: #C7D1DB;       /* 9.16:1 */
-  --color-on-panel-muted: #94A0AC; /* 5.32:1 */
+  /* -- ink on a card --------------------------------------- */
+  --color-on-panel: #393A3D;       /* 11.37:1 */
+  --color-on-panel-muted: #61636A; /* 6.00:1 */
 
-  /* The statement card is the one surface carrying BOTH near-black and
-     near-white type at once — the frame words in dark ink and the cycling
-     project name in light on the same panel. Since both inks have to work,
-     the panel is a true mid-tone: the dark ink lands at 4.22:1 and the
-     lifted ink at 3.68:1, both clear of the 3:1 floor for display type. */
-  --color-panel-mid: #6E7A8E;
-  --color-on-panel-mid: #10151C;      /* 4.22:1 — the frame words */
-  --color-on-panel-mid-lift: #E7EDF2; /* 3.68:1 — the cycling name */
+  /* The statement card carries both weights at once. On a white card there
+     is no longer a mid-tone to fight, so both simply resolve to the normal
+     card inks. */
+  --color-panel-mid: #FFFFFF;
+  --color-on-panel-mid: #393A3D;      /* 11.37:1 */
+  --color-on-panel-mid-lift: #0A6EFA; /* 4.54:1 — the cycling name */
 
-  /* -- interactive ---------------------------------------- */
-  --color-primary: #54D1DB;        /* 10.60:1 on the ground */
-  --color-primary-hover: #8BE0E8;
-  --color-primary-light: #8BE0E8;  /* 12.81:1 — the lifted cyan */
-  --color-on-primary: #0B0E14;     /* 10.60:1 on the cyan fill */
+  /* -- interactive ----------------------------------------- */
+  --color-primary: #0A6EFA;        /* fills, borders, large type */
+  --color-primary-strong: #0B5ED1; /* the same blue, darkened for small text */
+  --color-primary-hover: #0B5ED1;
+  --color-primary-light: #E7F0FD;  /* the active pill */
+  --color-on-primary: #FFFFFF;     /* 4.54:1 on the fill */
 
-  /* -- accent --------------------------------------------- */
-  --color-accent: #8BE0E8;
-  --color-accent-text: #8BE0E8;
+  /* -- accent ---------------------------------------------- */
+  --color-accent: #0A6EFA;
+  --color-accent-text: #0B5ED1;
+  --color-accent-soft: #E7F0FD;
 
-  /* -- lines ----------------------------------------------
-     Tinted with the porcelain rather than pure white, so a hairline on the
-     ground stays in the same family as the type sitting next to it. */
-  --color-line: rgba(185, 199, 210, 0.13);
-  --color-line-strong: rgba(185, 199, 210, 0.26);
-  --color-line-invert: rgba(185, 199, 210, 0.17);
-  --color-line-band: rgba(14, 19, 25, 0.2);
-  --color-line-panel: rgba(199, 209, 219, 0.16);
+  /* -- lines -----------------------------------------------
+     Tinted toward the ground rather than pure grey, so a hairline on a
+     card stays in the same family as the surface it divides. */
+  --color-line: #DADBE0;
+  --color-line-strong: #C6CAD4;
+  --color-line-invert: #DADBE0;
+  --color-line-band: #D2D7E0;
+  --color-line-panel: #E4E7EC;
 
-  /* -- type ----------------------------------------------- */
+  /* -- type -----------------------------------------------
+     The video names Euclid Circular B / Poppins. Poppins is the freely
+     available one, and it carries the chrome: navigation, labels, buttons.
+     Inter stays on running paragraphs, where a geometric face at length
+     gets tiring, and Anton stays on the display headline. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-anton), ui-sans-serif, system-ui, sans-serif;
-  /* The @theme key and the font-loader's own variable must not share a name:
-     `--font-x: var(--font-x)` is self-referential, and whether it resolves
-     comes down to stylesheet order rather than intent. */
   --font-script: var(--font-delafield), cursive;
   --font-geometric: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /* -- radii ----------------------------------------------
+     The old palette was built on 2px corners. This one is not: the card
+     radius is the single loudest signal of the look. */
+  --radius-card: 20px;
+  --radius-tile: 14px;
+  --radius-pill: 10px;
+
+  /* -- elevation ------------------------------------------
+     Shadows are grey-blue and wide, never black. A black shadow on a light
+     ground reads as dirt. */
+  --shadow-card: 0 1px 2px rgba(57, 58, 61, 0.04),
+                 0 8px 24px rgba(57, 58, 61, 0.06);
+  --shadow-lift: 0 2px 4px rgba(57, 58, 61, 0.05),
+                 0 18px 40px rgba(57, 58, 61, 0.10);
 
   /* -- motion --------------------------------------------- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -119,7 +139,7 @@
   html {
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
-    background-color: #0B0E14;
+    background-color: #E6E9EF;
   }
 
   body {
@@ -127,38 +147,36 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "ss03";
     overflow-x: clip;
-    background-color: #0B0E14;
+    background-color: #E6E9EF;
   }
 
   ::selection {
-    background-color: #54D1DB;
-    color: #0B0E14;
+    background-color: #0A6EFA;
+    color: #FFFFFF;
   }
 
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #0B0E14; }
+  ::-webkit-scrollbar-track { background: #E6E9EF; }
   ::-webkit-scrollbar-thumb {
-    background: #2B3242;
+    background: #C6CAD4;
     border-radius: 99px;
-    border: 2px solid #0B0E14;
+    border: 2px solid #E6E9EF;
   }
-  ::-webkit-scrollbar-thumb:hover { background: #3A4356; }
+  ::-webkit-scrollbar-thumb:hover { background: #AEB4C1; }
 }
 
 /* ============================================================
    TYPE UTILITIES
    ============================================================ */
 
-/* The reference's signature move: an ultra-heavy grotesque set enormous
-   and stretched vertically until the counters close up and the word reads
-   as a block. Anton is the closest freely-available face; the vertical
-   scale is what supplies the compression Anton does not have on its own. */
+/* An ultra-heavy grotesque set enormous and compressed until the counters
+   close up and the word reads as a block. */
 @utility text-mega {
   font-family: var(--font-display);
   font-weight: 400;
@@ -176,9 +194,7 @@
   text-wrap: balance;
 }
 
-/* Not every headline should be all-caps Anton. The about and expertise
-   headlines in the reference are a normal grotesque mixing light and bold
-   within a single sentence — that is this. */
+/* Not every headline should be all-caps Anton. */
 @utility text-editorial {
   font-family: var(--font-sans);
   font-weight: 300;
@@ -193,70 +209,110 @@
   letter-spacing: 0.01em;
 }
 
+/* Small tracked accent label. Uses the darkened blue: at this size the
+   sampled #0A6EFA would sit at 3.73:1 on the ground. */
 @utility eyebrow {
-  font-size: 0.625rem;
+  font-family: var(--font-geometric);
+  font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
-/* Small tracked meta label — the workhorse of both bands. */
+/* The workhorse small label — the dashboard chrome face. */
 @utility meta {
-  font-family: var(--font-sans);
-  font-size: 0.625rem;
+  font-family: var(--font-geometric);
+  font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-/* Establishes a shared perspective for a group of layered children. Put this
-   on the section, not on each card: perspective on every card individually
-   gives each its own vanishing point and the group stops reading as one
-   space. */
-/* Glass, derived from the ground rather than from white. A white-tinted
-   frosted panel on this palette reads as a different site; tinting with the
-   ground keeps it inside the identity and stops the blur turning milky. */
+/* ============================================================
+   SURFACES
+
+   One card, used everywhere. White, generously rounded, a hairline to
+   define the edge where the shadow is too soft to, and a wide grey-blue
+   shadow that lifts it off the ground.
+   ============================================================ */
+@utility card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line-panel);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* A card that responds to the pointer. */
+.card-hover {
+  transition:
+    transform 0.35s var(--ease-out-expo),
+    box-shadow 0.35s var(--ease-out-expo),
+    border-color 0.35s var(--ease-out-expo);
+  will-change: transform;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+  border-color: var(--color-line-strong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-hover,
+  .card-hover:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Translucent chrome — the floating bar, the expanded rail. Tinted with
+   white rather than the ground, because on a light page the blur has to
+   lighten what is behind it, not darken it. */
 @utility glass {
-  background-color: rgba(11, 14, 20, 0.55);
-  backdrop-filter: blur(14px) saturate(1.1);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  border: 1px solid rgba(185, 199, 210, 0.1);
+  background-color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(218, 219, 224, 0.9);
 }
 
-/* A mounted-plate surface — the material every 3D object in the site is made
-   of, in its CSS form. Solid-tinted rather than backdrop-blurred on purpose:
-   these sit inside 3D-transformed stages, where backdrop-filter is the one
-   effect browsers still disagree about. `glass` remains for flat chrome. */
+/* The container card. Named `plate` from the previous palette, where it was
+   a mounted metal panel; here it is the white card the whole look is built
+   on, and keeping the name means every section inherits it untouched. */
 @utility plate {
-  background-color: rgba(26, 32, 44, 0.6);
-  border: 1px solid var(--color-line);
-  border-radius: 2px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line-panel);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
 }
 
-/* Dimensional buttons and interactive plates. Rest → lift toward the viewer
-   with a warmed shadow → press back down. The transform is the depth; the
-   shadow is the light noticing. */
+/* A chip is NOT a small card. Chips sit inside cards, so a white fill would
+   make them vanish into the surface — they are an inset instead, and carry
+   no shadow. */
+@utility chip {
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+}
+
+/* Buttons. Rest → lift with a widening shadow → press back down. */
 .btn-depth {
   transition:
-    transform 0.4s var(--ease-out-expo),
-    box-shadow 0.4s var(--ease-out-expo),
-    border-color 0.4s var(--ease-out-expo),
-    background-color 0.4s var(--ease-out-expo),
-    color 0.4s var(--ease-out-expo);
+    transform 0.35s var(--ease-out-expo),
+    box-shadow 0.35s var(--ease-out-expo),
+    border-color 0.35s var(--ease-out-expo),
+    background-color 0.35s var(--ease-out-expo),
+    color 0.35s var(--ease-out-expo);
   will-change: transform;
 }
 .btn-depth:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 4px 10px rgba(4, 6, 10, 0.45),
-    0 22px 48px rgba(4, 6, 10, 0.5),
-    0 0 34px rgba(84, 209, 219, 0.1);
+    0 2px 6px rgba(57, 58, 61, 0.06),
+    0 14px 30px rgba(10, 110, 250, 0.16);
 }
 .btn-depth:active {
   transform: translateY(0) scale(0.985);
   transition-duration: 0.12s;
-  box-shadow: 0 1px 3px rgba(4, 6, 10, 0.5);
+  box-shadow: 0 1px 3px rgba(57, 58, 61, 0.1);
 }
 @media (prefers-reduced-motion: reduce) {
   .btn-depth,
@@ -309,7 +365,7 @@
   background-image: linear-gradient(
     90deg,
     transparent,
-    rgba(185, 199, 210, 0.13),
+    rgba(57, 58, 61, 0.07),
     transparent
   );
   animation: shimmer 1.8s var(--ease-out-expo) infinite;
@@ -328,13 +384,13 @@
 }
 
 @utility media-hover {
-  filter: saturate(0.78) brightness(0.92);
+  filter: saturate(0.9) brightness(1);
   transition:
     filter 0.7s var(--ease-out-expo),
     transform 0.9s var(--ease-out-expo);
 }
 .group:hover .media-hover {
-  filter: saturate(1.06) brightness(1);
+  filter: saturate(1.08) brightness(1.02);
 }
 
 @media (prefers-reduced-motion: reduce) {

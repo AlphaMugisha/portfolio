@@ -48,7 +48,7 @@ export default function Projects() {
                 href={`/projects/${p.slug}`}
                 className="plate btn-depth group block h-full p-2.5 transition-colors hover:border-primary"
               >
-                <div className="relative aspect-4/3 overflow-hidden">
+                <div className="relative aspect-4/3 overflow-hidden rounded-tile">
                   <Image
                     src={coverFor(p.slug)}
                     alt=""
@@ -89,7 +89,7 @@ export default function Projects() {
                     {p.stack.slice(0, 4).map((t) => (
                       <li
                         key={t}
-                        className="rounded-full border border-line px-3 py-1 text-[11px] text-text-muted"
+                        className="chip px-3 py-1 font-geometric text-[11px] text-text-muted"
                       >
                         {t}
                       </li>

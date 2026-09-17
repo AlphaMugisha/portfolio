@@ -7,7 +7,7 @@ export default function NotFound() {
       {/* Even the dead end is a place in the room, not a blank page. */}
       <span
         aria-hidden="true"
-        className="text-mega pointer-events-none absolute select-none whitespace-nowrap text-panel/50"
+        className="text-mega pointer-events-none absolute select-none whitespace-nowrap text-ghost/70"
         style={{
           fontSize: "min(40svh, 30vw)",
           lineHeight: 0.86,

@@ -42,7 +42,7 @@ export default function Skills() {
               <TiltCard tilt={2.5} className="h-full">
               <article className="plate h-full p-6 transition-colors duration-300 hover:border-primary sm:p-7">
                 <div className="flex items-baseline justify-between">
-                  <span className="meta text-primary">{group.index}</span>
+                  <span className="meta text-primary-strong">{group.index}</span>
                   <span className="meta text-text-muted">
                     {group.skills.length} tools
                   </span>
@@ -61,7 +61,7 @@ export default function Skills() {
                     <StaggerItem key={s.name}>
                       <span
                         title={s.detail}
-                        className="plate flex -translate-y-0 items-center gap-2 px-3 py-1.5 text-[11px] text-text-secondary transition-[color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+                        className="chip flex -translate-y-0 items-center gap-2 px-3 py-1.5 font-geometric text-[11px] text-text-secondary transition-[color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary-strong"
                       >
                         <TechIcon name={s.name} size={12} />
                         {s.name}

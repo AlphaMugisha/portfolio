@@ -52,7 +52,7 @@ export default function TiltCard({
   const ry = useSpring(useMotionValue(0), spring);
   const glowOpacity = useSpring(opacity, { stiffness: 160, damping: 28 });
 
-  const background = useMotionTemplate`radial-gradient(${glow}px circle at calc(${px} * 100%) calc(${py} * 100%), rgba(84, 209, 219, 0.09), transparent 70%)`;
+  const background = useMotionTemplate`radial-gradient(${glow}px circle at calc(${px} * 100%) calc(${py} * 100%), rgba(10, 110, 250, 0.09), transparent 70%)`;
 
   const active = fine && !reduced;
 

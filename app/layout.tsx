@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Anton, Mrs_Saint_Delafield } from "next/font/google";
+import { Inter, Anton, Mrs_Saint_Delafield, Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/ui/Header";
+import Sidebar from "@/components/ui/Sidebar";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
 
@@ -20,6 +20,15 @@ const anton = Anton({
   variable: "--font-anton",
   subsets: ["latin"],
   weight: "400",
+  display: "swap",
+});
+
+/* The dashboard chrome face, named in the reference: navigation, labels
+   and buttons. Running paragraphs stay on Inter. */
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -68,20 +77,23 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0E14",
-  colorScheme: "dark",
+  themeColor: "#E6E9EF",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${anton.variable} ${script.variable} h-full antialiased`}
+      className={`${inter.variable} ${anton.variable} ${script.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="relative min-h-full">
         <ScrollProgress />
-        <Header />
-        <main id="main" className="relative">
+        <Sidebar />
+        {/* The rail is fixed, so the page is inset by exactly its collapsed
+            width. It widens over the content on hover rather than pushing
+            it, which is what keeps the expansion from reflowing the page. */}
+        <main id="main" className="relative pl-16 md:pl-[76px]">
           {children}
         </main>
       </body>
