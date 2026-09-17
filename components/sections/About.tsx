@@ -11,6 +11,7 @@ import {
   EASE,
 } from "@/components/ui/motion-primitives";
 import TiltCard from "@/components/ui/TiltCard";
+import Section from "@/components/ui/Section";
 import { site } from "@/lib/site";
 
 /**
@@ -40,118 +41,91 @@ export default function About() {
   const reduced = useReducedMotion();
 
   return (
-    <section
+    <Section
       id="about"
-      data-band="dark"
-      className="scroll-mt-24 bg-ink px-6 py-24 sm:px-10 sm:py-28"
+      index="01"
+      label="About"
+      description="The person behind the work, and the habits the work came from."
+      className="bg-ink"
     >
-      <div className="mx-auto max-w-5xl">
-        <Reveal>
-          <p className="meta flex items-center gap-3 text-text-muted">
-            <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
-            01 — The person behind the work
-          </p>
-        </Reveal>
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)] lg:gap-14">
+        <div>
+          <TiltCard tilt={3} className="plate p-2.5">
+            <motion.div
+              className="overflow-hidden rounded-tile"
+              initial={reduced ? undefined : { clipPath: "inset(100% 0% 0% 0%)" }}
+              whileInView={reduced ? undefined : { clipPath: "inset(0% 0% 0% 0%)" }}
+              viewport={{ once: true, margin: "-120px" }}
+              transition={{ duration: 1.1, ease: EASE }}
+            >
+              <Image
+                src="/images/portrait.jpg"
+                alt={`Portrait of ${site.name}`}
+                width={1200}
+                height={1500}
+                sizes="(max-width: 1024px) 100vw, 30vw"
+                className="aspect-4/5 w-full rounded-tile object-cover"
+              />
+            </motion.div>
+          </TiltCard>
 
-        <Reveal delay={0.06}>
-          <h2 className="text-display mt-6 text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
-            About <span className="text-primary">me</span>
-          </h2>
-        </Reveal>
+          <Stagger className="mt-4 grid grid-cols-2 gap-3" stagger={0.06}>
+            {FACTS.map((f) => (
+              <StaggerItem key={f.label} className="h-full">
+                <div className="plate h-full px-4 py-3.5">
+                  <p className="meta text-text-muted">{f.label}</p>
+                  <p className="mt-2 text-sm leading-snug text-text-primary">
+                    {f.value}
+                  </p>
+                </div>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] lg:gap-16">
-          <div>
-            <TiltCard tilt={3} className="plate p-2.5">
-              <motion.div
-                className="overflow-hidden rounded-tile"
-                initial={
-                  reduced ? undefined : { clipPath: "inset(100% 0% 0% 0%)" }
-                }
-                whileInView={
-                  reduced ? undefined : { clipPath: "inset(0% 0% 0% 0%)" }
-                }
-                viewport={{ once: true, margin: "-120px" }}
-                transition={{ duration: 1.1, ease: EASE }}
-              >
-                <Image
-                  src="/images/portrait.jpg"
-                  alt={`Portrait of ${site.name}`}
-                  width={1200}
-                  height={1500}
-                  sizes="(max-width: 1024px) 100vw, 34vw"
-                  className="aspect-4/5 w-full rounded-tile object-cover"
-                />
-              </motion.div>
-            </TiltCard>
-            <Reveal delay={0.2}>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="meta text-text-muted">Kigali · RW</span>
-                <span className="meta text-primary">
-                  {new Date().getFullYear()}
-                </span>
-              </div>
+        <div className="flex flex-col justify-center">
+          <MaskedWords
+            as="h3"
+            words={STATEMENT}
+            className="text-editorial text-[clamp(1.5rem,3.4vw,2.6rem)] text-text-primary"
+            wordClassName={(i) =>
+              STRONG.has(i)
+                ? "font-bold text-text-primary"
+                : "font-light text-text-secondary"
+            }
+          />
+
+          <div className="mt-8 grid gap-6 text-pretty leading-relaxed text-text-secondary sm:grid-cols-2">
+            <Reveal delay={0.05}>
+              <p>
+                My work begins with the data. Before a screen exists there is a
+                schema, a set of roles, and a clear idea of who needs to do
+                what. That discipline came from starting with hardware, where a
+                system either behaves correctly or visibly does not.
+              </p>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <p>
+                Since then I have built web platforms, REST APIs,
+                administrative dashboards and connected devices — React,
+                Next.js and TypeScript on the front, Node, Laravel and PHP
+                behind them, over PostgreSQL, MySQL and SQLite.
+              </p>
             </Reveal>
           </div>
 
-          <div className="flex flex-col justify-center">
-            <MaskedWords
-              as="h3"
-              words={STATEMENT}
-              className="text-editorial text-[clamp(1.5rem,3.8vw,2.8rem)] text-text-primary"
-              wordClassName={(i) =>
-                STRONG.has(i)
-                  ? "font-bold text-text-primary"
-                  : "font-light text-text-secondary"
-              }
-            />
-
-            <div className="mt-8 grid gap-6 text-pretty leading-relaxed text-text-secondary sm:grid-cols-2">
-              <Reveal delay={0.05}>
-                <p>
-                  My work begins with the data. Before a screen exists there is
-                  a schema, a set of roles, and a clear idea of who needs to do
-                  what. That discipline came from starting with hardware, where
-                  a system either behaves correctly or visibly does not.
+          <div className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-8">
+            {FIGURES.map((f, i) => (
+              <Reveal key={f.label} delay={i * 0.08}>
+                <p className="text-display text-[clamp(1.8rem,4vw,2.8rem)] text-primary">
+                  <Counter value={f.value} suffix={f.suffix} />
                 </p>
+                <p className="meta mt-2.5 text-text-muted">{f.label}</p>
               </Reveal>
-              <Reveal delay={0.12}>
-                <p>
-                  Since then I have built web platforms, REST APIs,
-                  administrative dashboards and connected devices — React,
-                  Next.js and TypeScript on the front, Node, Laravel and PHP
-                  behind them, over PostgreSQL, MySQL and SQLite.
-                </p>
-              </Reveal>
-            </div>
-
-            <Stagger className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {FACTS.map((f) => (
-                <StaggerItem key={f.label} className="h-full">
-                  <TiltCard tilt={0} glow={170} className="h-full">
-                    <div className="plate lift h-full px-4 py-3.5">
-                      <p className="meta text-text-muted">{f.label}</p>
-                      <p className="mt-2.5 text-sm leading-snug text-text-primary">
-                        {f.value}
-                      </p>
-                    </div>
-                  </TiltCard>
-                </StaggerItem>
-              ))}
-            </Stagger>
-
-            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-8">
-              {FIGURES.map((f, i) => (
-                <Reveal key={f.label} delay={i * 0.08}>
-                  <p className="text-display text-[clamp(1.8rem,4vw,2.8rem)] text-primary">
-                    <Counter value={f.value} suffix={f.suffix} />
-                  </p>
-                  <p className="meta mt-2.5 text-text-muted">{f.label}</p>
-                </Reveal>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

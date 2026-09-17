@@ -457,6 +457,21 @@
   }
 }
 
+/* Horizontal tracks run edge to edge, so they cannot use the measure's
+   `mx-auto max-w`. This reproduces the same left edge with padding instead,
+   so the first card in the journey starts on the same grid line as every
+   heading above it. */
+.measure-pad {
+  padding-left: max(1.5rem, calc((100vw - 1320px) / 2 + 1.5rem));
+  padding-right: max(1.5rem, calc((100vw - 1320px) / 2 + 1.5rem));
+}
+@media (min-width: 640px) {
+  .measure-pad {
+    padding-left: max(2.5rem, calc((100vw - 1320px) / 2 + 2.5rem));
+    padding-right: max(2.5rem, calc((100vw - 1320px) / 2 + 2.5rem));
+  }
+}
+
 /* ============================================================
    ANIMATION
    ============================================================ */

@@ -185,7 +185,7 @@ export default function Journey() {
   };
 
   const header = (
-    <div className="mx-auto w-full max-w-5xl px-6 sm:px-10">
+    <div className="mx-auto w-full max-w-[1320px] px-6 sm:px-10">
       <Reveal>
         <p className="meta flex items-center gap-3 text-text-muted">
           <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
@@ -256,7 +256,7 @@ export default function Journey() {
               <motion.ul
                 ref={track}
                 style={{ x }}
-                className="flex w-max gap-6 px-6 sm:px-10"
+                className="measure-pad flex w-max gap-6"
               >
                 {cards}
               </motion.ul>
@@ -291,10 +291,10 @@ export default function Journey() {
         onScroll={onCarouselScroll}
         className="mt-10 overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <ul className="flex w-max gap-6 px-6 sm:px-10">{cards}</ul>
+        <ul className="measure-pad flex w-max gap-6">{cards}</ul>
       </div>
 
-      <p className="meta mt-8 px-6 text-text-muted sm:px-10">
+      <p className="meta measure-pad mt-8 text-text-muted">
         Swipe — the road runs right
       </p>
     </section>

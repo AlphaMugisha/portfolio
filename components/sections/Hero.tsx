@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import {
   motion,
   useMotionValue,
@@ -14,6 +15,8 @@ import {
 import SplitText from "@/components/ui/SplitText";
 import Marquee from "@/components/ui/Marquee";
 import Magnetic from "@/components/ui/Magnetic";
+import { MEASURE } from "@/components/ui/Section";
+import { projects, coverFor, statusCopy } from "@/lib/projects";
 import { site } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -36,19 +39,12 @@ const LINE_TWO = "Engineer";
    One set of beats rather than a hand-tuned delay on every element. The
    second headline line is placed relative to the first — it starts once the
    first line has released all its glyphs plus a short breath — and the tail
-   (paragraph, buttons, ticker) hangs off the end of that. Change the letter
-   stagger and the whole sequence still holds its shape, which is the point:
-   the numbers below are the only ones in the file.
+   hangs off the end of that. Change the letter stagger and the whole
+   sequence still holds its shape.
    ------------------------------------------------------------------ */
-const OPEN = {
-  meta: 0.05,
-  headline: 0.18,
-  letter: 0.042,
-} as const;
+const OPEN = { meta: 0.05, headline: 0.18, letter: 0.042 } as const;
 
 const LINE_TWO_AT = OPEN.headline + LINE_ONE.length * OPEN.letter + 0.14;
-/** The tail overlaps the second line deliberately — waiting for the headline
-    to fully settle reads as a stall, not as pacing. */
 const TAIL_AT = LINE_TWO_AT + 0.2;
 const TAIL_STEP = 0.12;
 const MARQUEE_AT = TAIL_AT + TAIL_STEP * 2;
@@ -65,8 +61,6 @@ const TAIL_ITEM = {
 
 /* ---------- orchestration helpers --------------------------------- */
 
-/** Stagger parent for the tail. Variants propagate, so the children below
-    carry no delays of their own. */
 function Tail({ children, className }: { children: ReactNode; className?: string }) {
   const reduced = useReducedMotion();
   if (reduced) return <div className={className}>{children}</div>;
@@ -87,7 +81,6 @@ function TailItem({ children, className }: { children: ReactNode; className?: st
   );
 }
 
-/** A single element on the opening timeline, outside the tail's stagger. */
 function Beat({
   children,
   at,
@@ -115,7 +108,6 @@ function Beat({
 
 /**
  * Pointer position as two springs in [-1, 1], relative to the viewport.
- *
  * Never attaches on a coarse pointer or under reduced motion — a touch
  * device would otherwise carry a listener that can never fire. The values
  * are MotionValues, so moving the pointer never re-renders the hero.
@@ -127,17 +119,14 @@ function usePointerDrift(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
-
     const onMove = (e: PointerEvent) => {
       x.set((e.clientX / window.innerWidth - 0.5) * 2);
       y.set((e.clientY / window.innerHeight - 0.5) * 2);
     };
-
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
   }, [enabled, x, y]);
 
-  // Slack springs: the backdrop should trail the pointer, not track it.
   const spring = { stiffness: 55, damping: 20, mass: 0.7 };
   return { px: useSpring(x, spring), py: useSpring(y, spring) };
 }
@@ -145,12 +134,11 @@ function usePointerDrift(enabled: boolean) {
 /* ---------- backdrop ----------------------------------------------- */
 
 /**
- * The depth behind the type: a tonal wash and a fine survey grid, both
- * inked from the band rather than from white so the porcelain never goes
- * milky. Oversized by 25% on every side — parallax translates it, and an
- * exactly-sized layer would slide its own edge into view. The overscan has
- * to stay ahead of the travel in `backdropY`, or the top edge surfaces at
- * the end of the scroll.
+ * The depth behind the type: a tonal wash and a fine survey grid, inked
+ * through CSS variables so both invert with the theme. Oversized by 25% on
+ * every side — parallax translates it, and an exactly-sized layer would
+ * slide its own edge into view. The overscan has to stay ahead of the travel
+ * in `backdropY`.
  */
 function Backdrop() {
   return (
@@ -186,67 +174,57 @@ function Backdrop() {
 /* ---------- hero ---------------------------------------------------- */
 
 /**
- * Hero — the porcelain band, opened with a per-letter rise and layered for
- * depth.
+ * Hero — an asymmetric split rather than a wall of type over an empty field.
  *
- * Motion here is two systems that never touch each other:
+ * Seven columns of introduction, five of the newest piece of work. The
+ * featured card is the reason the right-hand side exists: a portfolio should
+ * put a real project on screen before a visitor has scrolled once, and the
+ * previous layout spent that space on nothing.
  *
- *   ENTRY is time-driven — the headline builds glyph by glyph and the tail
- *   staggers out behind it, once, on mount.
+ * Motion is two systems that never touch each other. ENTRY is time-driven —
+ * the headline builds glyph by glyph and the tail staggers out behind it,
+ * once, on mount. DEPARTURE is scroll-driven — as the band leaves, its
+ * layers separate; the backdrop lags and swells, the type leads, the ticker
+ * sinks.
  *
- *   DEPARTURE is scroll-driven — as the band leaves, its layers separate.
- *   The backdrop lags and swells, the type leads, the ticker sinks. Nothing
- *   here is a second entrance; it is the same composition coming apart.
- *
- * One `useScroll` feeds one spring, and every layer is a `useTransform` off
- * that spring. So the whole parallax field costs a single scroll
- * subscription and zero React renders — the values are written straight to
- * the compositor. Only `transform` and `opacity` are ever animated.
- *
- * The band still carries dark type only (the cyan is invisible on porcelain
- * at 1.06:1), and every layer collapses to a static element under reduced
- * motion.
+ * One `useScroll` feeds one spring and every layer is a `useTransform` off
+ * it, so the whole parallax field costs a single scroll subscription and no
+ * React renders. Only `transform` and `opacity` are ever animated, and every
+ * layer collapses to a static element under reduced motion.
  */
 export default function Hero() {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
+  const featured = projects[0];
 
-  // 0 while the band fills the viewport, 1 once it has fully left the top.
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  // The single smoothed source. Springing here rather than per-layer keeps
-  // fast scrolling fluid without paying for six springs.
   const p = useSpring(scrollYProgress, {
     stiffness: 120,
     damping: 30,
     mass: 0.35,
   });
 
-  // Layers, back to front. Positive y lags behind the scroll and reads as
-  // depth; negative y leads it and reads as foreground.
   const backdropY = useTransform(p, [0, 1], [0, 210]);
   const backdropScale = useTransform(p, [0, 1], [1, 1.16]);
   const contentY = useTransform(p, [0, 1], [0, -158]);
   const headlineY = useTransform(p, [0, 1], [0, -72]);
-  // Deliberately the mildest layer. The ticker sits on the band's bottom
-  // edge, so travel here is clipped away by the section rather than read as
-  // depth — push it as hard as the rest and it just vanishes, leaving a
-  // dead strip of empty porcelain behind it.
+
+  // Deliberately the mildest layer: the ticker sits on the band's bottom
+  // edge, so travel there is clipped by the section rather than read as
+  // depth — pushed as hard as the rest it just vanishes, leaving a dead
+  // strip of empty ground behind it.
   const marqueeY = useTransform(p, [0, 1], [0, 58]);
 
-  // The band clears out well before it has finished leaving. The header is
-  // fixed, so anything still lit as it passes underneath ghosts across the
-  // nav; finishing the fade early keeps that overlap to a moment.
   const contentFade = useTransform(p, [0, 0.58], [1, 0]);
   const marqueeFade = useTransform(p, [0, 0.82], [1, 0]);
 
-  // Faded-out is not gone: an opacity-0 button still takes clicks, still
-  // takes tab focus, and is still announced. Flipping visibility at the end
-  // of the fade retires the whole block from all three at once, and scroll
-  // position restores it — so tabbing back to the top brings the links back.
+  // Faded-out is not gone: an opacity-0 link still takes clicks, tab focus
+  // and screen-reader announcement, and these stay on screen for ~200px
+  // after they finish fading.
   const departed = useTransform(p, (v) => (v >= 0.58 ? "hidden" : "visible"));
   const marqueeGone = useTransform(p, (v) => (v >= 0.82 ? "hidden" : "visible"));
 
@@ -262,9 +240,6 @@ export default function Hero() {
       data-band="light"
       className="relative flex min-h-svh flex-col overflow-hidden bg-band-light text-on-band"
     >
-      {/* Depth. Scroll parallax on the outer layer, pointer drift on the
-          inner one — nesting composes the two transforms without having to
-          sum MotionValues by hand. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         {reduced ? (
           <Backdrop />
@@ -273,91 +248,124 @@ export default function Hero() {
             className="absolute inset-0"
             style={{ y: backdropY, scale: backdropScale }}
           >
-            <motion.div
-              className="absolute inset-0"
-              style={{ x: driftX, y: driftY }}
-            >
+            <motion.div className="absolute inset-0" style={{ x: driftX, y: driftY }}>
               <Backdrop />
             </motion.div>
           </motion.div>
         )}
       </div>
 
-      <div className="relative flex flex-1 items-center pt-32 pb-16 sm:pt-40">
+      <div className="relative flex flex-1 items-center pt-28 pb-16 sm:pt-32">
         <motion.div
-          className="mx-auto w-full max-w-5xl px-6 sm:px-10"
+          className={MEASURE}
           style={
             reduced
               ? undefined
               : { y: contentY, opacity: contentFade, visibility: departed }
           }
         >
-          <Beat at={OPEN.meta}>
-            <p className="meta text-on-band-muted">
-              {site.name} — {site.location}
-            </p>
-          </Beat>
+          <div className="grid grid-cols-12 items-center gap-x-8 gap-y-12">
+            {/* ---- introduction ---------------------------------- */}
+            <div className="col-span-12 lg:col-span-7">
+              <Beat at={OPEN.meta}>
+                <p className="meta text-on-band-muted">
+                  {site.name} — {site.location}
+                </p>
+              </Beat>
 
-          {/* The headline leads the rest of the content out and leans a few
-              pixels against the pointer — enough to sit in front of the grid,
-              not enough to notice as an effect. */}
-          <motion.div
-            style={reduced ? undefined : { y: headlineY, x: typeDriftX }}
-          >
-            <h1 className="text-mega mt-6 text-[clamp(3rem,12vw,9rem)]">
-              <SplitText
-                text={LINE_ONE}
-                delay={OPEN.headline}
-                stagger={OPEN.letter}
-              />
-              <br />
-              <SplitText
-                text={LINE_TWO}
-                delay={LINE_TWO_AT}
-                stagger={OPEN.letter}
-              />
-            </h1>
-          </motion.div>
+              <motion.div style={reduced ? undefined : { y: headlineY, x: typeDriftX }}>
+                <h1 className="text-mega mt-6 text-[clamp(2.8rem,8.5vw,7rem)]">
+                  <SplitText text={LINE_ONE} delay={OPEN.headline} stagger={OPEN.letter} />
+                  <br />
+                  <SplitText text={LINE_TWO} delay={LINE_TWO_AT} stagger={OPEN.letter} />
+                </h1>
+              </motion.div>
 
-          <Tail>
-            <TailItem>
-              <p className="mt-8 max-w-xl text-pretty text-lg leading-relaxed text-on-band-muted">
-                {site.tagline} I build web platforms, embedded electronics and
-                applied AI systems from {site.location}.
-              </p>
-            </TailItem>
+              <Tail>
+                <TailItem>
+                  <p className="mt-8 max-w-lg text-pretty text-lg leading-relaxed text-on-band-muted">
+                    {site.tagline} I build web platforms, embedded electronics
+                    and applied AI systems from {site.location}.
+                  </p>
+                </TailItem>
 
-            <TailItem className="mt-10 flex flex-wrap items-center gap-4">
-              <Magnetic pull={8} contentPull={4} radius={90}>
-                <Link
-                  href="#projects"
-                  className="btn-depth group inline-flex items-center gap-2.5 rounded-pill bg-primary px-6 py-3.5 font-geometric text-sm font-medium text-on-primary"
-                >
-                  See my work
-                  <motion.span
-                    aria-hidden="true"
-                    animate={reduced ? undefined : { y: [0, 3, 0] }}
-                    transition={{
-                      duration: 1.6,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                    className="inline-flex"
-                  >
-                    <ArrowDown size={15} />
-                  </motion.span>
-                </Link>
-              </Magnetic>
-              <Magnetic pull={8} contentPull={4} radius={90}>
-                <Link
-                  href="#contact"
-                  className="btn-depth inline-flex items-center rounded-pill border border-line-strong bg-surface px-6 py-3.5 font-geometric text-sm font-medium text-on-band"
-                >
-                  Get in touch
-                </Link>
-              </Magnetic>
-            </TailItem>
-          </Tail>
+                <TailItem className="mt-10 flex flex-wrap items-center gap-4">
+                  <Magnetic pull={8} contentPull={4} radius={90}>
+                    <Link
+                      href="#projects"
+                      className="btn-depth group inline-flex items-center gap-2.5 rounded-pill bg-primary px-6 py-3.5 font-geometric text-sm font-medium text-on-primary"
+                    >
+                      See my work
+                      <motion.span
+                        aria-hidden="true"
+                        animate={reduced ? undefined : { y: [0, 3, 0] }}
+                        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                        className="inline-flex"
+                      >
+                        <ArrowDown size={15} />
+                      </motion.span>
+                    </Link>
+                  </Magnetic>
+                  <Magnetic pull={8} contentPull={4} radius={90}>
+                    <Link
+                      href="#contact"
+                      className="btn-depth inline-flex items-center rounded-pill border border-line-strong bg-surface px-6 py-3.5 font-geometric text-sm font-medium text-on-band"
+                    >
+                      Get in touch
+                    </Link>
+                  </Magnetic>
+                </TailItem>
+              </Tail>
+            </div>
+
+            {/* ---- the newest piece of work ----------------------- */}
+            <Beat at={TAIL_AT + TAIL_STEP} className="col-span-12 lg:col-span-5">
+              <Link
+                href={`/projects/${featured.slug}`}
+                className="plate lift group block p-2.5"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden rounded-tile">
+                  <Image
+                    src={coverFor(featured.slug)}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    priority
+                    className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <span className="meta absolute left-3 top-3 rounded-full bg-surface/90 px-3 py-1.5 text-text-secondary backdrop-blur">
+                    Latest
+                  </span>
+                </div>
+
+                <div className="px-3 pb-2 pt-4">
+                  <div className="flex items-center gap-x-4">
+                    <span className="meta text-text-muted">{featured.year}</span>
+                    <span className="meta flex items-center gap-2 text-text-secondary">
+                      <span
+                        aria-hidden="true"
+                        className="h-1.5 w-1.5 rounded-full bg-primary"
+                      />
+                      {statusCopy[featured.status]}
+                    </span>
+                  </div>
+
+                  <h2 className="text-editorial mt-2.5 flex items-baseline justify-between gap-3 text-xl text-text-primary transition-colors group-hover:text-primary-strong">
+                    {featured.name}
+                    <ArrowUpRight
+                      size={17}
+                      aria-hidden="true"
+                      className="shrink-0 text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+                    />
+                  </h2>
+
+                  <p className="mt-2 line-clamp-2 text-pretty text-sm leading-relaxed text-text-secondary">
+                    {featured.summary}
+                  </p>
+                </div>
+              </Link>
+            </Beat>
+          </div>
         </motion.div>
       </div>
 

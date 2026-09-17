@@ -1,12 +1,9 @@
 "use client";
 
-import {
-  Reveal,
-  Stagger,
-  StaggerItem,
-} from "@/components/ui/motion-primitives";
+import { Stagger, StaggerItem } from "@/components/ui/motion-primitives";
 import TechIcon from "@/components/ui/TechIcon";
 import TiltCard from "@/components/ui/TiltCard";
+import Section from "@/components/ui/Section";
 import { skillGroups } from "@/lib/skills";
 
 /**
@@ -17,30 +14,23 @@ import { skillGroups } from "@/lib/skills";
  */
 export default function Skills() {
   return (
-    <section
+    <Section
       id="skills"
-      data-band="dark"
-      className="scroll-mt-24 bg-ink px-6 py-24 sm:px-10 sm:py-28"
+      index="02"
+      label="Expertise"
+      description="Four layers of the same craft, from the schema underneath to the board on the bench."
+      aside={
+        <p className="meta text-text-muted">
+          {skillGroups.reduce((n, g) => n + g.skills.length, 0)} tools
+        </p>
+      }
+      className="bg-ink"
     >
-      <div className="mx-auto max-w-5xl">
-        <Reveal>
-          <p className="meta flex items-center gap-3 text-text-muted">
-            <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
-            02 — What I do
-          </p>
-        </Reveal>
-
-        <Reveal delay={0.06}>
-          <h2 className="text-display mt-6 text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
-            My <span className="text-primary">expertise</span>
-          </h2>
-        </Reveal>
-
-        <Stagger className="mt-12 grid gap-5 md:grid-cols-2" stagger={0.12}>
-          {skillGroups.map((group) => (
-            <StaggerItem key={group.id} className="h-full">
-              <TiltCard tilt={2.5} className="h-full">
-              <article className="plate lift h-full p-6 sm:p-7">
+      <Stagger className="grid gap-5 md:grid-cols-2" stagger={0.1}>
+        {skillGroups.map((group) => (
+          <StaggerItem key={group.id} className="h-full">
+            <TiltCard tilt={2.5} className="h-full">
+              <article className="plate lift flex h-full flex-col p-6 sm:p-7">
                 <div className="flex items-baseline justify-between">
                   <span className="meta text-primary-strong">{group.index}</span>
                   <span className="meta text-text-muted">
@@ -56,7 +46,10 @@ export default function Skills() {
                   {group.blurb}
                 </p>
 
-                <Stagger className="mt-5 flex flex-wrap gap-2" stagger={0.025}>
+                <Stagger
+                  className="mt-auto flex flex-wrap gap-2 pt-5"
+                  stagger={0.025}
+                >
                   {group.skills.map((s) => (
                     <StaggerItem key={s.name}>
                       <span
@@ -70,11 +63,10 @@ export default function Skills() {
                   ))}
                 </Stagger>
               </article>
-              </TiltCard>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </div>
-    </section>
+            </TiltCard>
+          </StaggerItem>
+        ))}
+      </Stagger>
+    </Section>
   );
 }
