@@ -167,16 +167,16 @@ function Backdrop() {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 60% 50% at 30% 32%, rgba(10,110,250,0.07), transparent 70%)," +
-            "radial-gradient(ellipse 50% 46% at 78% 72%, rgba(57,58,61,0.05), transparent 68%)",
+            "radial-gradient(ellipse 60% 50% at 30% 32%, var(--grid-wash-accent), transparent 70%)," +
+            "radial-gradient(ellipse 50% 46% at 78% 72%, var(--grid-wash-ink), transparent 68%)",
         }}
       />
       <div
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(to right, rgba(57,58,61,0.07) 0 1px, transparent 1px 92px)," +
-            "repeating-linear-gradient(to bottom, rgba(57,58,61,0.055) 0 1px, transparent 1px 92px)",
+            "repeating-linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px 92px)," +
+            "repeating-linear-gradient(to bottom, var(--grid-line-soft) 0 1px, transparent 1px 92px)",
         }}
       />
     </div>

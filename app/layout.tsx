@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Anton, Mrs_Saint_Delafield, Poppins } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/ui/Sidebar";
-import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
+import { THEME_SCRIPT } from "@/lib/theme";
 
 /* Three roles, three faces.
 
@@ -77,18 +77,28 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#E6E9EF",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#E6E9EF" },
+    { media: "(prefers-color-scheme: dark)", color: "#0F1319" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      /* The pre-paint script writes data-theme onto this element, so the
+         server markup and the first client render disagree by design. */
+      suppressHydrationWarning
       className={`${inter.variable} ${anton.variable} ${script.variable} ${poppins.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="relative min-h-full">
-        <ScrollProgress />
+        {/* Reading progress lives in the rail now, not as a bar across the
+            top — there is no longer a top edge for it to belong to. */}
         <Sidebar />
         {/* The rail is fixed, so the page is inset by exactly its collapsed
             width. It widens over the content on hover rather than pushing

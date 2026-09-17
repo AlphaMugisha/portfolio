@@ -16,6 +16,9 @@ export const site = {
   description:
     "Alpha Mugisha — a software and systems builder from Kigali, Rwanda, working across web platforms, embedded electronics and applied AI.",
   url: "https://alphamugisha.dev", // PLACEHOLDER — update once deployed.
+  // PLACEHOLDER — the rail links here. Drop the real file at
+  // `public/alpha-mugisha-cv.pdf` and the Download CV button works as-is.
+  cv: "/alpha-mugisha-cv.pdf",
 } as const;
 
 /* Labels follow the reference's naming — "Work" and "Expertise" rather than

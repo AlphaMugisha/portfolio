@@ -54,15 +54,21 @@ export default function About() {
         </Reveal>
 
         <Reveal delay={0.06}>
-          <h2 className="text-display mt-6 text-[clamp(1.9rem,5.2vw,3.6rem)] text-primary">
-            About me
-          </h2>
+          <div className="panel-head mt-6">
+            <h2 className="text-display text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
+              About <span className="text-primary">me</span>
+            </h2>
+            <p className="chip meta px-3 py-1.5 text-text-muted">
+              {site.location}
+            </p>
+          </div>
         </Reveal>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] lg:gap-16">
           <div>
             <TiltCard tilt={3} className="plate p-2.5">
               <motion.div
+                className="overflow-hidden rounded-tile"
                 initial={
                   reduced ? undefined : { clipPath: "inset(100% 0% 0% 0%)" }
                 }
@@ -78,7 +84,7 @@ export default function About() {
                   width={1200}
                   height={1500}
                   sizes="(max-width: 1024px) 100vw, 34vw"
-                  className="aspect-4/5 w-full object-cover"
+                  className="aspect-4/5 w-full rounded-tile object-cover"
                 />
               </motion.div>
             </TiltCard>
@@ -127,7 +133,7 @@ export default function About() {
               {FACTS.map((f) => (
                 <StaggerItem key={f.label} className="h-full">
                   <TiltCard tilt={0} glow={170} className="h-full">
-                    <div className="plate h-full px-4 py-3.5 transition-colors duration-300 hover:border-primary">
+                    <div className="plate lift h-full px-4 py-3.5">
                       <p className="meta text-text-muted">{f.label}</p>
                       <p className="mt-2.5 text-sm leading-snug text-text-primary">
                         {f.value}
@@ -138,13 +144,15 @@ export default function About() {
               ))}
             </Stagger>
 
-            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-8">
+            <div className="mt-10 grid grid-cols-3 gap-3">
               {FIGURES.map((f, i) => (
-                <Reveal key={f.label} delay={i * 0.08}>
-                  <p className="text-display text-[clamp(1.8rem,4vw,2.8rem)] text-primary">
-                    <Counter value={f.value} suffix={f.suffix} />
-                  </p>
-                  <p className="meta mt-2.5 text-text-muted">{f.label}</p>
+                <Reveal key={f.label} delay={i * 0.08} className="h-full">
+                  <div className="plate lift h-full px-4 py-4">
+                    <p className="text-display text-[clamp(1.6rem,3.6vw,2.4rem)] text-primary">
+                      <Counter value={f.value} suffix={f.suffix} />
+                    </p>
+                    <p className="meta mt-2 text-text-muted">{f.label}</p>
+                  </div>
                 </Reveal>
               ))}
             </div>

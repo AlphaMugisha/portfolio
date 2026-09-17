@@ -95,7 +95,7 @@ export default function TiltCard({
       <motion.div
         aria-hidden="true"
         style={{ background, opacity: glowOpacity }}
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 rounded-card"
       />
     </motion.div>
   );

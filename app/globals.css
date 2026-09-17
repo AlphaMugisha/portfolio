@@ -111,17 +111,30 @@
   /* -- radii ----------------------------------------------
      The old palette was built on 2px corners. This one is not: the card
      radius is the single loudest signal of the look. */
-  --radius-card: 20px;
-  --radius-tile: 14px;
-  --radius-pill: 10px;
+  --radius-card: 22px;
+  --radius-tile: 15px;
+  --radius-pill: 11px;
 
   /* -- elevation ------------------------------------------
      Shadows are grey-blue and wide, never black. A black shadow on a light
      ground reads as dirt. */
-  --shadow-card: 0 1px 2px rgba(57, 58, 61, 0.04),
-                 0 8px 24px rgba(57, 58, 61, 0.06);
-  --shadow-lift: 0 2px 4px rgba(57, 58, 61, 0.05),
-                 0 18px 40px rgba(57, 58, 61, 0.10);
+  --shadow-card: 0 1px 1px rgba(30, 41, 59, 0.04),
+                 0 3px 6px rgba(30, 41, 59, 0.04),
+                 0 10px 28px rgba(30, 41, 59, 0.05);
+  --shadow-lift: 0 2px 4px rgba(30, 41, 59, 0.05),
+                 0 10px 20px rgba(30, 41, 59, 0.07),
+                 0 28px 56px rgba(10, 110, 250, 0.12);
+  /* The ring is what actually reads on hover. A shadow alone on a light
+     ground is nearly invisible; a tinted hairline is not. */
+  --ring-hover: rgba(10, 110, 250, 0.38);
+
+  /* The hero's survey grid. Held as variables because it is the one piece
+     of the page inked directly rather than through a token — it has to
+     invert with the theme or it disappears into whichever ground it is on. */
+  --grid-line: rgba(57, 58, 61, 0.07);
+  --grid-line-soft: rgba(57, 58, 61, 0.055);
+  --grid-wash-accent: rgba(10, 110, 250, 0.07);
+  --grid-wash-ink: rgba(57, 58, 61, 0.05);
 
   /* -- motion --------------------------------------------- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -169,6 +182,139 @@
     border: 2px solid #E6E9EF;
   }
   ::-webkit-scrollbar-thumb:hover { background: #AEB4C1; }
+}
+
+
+/* ============================================================
+   DARK
+
+   The same token names, re-pointed. Every utility on the site resolves
+   through `var(--color-*)`, so overriding them here flips the whole page
+   without a single component knowing a theme exists.
+
+   Two things are NOT simple inversions:
+
+     - The accent lightens to #5AA2FF for text and icons. The sampled
+       #0A6EFA is 2.4:1 on a dark card — unreadable. Fills keep #0A6EFA
+       with white on top, which still clears 4.54:1.
+     - Shadows stop doing the work. On a dark ground a drop shadow is
+       invisible, so the card is separated by a lighter surface and a
+       hairline instead, and hover leans on the ring rather than the lift.
+
+   Measured, on the values below: ink 14.42:1 on card, secondary 9.22:1,
+   muted 5.90:1 at worst, accent 5.60:1 at worst.
+   ============================================================ */
+:root[data-theme="dark"] {
+  --color-ink: #0F1319;
+  --color-void: #0B0E13;
+  --color-panel: #171C24;
+  --color-paper: #171C24;
+  --color-ghost: #232A34;
+
+  --color-bg: #0F1319;
+  --color-bg-raised: #1F252F;
+  --color-surface: #171C24;
+  --color-surface-raised: #1F252F;
+  --color-bg-invert: #0B0E13;
+  --color-surface-invert: #171C24;
+
+  --color-band-light: #0F1319;
+  --color-band-deep: #0B0E13;
+
+  --color-text-primary: #E8ECF2;
+  --color-text-secondary: #B7BFCB;
+  --color-text-muted: #98A1AE;
+  --color-text-invert: #E8ECF2;
+  --color-text-invert-muted: #98A1AE;
+
+  --color-on-band: #E8ECF2;
+  --color-on-band-muted: #98A1AE;
+  --color-on-panel: #E8ECF2;
+  --color-on-panel-muted: #98A1AE;
+
+  --color-panel-mid: #171C24;
+  --color-on-panel-mid: #E8ECF2;
+  --color-on-panel-mid-lift: #5AA2FF;
+
+  --color-primary: #5AA2FF;
+  --color-primary-strong: #8CBEFF;
+  --color-primary-hover: #8CBEFF;
+  --color-primary-light: #10294A;
+  --color-on-primary: #FFFFFF;
+
+  --color-accent: #5AA2FF;
+  --color-accent-text: #8CBEFF;
+  --color-accent-soft: #10294A;
+
+  --color-line: #262D38;
+  --color-line-strong: #333C49;
+  --color-line-invert: #262D38;
+  --color-line-band: #262D38;
+  --color-line-panel: #242B35;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4),
+                 0 12px 28px rgba(0, 0, 0, 0.28);
+  --shadow-lift: 0 2px 6px rgba(0, 0, 0, 0.45),
+                 0 24px 50px rgba(0, 0, 0, 0.4);
+  --ring-hover: rgba(90, 162, 255, 0.5);
+
+  --grid-line: rgba(232, 236, 242, 0.06);
+  --grid-line-soft: rgba(232, 236, 242, 0.045);
+  --grid-wash-accent: rgba(90, 162, 255, 0.10);
+  --grid-wash-ink: rgba(232, 236, 242, 0.04);
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] html {
+  background-color: #0F1319;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track { background: #0F1319; }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #333C49;
+  border-color: #0F1319;
+}
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #444E5D; }
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+/* The interactive card. Rest is quiet; hover lifts it, deepens the shadow
+   and — the part that actually reads — tints the hairline with the accent.
+   A shadow alone is almost invisible against a light ground. */
+.lift {
+  transition:
+    transform 0.4s var(--ease-out-expo),
+    box-shadow 0.4s var(--ease-out-expo),
+    border-color 0.4s var(--ease-out-expo);
+  will-change: transform;
+}
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+  border-color: var(--ring-hover);
+}
+.lift:active {
+  transform: translateY(-1px);
+  transition-duration: 0.12s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lift,
+  .lift:hover,
+  .lift:active { transform: none; transition: none; }
+}
+
+/* A panel header: the eyebrow, the title, and a meta chip on the right,
+   sitting on a hairline. The dashboard rhythm every section now shares. */
+@utility panel-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-line);
 }
 
 /* ============================================================
