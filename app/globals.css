@@ -16,6 +16,8 @@
      #393A3D  heading ink
      #DADBE0  the hairline
 
+   There is one light theme and only one — no dark counterpart, by choice.
+
    One value is NOT from the video: #0B5ED1, a darkened step of the same
    blue. The video only ever sets its accent on white, where #0A6EFA clears
    4.54:1. On the grey ground it falls to 3.73:1 and on its own active pill
@@ -183,96 +185,6 @@
 }
 
 
-/* ============================================================
-   DARK
-
-   The same token names, re-pointed. Every utility on the site resolves
-   through `var(--color-*)`, so overriding them here flips the whole page
-   without a single component knowing a theme exists.
-
-   Two things are NOT simple inversions:
-
-     - The accent lightens to #5AA2FF for text and icons. The sampled
-       #0A6EFA is 2.4:1 on a dark card — unreadable. Fills keep #0A6EFA
-       with white on top, which still clears 4.54:1.
-     - Shadows stop doing the work. On a dark ground a drop shadow is
-       invisible, so the card is separated by a lighter surface and a
-       hairline instead, and hover leans on the ring rather than the lift.
-
-   Measured, on the values below: ink 14.42:1 on card, secondary 9.22:1,
-   muted 5.90:1 at worst, accent 5.60:1 at worst.
-   ============================================================ */
-:root[data-theme="dark"] {
-  --color-ink: #0F1319;
-  --color-void: #0B0E13;
-  --color-panel: #171C24;
-  --color-paper: #171C24;
-  --color-ghost: #232A34;
-
-  --color-bg: #0F1319;
-  --color-bg-raised: #1F252F;
-  --color-surface: #171C24;
-  --color-surface-raised: #1F252F;
-  --color-bg-invert: #0B0E13;
-  --color-surface-invert: #171C24;
-
-  --color-band-light: #0F1319;
-  --color-band-deep: #0B0E13;
-
-  --color-text-primary: #E8ECF2;
-  --color-text-secondary: #B7BFCB;
-  --color-text-muted: #98A1AE;
-  --color-text-invert: #E8ECF2;
-  --color-text-invert-muted: #98A1AE;
-
-  --color-on-band: #E8ECF2;
-  --color-on-band-muted: #98A1AE;
-  --color-on-panel: #E8ECF2;
-  --color-on-panel-muted: #98A1AE;
-
-  --color-panel-mid: #171C24;
-  --color-on-panel-mid: #E8ECF2;
-  --color-on-panel-mid-lift: #5AA2FF;
-
-  --color-primary: #5AA2FF;
-  --color-primary-strong: #8CBEFF;
-  --color-primary-hover: #8CBEFF;
-  --color-primary-light: #10294A;
-  --color-on-primary: #FFFFFF;
-
-  --color-accent: #5AA2FF;
-  --color-accent-text: #8CBEFF;
-  --color-accent-soft: #10294A;
-
-  --color-line: #262D38;
-  --color-line-strong: #333C49;
-  --color-line-invert: #262D38;
-  --color-line-band: #262D38;
-  --color-line-panel: #242B35;
-
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4),
-                 0 12px 28px rgba(0, 0, 0, 0.28);
-  --shadow-lift: 0 2px 6px rgba(0, 0, 0, 0.45),
-                 0 24px 50px rgba(0, 0, 0, 0.4);
-  --ring-hover: rgba(90, 162, 255, 0.5);
-
-  --grid-line: rgba(232, 236, 242, 0.06);
-  --grid-line-soft: rgba(232, 236, 242, 0.045);
-  --grid-wash-accent: rgba(90, 162, 255, 0.10);
-  --grid-wash-ink: rgba(232, 236, 242, 0.04);
-}
-
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] html {
-  background-color: #0F1319;
-}
-
-:root[data-theme="dark"] ::-webkit-scrollbar-track { background: #0F1319; }
-:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #333C49;
-  border-color: #0F1319;
-}
-:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #444E5D; }
 
 /* ============================================================
    CARDS

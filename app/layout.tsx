@@ -4,7 +4,6 @@ import "./globals.css";
 import Header from "@/components/ui/Header";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
-import { THEME_SCRIPT } from "@/lib/theme";
 
 /* Three roles, three faces.
 
@@ -78,25 +77,16 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
-    { media: "(prefers-color-scheme: dark)", color: "#0F1319" },
-  ],
-  colorScheme: "light dark",
+  themeColor: "#FFFFFF",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      /* The pre-paint script writes data-theme onto this element, so the
-         server markup and the first client render disagree by design. */
-      suppressHydrationWarning
       className={`${inter.variable} ${anton.variable} ${script.variable} ${poppins.variable} h-full antialiased`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-      </head>
       <body className="relative min-h-full">
         <ScrollProgress />
         <Header />

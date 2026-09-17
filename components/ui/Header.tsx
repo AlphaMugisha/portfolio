@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Menu, X, Moon, Sun, Download } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
 import { site, navItems } from "@/lib/site";
-import { applyTheme, readTheme, type Theme } from "@/lib/theme";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -26,10 +25,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("");
-  const [theme, setTheme] = useState<Theme>("light");
   const reduced = useReducedMotion();
-
-  useEffect(() => setTheme(readTheme()), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -77,12 +73,6 @@ export default function Header() {
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);
-
-  const toggleTheme = () => {
-    const next: Theme = theme === "dark" ? "light" : "dark";
-    applyTheme(next);
-    setTheme(next);
-  };
 
   return (
     <>
@@ -144,17 +134,6 @@ export default function Header() {
 
           {/* ---- actions ----------------------------------------- */}
           <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={
-                theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-              }
-              className="grid h-9 w-9 place-items-center rounded-full text-text-secondary transition-colors hover:bg-bg-raised hover:text-text-primary"
-            >
-              {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
-            </button>
-
             <a
               href={site.cv}
               download
