@@ -1,16 +1,22 @@
 "use client";
 
-import { Stagger, StaggerItem } from "@/components/ui/motion-primitives";
-import TechIcon from "@/components/ui/TechIcon";
-import TiltCard from "@/components/ui/TiltCard";
+import { Reveal } from "@/components/ui/motion-primitives";
 import Section from "@/components/ui/Section";
+import TechIcon from "@/components/ui/TechIcon";
 import { skillGroups } from "@/lib/skills";
 
 /**
- * Skills — four group cards that rise in sequence, each filling with its
- * chips in a second, finer stagger. Every chip's `title` says what the
- * technology is used for; no proficiency bars, because any number on them
- * would be invented.
+ * Expertise — a ruled list, not a grid of cards.
+ *
+ * Four boxed cards gave four capabilities equal visual weight and turned the
+ * section into a wall. A list avoids exactly that: a row is only as tall as
+ * its content needs, the rules line everything up, and the eye runs down one
+ * column instead of ping-ponging around a 2×2.
+ *
+ * Each row is the group's number and name on the left, its sentence and its
+ * tools on the right. Every chip's `title` says what the technology is used
+ * for; there are no proficiency bars, because any number on them would be
+ * invented.
  */
 export default function Skills() {
   return (
@@ -26,47 +32,47 @@ export default function Skills() {
       }
       className="bg-ink"
     >
-      <Stagger className="grid gap-5 md:grid-cols-2" stagger={0.1}>
-        {skillGroups.map((group) => (
-          <StaggerItem key={group.id} className="h-full">
-            <TiltCard tilt={2.5} className="h-full">
-              <article className="plate lift flex h-full flex-col p-6 sm:p-7">
-                <div className="flex items-baseline justify-between">
-                  <span className="meta text-primary-strong">{group.index}</span>
-                  <span className="meta text-text-muted">
-                    {group.skills.length} tools
+      <ul className="border-t border-line">
+        {skillGroups.map((group, i) => (
+          <li key={group.id}>
+            <Reveal delay={i * 0.06} y={18}>
+              {/* The row is one group, so the number and the name both light
+                  up when the pointer is anywhere along it — not only when it
+                  happens to be over the words. */}
+              <div className="group grid gap-x-10 gap-y-5 border-b border-line py-8 sm:grid-cols-[minmax(0,0.34fr)_minmax(0,1fr)] sm:py-10">
+                <div className="flex items-baseline gap-4">
+                  <span className="meta shrink-0 text-primary-strong">
+                    {group.index}
                   </span>
+                  <h3 className="text-display text-[clamp(1.3rem,2.4vw,1.85rem)] text-text-primary transition-colors duration-300 group-hover:text-primary-strong">
+                    {group.title}
+                  </h3>
                 </div>
 
-                <h3 className="text-display mt-4 text-2xl text-text-primary">
-                  {group.title}
-                </h3>
+                <div>
+                  <p className="max-w-xl text-pretty leading-relaxed text-text-secondary">
+                    {group.blurb}
+                  </p>
 
-                <p className="mt-3 text-pretty text-sm leading-relaxed text-text-secondary">
-                  {group.blurb}
-                </p>
-
-                <Stagger
-                  className="mt-auto flex flex-wrap gap-2 pt-5"
-                  stagger={0.025}
-                >
-                  {group.skills.map((s) => (
-                    <StaggerItem key={s.name}>
-                      <span
-                        title={s.detail}
-                        className="chip flex -translate-y-0 items-center gap-2 px-3 py-1.5 font-geometric text-[11px] text-text-secondary transition-[color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary-strong"
-                      >
-                        <TechIcon name={s.name} size={12} />
-                        {s.name}
-                      </span>
-                    </StaggerItem>
-                  ))}
-                </Stagger>
-              </article>
-            </TiltCard>
-          </StaggerItem>
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {group.skills.map((s) => (
+                      <li key={s.name}>
+                        <span
+                          title={s.detail}
+                          className="chip flex items-center gap-2 px-3 py-1.5 font-geometric text-[11px] text-text-secondary transition-[color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary-strong"
+                        >
+                          <TechIcon name={s.name} size={12} />
+                          {s.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </Reveal>
+          </li>
         ))}
-      </Stagger>
+      </ul>
     </Section>
   );
 }

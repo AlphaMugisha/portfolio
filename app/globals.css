@@ -7,10 +7,10 @@
    sidebar. The palette is lifted from the frames rather than eyeballed:
    every value below was read straight out of the video.
 
-     #FFFFFF  the card. Every block of content sits on one of these,
-              rounded and lifted off the ground by a soft shadow
-     #E6E9EF  the page ground. Never white — the cards need something to
-              sit ON, and that separation is the whole look
+     #FFFFFF  the ground AND the card. The page is plain white throughout;
+              a card is separated by its hairline and a whisper of shadow,
+              not by a fill, because there is no longer a tone to contrast
+              against
      #E7F0FD  the active pill behind a selected nav row
      #0A6EFA  the accent. Fills, active icons, borders, large type
      #393A3D  heading ink
@@ -33,8 +33,8 @@
    ============================================================ */
 @theme {
   /* -- core ------------------------------------------------ */
-  --color-ink: #E6E9EF;      /* the section ground */
-  --color-void: #DDE1E8;     /* the deepest ground — footer, menu */
+  --color-ink: #FFFFFF;      /* the section ground — plain white */
+  --color-void: #FAFBFC;     /* the footer, a half-step off white */
   --color-panel: #FFFFFF;    /* the card */
   --color-paper: #FFFFFF;
   --color-cyan: #0A6EFA;
@@ -42,29 +42,28 @@
   --color-ghost: #CFD5DE;    /* oversized display type used as texture */
 
   /* -- semantic surfaces ---------------------------------- */
-  --color-bg: #E6E9EF;
-  --color-bg-raised: #EDEFF4;
+  --color-bg: #FFFFFF;
+  --color-bg-raised: #F4F6F8;
   --color-surface: #FFFFFF;
   --color-surface-raised: #FFFFFF;
-  --color-bg-invert: #DDE1E8;
+  --color-bg-invert: #FAFBFC;
   --color-surface-invert: #FFFFFF;
 
-  /* The hero band is the ground itself now. The old palette made it a
-     porcelain sheet against a dark page; here the page is already light,
-     so the band is defined by its grid and its type, not by a fill. */
-  --color-band-light: #E6E9EF;
-  --color-band-deep: #DDE1E8;
+  /* The hero band is the ground itself — white, like everything else. It is
+     defined by its grid and its type, never by a fill. */
+  --color-band-light: #FFFFFF;
+  --color-band-deep: #FAFBFC;
 
   /* -- ink ------------------------------------------------- */
-  --color-text-primary: #393A3D;   /* 9.35:1 on ground, 11.37:1 on card */
-  --color-text-secondary: #55585E; /* 5.87:1 on ground, 7.13:1 on card */
-  --color-text-muted: #61636A;     /* 4.93:1 on ground — lightest allowed */
+  --color-text-primary: #393A3D;   /* 11.37:1 on white */
+  --color-text-secondary: #55585E; /* 7.13:1 on white */
+  --color-text-muted: #61636A;     /* 6.00:1 on white — lightest allowed */
   --color-text-invert: #393A3D;
   --color-text-invert-muted: #61636A;
 
   /* -- ink on the hero band -------------------------------- */
-  --color-on-band: #393A3D;        /* 9.35:1 */
-  --color-on-band-muted: #61636A;  /* 4.93:1 */
+  --color-on-band: #393A3D;        /* 11.37:1 */
+  --color-on-band-muted: #61636A;  /* 6.00:1 */
 
   /* -- ink on a card --------------------------------------- */
   --color-on-panel: #393A3D;       /* 11.37:1 */
@@ -96,7 +95,7 @@
   --color-line-strong: #C6CAD4;
   --color-line-invert: #DADBE0;
   --color-line-band: #D2D7E0;
-  --color-line-panel: #E4E7EC;
+  --color-line-panel: #E6E9EE;
 
   /* -- type -----------------------------------------------
      The video names Euclid Circular B / Poppins. Poppins is the freely
@@ -118,9 +117,8 @@
   /* -- elevation ------------------------------------------
      Shadows are grey-blue and wide, never black. A black shadow on a light
      ground reads as dirt. */
-  --shadow-card: 0 1px 1px rgba(30, 41, 59, 0.04),
-                 0 3px 6px rgba(30, 41, 59, 0.04),
-                 0 10px 28px rgba(30, 41, 59, 0.05);
+  --shadow-card: 0 1px 2px rgba(30, 41, 59, 0.03),
+                 0 4px 12px rgba(30, 41, 59, 0.035);
   --shadow-lift: 0 2px 4px rgba(30, 41, 59, 0.05),
                  0 10px 20px rgba(30, 41, 59, 0.07),
                  0 28px 56px rgba(10, 110, 250, 0.12);
@@ -152,7 +150,7 @@
   html {
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
-    background-color: #E6E9EF;
+    background-color: #FFFFFF;
   }
 
   body {
@@ -160,7 +158,7 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "ss03";
     overflow-x: clip;
-    background-color: #E6E9EF;
+    background-color: #FFFFFF;
   }
 
   ::selection {
@@ -175,11 +173,11 @@
   }
 
   ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #E6E9EF; }
+  ::-webkit-scrollbar-track { background: #FFFFFF; }
   ::-webkit-scrollbar-thumb {
     background: #C6CAD4;
     border-radius: 99px;
-    border: 2px solid #E6E9EF;
+    border: 2px solid #FFFFFF;
   }
   ::-webkit-scrollbar-thumb:hover { background: #AEB4C1; }
 }

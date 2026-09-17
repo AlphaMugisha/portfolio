@@ -1,10 +1,13 @@
 /**
  * Theme selection.
  *
- * Three states, not two: "light", "dark", or no stored choice at all, in
- * which case the system preference wins and keeps winning if the user
- * changes it at the OS level. Storing "light" the first time someone lands
- * in light mode would silently pin them there forever.
+ * Two stored states — "light" and "dark" — and an unset default of light.
+ *
+ * The site is a white page. Following the OS preference meant anyone with
+ * dark mode switched on at the system level met a dark site without ever
+ * asking for one, which is not what this design is. Dark is now something
+ * you opt into with the toggle, and the choice is remembered; unset always
+ * means white.
  */
 export type Theme = "light" | "dark";
 
@@ -21,8 +24,7 @@ export const THEME_KEY = "theme";
  */
 export const THEME_SCRIPT = `(function(){try{
 var s=localStorage.getItem(${JSON.stringify(THEME_KEY)});
-var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;
-document.documentElement.setAttribute("data-theme",d?"dark":"light");
+document.documentElement.setAttribute("data-theme",s==="dark"?"dark":"light");
 }catch(e){document.documentElement.setAttribute("data-theme","light");}})();`;
 
 export function readTheme(): Theme {
