@@ -36,7 +36,20 @@ interface RevealProps {
   once?: boolean;
 }
 
-/** Fade + rise as the element scrolls into view. The workhorse. */
+/**
+ * Fade + rise as the element scrolls into view. The workhorse.
+ *
+ * Driven by `useInView` rather than the `whileInView` prop. They look
+ * equivalent and are not: `whileInView` failed to fire when a section was
+ * reached by an instant jump — a deep link, or `scrollIntoView` — leaving
+ * every heading in that section stuck at `opacity: 0`. `useInView` attaches
+ * its observer in an effect and evaluates the element's position when it
+ * does, so arriving already-in-view is the normal path rather than an edge
+ * case. Everything on this page that already used it never had the bug.
+ *
+ * The failure mode is what makes this worth the extra ref: a reveal that
+ * does not fire is not "unanimated", it is invisible.
+ */
 export function Reveal({
   children,
   className,
@@ -45,14 +58,17 @@ export function Reveal({
   once = true,
 }: RevealProps) {
   const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once, margin: "-90px" });
+
   if (reduced) return <div className={className}>{children}</div>;
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-90px" }}
+      animate={inView ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration: 0.85, delay, ease: EASE }}
     >
       {children}
@@ -74,14 +90,17 @@ export function Stagger({
   delay?: number;
 }) {
   const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
   if (reduced) return <div className={className}>{children}</div>;
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
+      animate={inView ? "visible" : "hidden"}
       variants={{
         hidden: {},
         visible: {
@@ -423,16 +442,21 @@ export function Zoom({
   once?: boolean;
 }) {
   const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once, margin: "-80px" });
+
   if (reduced) return <div className={className}>{children}</div>;
 
   const off = ZOOM_OFFSET[from];
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial={{ opacity: 0, scale, x: off.x, y: off.y }}
-      whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-      viewport={{ once, margin: "-80px" }}
+      animate={
+        inView ? { opacity: 1, scale: 1, x: 0, y: 0 } : { opacity: 0, scale, x: off.x, y: off.y }
+      }
       transition={{ duration, delay, ease: EASE }}
     >
       {children}
@@ -453,14 +477,17 @@ export function ZoomStagger({
   once?: boolean;
 }) {
   const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once, margin: "-60px" });
+
   if (reduced) return <div className={className}>{children}</div>;
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once, margin: "-60px" }}
+      animate={inView ? "visible" : "hidden"}
       variants={{ hidden: {}, visible: { transition: { staggerChildren: stagger } } }}
     >
       {children}

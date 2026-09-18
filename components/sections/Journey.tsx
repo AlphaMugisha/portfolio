@@ -10,6 +10,7 @@ import {
   useSpring,
   useMotionValueEvent,
   useReducedMotion,
+  useInView,
 } from "framer-motion";
 import { Reveal, EASE } from "@/components/ui/motion-primitives";
 import TiltCard from "@/components/ui/TiltCard";
@@ -57,12 +58,17 @@ function Counter({ active }: { active: number }) {
 
 function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: number }) {
   const reduced = useReducedMotion();
+  // `useInView` rather than `whileInView`: the latter does not fire when a
+  // card is already in place as the section is jumped to, and the wipe below
+  // fails to invisible rather than to unanimated.
+  const ref = useRef<HTMLLIElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px -60px 0px 0px" });
 
   return (
     <motion.li
+      ref={ref}
       initial={reduced ? undefined : { opacity: 0, x: 70 }}
-      whileInView={reduced ? undefined : { opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "0px -60px 0px 0px" }}
+      animate={reduced || inView ? { opacity: 1, x: 0 } : undefined}
       transition={{ duration: 0.9, ease: EASE }}
       className="w-[80vw] shrink-0 snap-start sm:w-[440px] lg:w-[480px]"
     >
@@ -71,8 +77,9 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
           <div className="relative aspect-[16/10] overflow-hidden">
             <motion.div
               initial={reduced ? undefined : { clipPath: "inset(0% 100% 0% 0%)" }}
-              whileInView={reduced ? undefined : { clipPath: "inset(0% 0% 0% 0%)" }}
-              viewport={{ once: true, margin: "0px -40px 0px 0px" }}
+              animate={
+                reduced || inView ? { clipPath: "inset(0% 0% 0% 0%)" } : undefined
+              }
               transition={{ duration: 1.0, delay: 0.15, ease: EASE }}
               className="absolute inset-0"
             >
@@ -186,17 +193,17 @@ export default function Journey() {
 
   const header = (
     <div className="mx-auto w-full max-w-[1320px] px-6 sm:px-10">
-      <Reveal>
-        <p className="meta flex items-center gap-3 text-text-muted">
-          <span aria-hidden="true" className="h-px w-7 bg-line-strong" />
-          04 — How it developed
-        </p>
+      {/* The same header shape as every other section. Journey cannot use
+          the Section component itself — it is pinned and its track runs edge
+          to edge — so the pattern is reproduced rather than imported. */}
+      <Reveal y={14}>
+        <p className="eyebrow">How it developed</p>
       </Reveal>
 
-      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
-        <Reveal delay={0.06}>
-          <h2 className="text-display text-[clamp(1.9rem,5.2vw,3.6rem)] text-text-primary">
-            The <span className="text-primary">journey</span>
+      <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+        <Reveal delay={0.05} y={18}>
+          <h2 className="text-mega max-w-3xl text-[clamp(2rem,5.2vw,3.8rem)] text-text-primary">
+            How I got <span className="text-primary">here.</span>
           </h2>
         </Reveal>
         <Counter active={active} />

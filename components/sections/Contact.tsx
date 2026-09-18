@@ -3,7 +3,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
 import { Reveal } from "@/components/ui/motion-primitives";
-import SplitText from "@/components/ui/SplitText";
 import Marquee from "@/components/ui/Marquee";
 import Magnetic from "@/components/ui/Magnetic";
 import TiltCard from "@/components/ui/TiltCard";
@@ -25,16 +24,13 @@ export default function Contact() {
     <>
       <Section
         id="contact"
-        index="05"
-        label="Contact"
+        eyebrow="Contact"
+        title="Let's build"
+        accent="something."
         description="Open to freelance work, full-time roles and collaboration."
         className="bg-ink"
       >
-        <h2 className="text-mega text-[clamp(2.6rem,8vw,6rem)] text-text-primary">
-          <SplitText text="Let's talk" trigger="view" stagger={0.04} />
-        </h2>
-
-        <div className="mt-10 grid gap-10 border-t border-line pt-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
           <div>
             <Reveal>
               <p className="max-w-xl text-pretty text-lg leading-relaxed text-text-secondary">

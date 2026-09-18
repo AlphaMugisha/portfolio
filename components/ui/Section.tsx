@@ -4,20 +4,23 @@ import type { ReactNode } from "react";
 import { Reveal } from "@/components/ui/motion-primitives";
 
 /* ------------------------------------------------------------------
-   The page grid.
+   The section header.
 
-   Every section is twelve columns on one measure. A narrow left column
-   carries the section's number, rule and name, and STICKS while the content
-   beside it scrolls past — so you always know which part of the site you are
-   in without the heading eating a screen of vertical space each time.
+   Three lines, stacked, then the content at full width beneath:
 
-   That is the whole structural idea, and it is why the headings here are
-   small. The one enormous display line on the site belongs to the hero;
-   repeating it five more times is what made the old page read as five
-   identical slabs rather than one document.
+     a small accent eyebrow naming the section,
+     a real sentence for a heading with its closing clause in the accent,
+     one supporting line.
 
-   Below `lg` the column simply stacks and stops sticking — a sticky label on
-   a phone is a label that covers the content it is labelling.
+   The heading is a SENTENCE, not a label. "Work" tells a reader what the
+   section is filed under; "Things I have built and shipped" tells them what
+   they are about to look at, and the accent on the closing clause is what
+   stops a long heading reading as a paragraph.
+
+   This replaces a sticky label column. That version kept the section name on
+   screen the whole way down, but it spent a quarter of every row on a word
+   and pushed all the content into the remaining three-quarters — so nothing
+   ever got the full measure, and the page never opened up.
    ------------------------------------------------------------------ */
 
 /** The shared measure. Everything on the page lines up to this. */
@@ -25,22 +28,26 @@ export const MEASURE = "mx-auto w-full max-w-[1320px] px-6 sm:px-10";
 
 export default function Section({
   id,
-  index,
-  label,
+  eyebrow,
+  title,
+  accent,
   description,
   children,
   className = "",
   aside,
 }: {
   id: string;
-  /** The running number in the left column — "01", "02", … */
-  index: string;
-  label: string;
-  /** One line under the heading. Optional; most sections want it. */
+  /** Small accent label above the heading — "Toolbox", "Selected work". */
+  eyebrow: string;
+  /** The heading, up to the accent clause. */
+  title: string;
+  /** The closing clause, set in the accent colour. */
+  accent: string;
+  /** One supporting line under the heading. */
   description?: string;
   children: ReactNode;
   className?: string;
-  /** Extra content pinned under the label, e.g. a count or a link. */
+  /** Sits opposite the heading on wide screens — a count, a link. */
   aside?: ReactNode;
 }) {
   return (
@@ -49,30 +56,36 @@ export default function Section({
       className={`scroll-mt-28 py-20 sm:py-28 lg:py-32 ${className}`}
     >
       <div className={MEASURE}>
-        <div className="grid grid-cols-12 items-start gap-x-8 gap-y-10">
-          {/* ---- the sticky label ---------------------------------- */}
-          <header className="col-span-12 lg:sticky lg:top-28 lg:col-span-3">
-            <Reveal y={16}>
-              <p className="meta text-primary-strong">{index}</p>
-              <span
-                aria-hidden="true"
-                className="mt-4 block h-px w-10 bg-primary"
-              />
-              <h2 className="text-display mt-5 text-[clamp(1.6rem,2.6vw,2.1rem)] text-text-primary">
-                {label}
-              </h2>
-              {description && (
-                <p className="mt-4 max-w-[26ch] text-pretty text-sm leading-relaxed text-text-muted">
-                  {description}
-                </p>
-              )}
-              {aside && <div className="mt-6">{aside}</div>}
-            </Reveal>
-          </header>
+        <header>
+          <Reveal y={14}>
+            <p className="eyebrow">{eyebrow}</p>
+          </Reveal>
 
-          {/* ---- the content -------------------------------------- */}
-          <div className="col-span-12 lg:col-span-9">{children}</div>
-        </div>
+          <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+            <Reveal delay={0.05} y={18}>
+              <h2 className="text-mega max-w-4xl text-[clamp(2rem,5.2vw,3.8rem)] text-text-primary">
+                {title}{" "}
+                <span className="text-primary">{accent}</span>
+              </h2>
+            </Reveal>
+
+            {aside && (
+              <Reveal delay={0.12} y={14}>
+                {aside}
+              </Reveal>
+            )}
+          </div>
+
+          {description && (
+            <Reveal delay={0.14} y={16}>
+              <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-text-secondary">
+                {description}
+              </p>
+            </Reveal>
+          )}
+        </header>
+
+        <div className="mt-12 sm:mt-16">{children}</div>
       </div>
     </section>
   );

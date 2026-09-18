@@ -25,9 +25,10 @@ export default function Projects() {
   return (
     <Section
       id="projects"
-      index="03"
-      label="Work"
-      description="Platforms, connected hardware and applied AI — built for real organisations."
+      eyebrow="Selected work"
+      title="Things I have"
+      accent="built and shipped."
+      description="Platforms, connected hardware and applied AI — built for real organisations, not for a tutorial."
       aside={<p className="meta text-text-muted">{projects.length} projects</p>}
       className="bg-ink"
     >

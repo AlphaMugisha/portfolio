@@ -5,7 +5,6 @@ import {
   Reveal,
   Stagger,
   StaggerItem,
-  MaskedWords,
   Counter,
 } from "@/components/ui/motion-primitives";
 import TiltCard from "@/components/ui/TiltCard";
@@ -15,19 +14,16 @@ import { site } from "@/lib/site";
 /**
  * About.
  *
- * Restructured into three beats instead of one side-by-side block. The
- * statement gets the full content column to itself and lands first; the
- * portrait and the prose share the middle; the figures close it as a strip.
- * Reading top-to-bottom now has a shape — before, the eye had to choose
- * between two equally weighted columns the moment the section began.
+ * The statement that used to sit here as a second large heading is now the
+ * section heading itself. Two display lines stacked — "The person behind the
+ * work" and "I build systems where software meets hardware" — were saying
+ * the same thing twice at the same size, and the better sentence deserved
+ * the bigger position.
  *
  * The portrait carries a small overlapping plate, the same opposed-tilt
  * device the hero uses, so the two image moments on the page belong to one
  * language rather than being unrelated treatments.
  */
-
-const STATEMENT = ["I build", "systems", "where", "software", "meets", "hardware."];
-const STRONG = new Set([0, 2, 4]);
 
 const FACTS = [
   { label: "Based", value: site.location },
@@ -47,25 +43,14 @@ export default function About() {
   return (
     <Section
       id="about"
-      index="01"
-      label="About"
-      description="The person behind the work, and the habits the work came from."
+      eyebrow="About"
+      title="I build systems where"
+      accent="software meets hardware."
+      description="How I got into this, what I reach for first, and the habits the work came from."
       className="bg-ink"
     >
-      {/* ---- the statement, alone ------------------------------- */}
-      <MaskedWords
-        as="h3"
-        words={STATEMENT}
-        className="text-editorial max-w-4xl text-[clamp(1.7rem,4vw,3.1rem)]"
-        wordClassName={(i) =>
-          STRONG.has(i)
-            ? "font-semibold text-text-primary"
-            : "font-light text-text-secondary"
-        }
-      />
-
       {/* ---- portrait and prose --------------------------------- */}
-      <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)] lg:gap-16">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)] lg:gap-16">
         <div className="relative">
           {/* The reveal wraps TiltCard rather than sitting inside it.
               Nested within TiltCard's 3D-transformed layer, the viewport

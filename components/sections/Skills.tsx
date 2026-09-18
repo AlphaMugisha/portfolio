@@ -29,23 +29,14 @@ export default function Skills() {
   return (
     <Section
       id="skills"
-      index="02"
-      label="Expertise"
-      description="Four layers of the same craft, from the schema underneath to the board on the bench."
+      eyebrow="Toolbox"
+      title="The tools I"
+      accent="actually use."
+      description={`${total} technologies across four layers of the same craft — and every one of them is used in something on this page, not collected.`}
       aside={<p className="meta text-text-muted">{total} tools</p>}
       className="bg-ink"
     >
-      <Reveal>
-        <p className="max-w-2xl text-pretty text-[clamp(1.15rem,2.2vw,1.6rem)] font-light leading-snug text-text-secondary">
-          {total} technologies across the stack —{" "}
-          <span className="font-medium text-text-primary">
-            every one of them used in something on this page
-          </span>
-          , not collected.
-        </p>
-      </Reveal>
-
-      <div className="mt-14 space-y-12">
+<div className="space-y-12">
         {skillGroups.map((group, gi) => (
           <Reveal key={group.id} delay={gi * 0.05} y={18}>
             <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
