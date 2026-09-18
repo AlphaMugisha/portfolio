@@ -13,29 +13,29 @@ const fs = require("fs");
 const OUT = path.join(__dirname, "..", "public", "images");
 fs.mkdirSync(OUT, { recursive: true });
 
-// Re-graded for the light palette sampled from fortosee.mp4. Each scheme is
-// a pale wash with one saturated note, so a cover reads as a soft
-// photographic field sitting ON the page rather than a dark hole punched
-// through it. The veil in `field` darkens toward the bottom, so the base
-// values start lighter than the surface they land on.
+// Re-graded to sit beside the hero art, which is a saturated mesh gradient.
+// The previous pass was so pale the covers read as blank tiles next to it —
+// a cover is meant to be the loudest thing in its card, not the quietest.
+// Each scheme is a light base with three real chroma notes; the heavy blur
+// and the veil in `field` take most of the intensity back out.
 const SCHEMES = {
-  portrait:   ["#F2F5F9", "#DEE8F6", "#C2D8F3", "#89B4EE"],
-  hero:       ["#F3F5FA", "#E1E9F6", "#C7D9F1", "#95BCEF"],
-  rwasport:   ["#F0F4FB", "#D8E5F8", "#B5D0F6", "#74ACF2"],
-  greenhouse: ["#EFF6F3", "#D9ECE5", "#B6DCD0", "#7FC5B1"],
-  cleankigali:["#EEF5F7", "#D8EAEE", "#B2D7DF", "#78BDCA"],
-  tembera:    ["#F3F1F9", "#E2DEF4", "#C7BFEA", "#9A90D3"],
-  transiteco: ["#F1F3F8", "#DFE4EE", "#C2CCDC", "#92A0B8"],
-  payment:    ["#F8F4EE", "#F1E6D4", "#E4CCA5", "#D3AC6B"],
-  ikibina:    ["#F3F1F8", "#E2DDF2", "#C9C0E6", "#9F94CF"],
-  school:     ["#F0F2F6", "#DEE3EB", "#BFCAD8", "#92A0B2"],
+  portrait:   ["#E8EFFC", "#9CC0F5", "#5B8DEF", "#C7B4FF"],
+  hero:       ["#E9F0FD", "#A5C6F7", "#4F8BF0", "#B9A8FF"],
+  rwasport:   ["#E6F0FE", "#8FBDF8", "#2F7BEF", "#63D3E8"],
+  greenhouse: ["#E7F6F0", "#93DCC2", "#3FBF96", "#BEE86F"],
+  cleankigali:["#E6F4F7", "#8FD3E2", "#3CA9C6", "#7BE0C9"],
+  tembera:    ["#EFEBFD", "#BDAEF5", "#7C5CE8", "#E39BE0"],
+  transiteco: ["#EBEFF6", "#A9B8D4", "#6B82AC", "#8FB6D9"],
+  payment:    ["#FCF3E6", "#F3D5A0", "#E0A94F", "#FF9E6B"],
+  ikibina:    ["#EFEAFB", "#C3B0EE", "#8465D8", "#B79BF0"],
+  school:     ["#EBEFF5", "#ABBBD3", "#6C86A8", "#9CC2DD"],
 
-  // The journey strip still reads left to right as a progression: warm
-  // workbench -> teal server era -> the accent blue -> violet.
-  jFoundation:["#F8F4ED", "#F2E7D3", "#E6D0A8", "#D4B070"],
-  jEarly:     ["#EEF6F4", "#D8EDE7", "#B3DDD2", "#7AC6B3"],
-  jCurrent:   ["#EDF3FB", "#D6E4F9", "#AFCEF7", "#6EA9F2"],
-  jOngoing:   ["#F2F1F9", "#E0DEF4", "#C3BEEA", "#9590D3"],
+  // The journey strip reads left to right as a progression: warm workbench
+  // -> teal server era -> the accent blue -> violet.
+  jFoundation:["#FCF2E4", "#F0D096", "#DFA243", "#FFAE72"],
+  jEarly:     ["#E6F5F1", "#8FDAC4", "#38BC97", "#6FD7C0"],
+  jCurrent:   ["#E6EFFD", "#93C0F8", "#2F7BEF", "#6BB2F5"],
+  jOngoing:   ["#EEEAFC", "#BFAEF2", "#7C5CE8", "#A98FE8"],
 };
 
 /** Soft blurred blobs over a base wash — reads as depth-of-field photography. */
@@ -52,7 +52,7 @@ function field(w, h, colors, seed) {
     const cy = next() * h;
     const r = (0.28 + next() * 0.42) * Math.min(w, h);
     const fill = [c1, c2, c3, c2][i % 4];
-    const op = 0.34 + next() * 0.3;
+    const op = 0.44 + next() * 0.34;
     return `<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${r.toFixed(0)}" fill="${fill}" opacity="${op.toFixed(2)}"/>`;
   }).join("");
 
@@ -66,7 +66,7 @@ function field(w, h, colors, seed) {
     </linearGradient>
     <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="${c0}" stop-opacity="0.05"/>
-      <stop offset="100%" stop-color="${c0}" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="${c0}" stop-opacity="0.16"/>
     </linearGradient>
   </defs>
   <rect width="${w}" height="${h}" fill="url(#base)"/>
@@ -101,7 +101,7 @@ const JOBS = [
     await sharp(field(w, h, colors, seed))
       // Heavy blur turns the hard circles into a soft photographic field.
       .blur(Math.round(Math.min(w, h) / 26))
-      .modulate({ saturation: 0.92, brightness: 1.02 })
+      .modulate({ saturation: 1.12, brightness: 1.0 })
       .jpeg({ quality: 78, mozjpeg: true })
       .toFile(dest);
     const kb = (fs.statSync(dest).size / 1024).toFixed(0);

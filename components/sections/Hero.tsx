@@ -15,6 +15,7 @@ import {
 import SplitText from "@/components/ui/SplitText";
 import Marquee from "@/components/ui/Marquee";
 import Magnetic from "@/components/ui/Magnetic";
+import TechIcon from "@/components/ui/TechIcon";
 import { MEASURE } from "@/components/ui/Section";
 import { projects, coverFor, statusCopy } from "@/lib/projects";
 import { site } from "@/lib/site";
@@ -31,18 +32,22 @@ const TICKER = [
 ];
 
 const LINE_ONE = "Software";
-const LINE_TWO = "Engineer";
+const LINE_TWO = "Engineer.";
+
+/** Marks floating beside the composition — the stack, at a glance. */
+const FLOATERS = [
+  { name: "React", className: "-left-5 top-[18%]", delay: 0 },
+  { name: "ESP32", className: "-right-4 top-[8%]", delay: 0.8 },
+  { name: "PostgreSQL", className: "-right-6 bottom-[26%]", delay: 1.6 },
+] as const;
 
 /* ------------------------------------------------------------------
-   The opening timeline.
-
-   One set of beats rather than a hand-tuned delay on every element. The
-   second headline line is placed relative to the first — it starts once the
-   first line has released all its glyphs plus a short breath — and the tail
-   hangs off the end of that. Change the letter stagger and the whole
+   The opening timeline. One set of beats rather than a hand-tuned delay on
+   every element: the second headline line is placed relative to the first,
+   and the tail hangs off the end of that. Change the letter stagger and the
    sequence still holds its shape.
    ------------------------------------------------------------------ */
-const OPEN = { meta: 0.05, headline: 0.18, letter: 0.042 } as const;
+const OPEN = { badge: 0.05, headline: 0.18, letter: 0.042 } as const;
 
 const LINE_TWO_AT = OPEN.headline + LINE_ONE.length * OPEN.letter + 0.14;
 const TAIL_AT = LINE_TWO_AT + 0.2;
@@ -134,63 +139,72 @@ function usePointerDrift(enabled: boolean) {
 /* ---------- backdrop ----------------------------------------------- */
 
 /**
- * The depth behind the type: a tonal wash and a fine survey grid, inked
- * through CSS variables so both invert with the theme. Oversized by 25% on
- * every side — parallax translates it, and an exactly-sized layer would
- * slide its own edge into view. The overscan has to stay ahead of the travel
- * in `backdropY`.
+ * Two soft colour fields and nothing else.
+ *
+ * There was a survey grid here. On a white page it read as graph paper —
+ * a texture the rest of the site never repeats, competing with the type it
+ * was supposed to sit behind. What the hero actually needs from a backdrop
+ * is a suggestion that the white is lit rather than blank, and two very wide
+ * washes do that without drawing a single line.
  */
 function Backdrop() {
   return (
     <div
       className="absolute inset-[-25%]"
       style={{
-        maskImage:
-          "radial-gradient(ellipse 78% 68% at 50% 42%, #000 38%, transparent 76%)",
-        WebkitMaskImage:
-          "radial-gradient(ellipse 78% 68% at 50% 42%, #000 38%, transparent 76%)",
+        backgroundImage:
+          "radial-gradient(ellipse 52% 48% at 22% 26%, var(--grid-wash-accent), transparent 68%)," +
+          "radial-gradient(ellipse 46% 44% at 84% 68%, var(--grid-wash-ink), transparent 66%)",
       }}
+    />
+  );
+}
+
+/* ---------- floating mark ------------------------------------------ */
+
+/** A logo on a small card, drifting. Decorative; the stack is listed for
+    real in Expertise, so these are hidden from assistive technology. */
+function Floater({
+  name,
+  className,
+  delay,
+}: {
+  name: string;
+  className: string;
+  delay: number;
+}) {
+  const reduced = useReducedMotion();
+  return (
+    <motion.div
+      aria-hidden="true"
+      className={`absolute z-20 grid h-14 w-14 place-items-center rounded-tile border border-line bg-surface shadow-[var(--shadow-card)] ${className}`}
+      animate={reduced ? undefined : { y: [0, -9, 0] }}
+      transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut", delay }}
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse 60% 50% at 30% 32%, var(--grid-wash-accent), transparent 70%)," +
-            "radial-gradient(ellipse 50% 46% at 78% 72%, var(--grid-wash-ink), transparent 68%)",
-        }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px 92px)," +
-            "repeating-linear-gradient(to bottom, var(--grid-line-soft) 0 1px, transparent 1px 92px)",
-        }}
-      />
-    </div>
+      <TechIcon name={name} size={24} />
+    </motion.div>
   );
 }
 
 /* ---------- hero ---------------------------------------------------- */
 
 /**
- * Hero — an asymmetric split rather than a wall of type over an empty field.
+ * Hero — an asymmetric split with a layered composition.
  *
- * Seven columns of introduction, five of the newest piece of work. The
- * featured card is the reason the right-hand side exists: a portfolio should
- * put a real project on screen before a visitor has scrolled once, and the
- * previous layout spent that space on nothing.
+ * Seven columns of introduction, five of a stack: an abstract panel, the
+ * newest project overlapping its corner, and three marks from the toolkit
+ * drifting around the edges. The tilts are small and opposed — the panel
+ * leans one way, the card the other — which is what makes two rectangles
+ * read as a pile rather than a mistake.
  *
- * Motion is two systems that never touch each other. ENTRY is time-driven —
- * the headline builds glyph by glyph and the tail staggers out behind it,
- * once, on mount. DEPARTURE is scroll-driven — as the band leaves, its
- * layers separate; the backdrop lags and swells, the type leads, the ticker
- * sinks.
+ * Motion is two systems that never touch. ENTRY is time-driven: the headline
+ * builds glyph by glyph and the tail staggers behind it, once, on mount.
+ * DEPARTURE is scroll-driven: as the band leaves, its layers separate.
  *
  * One `useScroll` feeds one spring and every layer is a `useTransform` off
  * it, so the whole parallax field costs a single scroll subscription and no
- * React renders. Only `transform` and `opacity` are ever animated, and every
- * layer collapses to a static element under reduced motion.
+ * React renders. Only `transform` and `opacity` animate, and every layer
+ * collapses to a static element under reduced motion.
  */
 export default function Hero() {
   const reduced = useReducedMotion();
@@ -212,11 +226,11 @@ export default function Hero() {
   const backdropScale = useTransform(p, [0, 1], [1, 1.16]);
   const contentY = useTransform(p, [0, 1], [0, -158]);
   const headlineY = useTransform(p, [0, 1], [0, -72]);
+  const artY = useTransform(p, [0, 1], [0, -40]);
 
   // Deliberately the mildest layer: the ticker sits on the band's bottom
   // edge, so travel there is clipped by the section rather than read as
-  // depth — pushed as hard as the rest it just vanishes, leaving a dead
-  // strip of empty ground behind it.
+  // depth — pushed as hard as the rest it just vanishes.
   const marqueeY = useTransform(p, [0, 1], [0, 58]);
 
   const contentFade = useTransform(p, [0, 0.58], [1, 0]);
@@ -232,6 +246,8 @@ export default function Hero() {
   const driftX = useTransform(px, [-1, 1], [30, -30]);
   const driftY = useTransform(py, [-1, 1], [22, -22]);
   const typeDriftX = useTransform(px, [-1, 1], [-9, 9]);
+  const artDriftX = useTransform(px, [-1, 1], [14, -14]);
+  const artDriftY = useTransform(py, [-1, 1], [10, -10]);
 
   return (
     <section
@@ -264,32 +280,45 @@ export default function Hero() {
               : { y: contentY, opacity: contentFade, visibility: departed }
           }
         >
-          <div className="grid grid-cols-12 items-center gap-x-8 gap-y-12">
+          <div className="grid grid-cols-12 items-center gap-x-8 gap-y-16">
             {/* ---- introduction ---------------------------------- */}
             <div className="col-span-12 lg:col-span-7">
-              <Beat at={OPEN.meta}>
-                <p className="meta text-on-band-muted">
-                  {site.name} — {site.location}
+              <Beat at={OPEN.badge}>
+                <p className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface py-2 pl-3 pr-4 shadow-[var(--shadow-card)]">
+                  <span className="relative grid h-2 w-2 place-items-center">
+                    {!reduced && (
+                      <span className="absolute h-2 w-2 animate-ping rounded-full bg-primary opacity-60" />
+                    )}
+                    <span className="relative h-2 w-2 rounded-full bg-primary" />
+                  </span>
+                  <span className="meta text-text-secondary">
+                    Open to new work — {site.location}
+                  </span>
                 </p>
               </Beat>
 
               <motion.div style={reduced ? undefined : { y: headlineY, x: typeDriftX }}>
-                <h1 className="text-mega mt-6 text-[clamp(2.8rem,8.5vw,7rem)]">
+                <h1 className="text-mega mt-7 text-[clamp(2.9rem,8vw,6.5rem)]">
                   <SplitText text={LINE_ONE} delay={OPEN.headline} stagger={OPEN.letter} />
                   <br />
-                  <SplitText text={LINE_TWO} delay={LINE_TWO_AT} stagger={OPEN.letter} />
+                  <SplitText
+                    text={LINE_TWO}
+                    delay={LINE_TWO_AT}
+                    stagger={OPEN.letter}
+                    letterClassName="text-primary"
+                  />
                 </h1>
               </motion.div>
 
               <Tail>
                 <TailItem>
-                  <p className="mt-8 max-w-lg text-pretty text-lg leading-relaxed text-on-band-muted">
+                  <p className="mt-7 max-w-lg text-pretty text-lg leading-relaxed text-on-band-muted">
                     {site.tagline} I build web platforms, embedded electronics
                     and applied AI systems from {site.location}.
                   </p>
                 </TailItem>
 
-                <TailItem className="mt-10 flex flex-wrap items-center gap-4">
+                <TailItem className="mt-9 flex flex-wrap items-center gap-4">
                   <Magnetic pull={8} contentPull={4} radius={90}>
                     <Link
                       href="#projects"
@@ -318,52 +347,65 @@ export default function Hero() {
               </Tail>
             </div>
 
-            {/* ---- the newest piece of work ----------------------- */}
-            <Beat at={TAIL_AT + TAIL_STEP} className="col-span-12 lg:col-span-5">
-              <Link
-                href={`/projects/${featured.slug}`}
-                className="plate lift group block p-2.5"
+            {/* ---- the pile -------------------------------------- */}
+            <Beat at={TAIL_AT} className="col-span-12 lg:col-span-5">
+              <motion.div
+                className="relative mx-auto max-w-sm lg:max-w-none"
+                style={reduced ? undefined : { y: artY, x: artDriftX }}
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-tile">
-                  <Image
-                    src={coverFor(featured.slug)}
-                    alt=""
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                    priority
-                    className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
-                  <span className="meta absolute left-3 top-3 rounded-full bg-surface/90 px-3 py-1.5 text-text-secondary backdrop-blur">
-                    Latest
-                  </span>
-                </div>
-
-                <div className="px-3 pb-2 pt-4">
-                  <div className="flex items-center gap-x-4">
-                    <span className="meta text-text-muted">{featured.year}</span>
-                    <span className="meta flex items-center gap-2 text-text-secondary">
-                      <span
-                        aria-hidden="true"
-                        className="h-1.5 w-1.5 rounded-full bg-primary"
-                      />
-                      {statusCopy[featured.status]}
-                    </span>
+                {/* The panel, leaning one way. */}
+                <motion.div
+                  style={reduced ? undefined : { y: artDriftY }}
+                  className="plate overflow-hidden p-2.5 lg:-rotate-2"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-tile">
+                    <Image
+                      src="/images/hero/primary.jpg"
+                      alt=""
+                      fill
+                      sizes="(max-width: 1024px) 24rem, 36vw"
+                      priority
+                      className="object-cover"
+                    />
                   </div>
+                </motion.div>
 
-                  <h2 className="text-editorial mt-2.5 flex items-baseline justify-between gap-3 text-xl text-text-primary transition-colors group-hover:text-primary-strong">
-                    {featured.name}
+                {/* The newest project, leaning the other — which is what
+                    makes two rectangles read as a pile and not a mistake. */}
+                <Link
+                  href={`/projects/${featured.slug}`}
+                  className="plate lift group absolute -bottom-8 -left-4 z-10 w-[72%] p-2 lg:rotate-[2.5deg]"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-[11px]">
+                    <Image
+                      src={coverFor(featured.slug)}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1024px) 18rem, 26vw"
+                      className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-3 px-2 pb-1 pt-3">
+                    <div className="min-w-0">
+                      <p className="meta truncate text-text-muted">
+                        {featured.year} · {statusCopy[featured.status]}
+                      </p>
+                      <p className="truncate font-geometric text-sm font-medium text-text-primary transition-colors group-hover:text-primary-strong">
+                        {featured.name}
+                      </p>
+                    </div>
                     <ArrowUpRight
-                      size={17}
+                      size={16}
                       aria-hidden="true"
                       className="shrink-0 text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
                     />
-                  </h2>
+                  </div>
+                </Link>
 
-                  <p className="mt-2 line-clamp-2 text-pretty text-sm leading-relaxed text-text-secondary">
-                    {featured.summary}
-                  </p>
-                </div>
-              </Link>
+                {FLOATERS.map((f) => (
+                  <Floater key={f.name} {...f} />
+                ))}
+              </motion.div>
             </Beat>
           </div>
         </motion.div>
@@ -380,7 +422,7 @@ export default function Hero() {
           <Marquee
             items={TICKER}
             duration={34}
-            className="border-t border-line-band py-4"
+            className="border-t border-line py-4"
             itemClassName="meta text-on-band-muted"
           />
         </motion.div>
