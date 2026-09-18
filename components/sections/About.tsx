@@ -1,23 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
 import {
   Reveal,
   Stagger,
   StaggerItem,
   MaskedWords,
   Counter,
-  EASE,
 } from "@/components/ui/motion-primitives";
 import TiltCard from "@/components/ui/TiltCard";
 import Section from "@/components/ui/Section";
 import { site } from "@/lib/site";
 
 /**
- * About — portrait left, statement and facts right. The portrait unmasks
- * upward as it enters, the statement rises word by word, and the figures
- * count up once they are seen.
+ * About.
+ *
+ * Restructured into three beats instead of one side-by-side block. The
+ * statement gets the full content column to itself and lands first; the
+ * portrait and the prose share the middle; the figures close it as a strip.
+ * Reading top-to-bottom now has a shape — before, the eye had to choose
+ * between two equally weighted columns the moment the section began.
+ *
+ * The portrait carries a small overlapping plate, the same opposed-tilt
+ * device the hero uses, so the two image moments on the page belong to one
+ * language rather than being unrelated treatments.
  */
 
 const STATEMENT = ["I build", "systems", "where", "software", "meets", "hardware."];
@@ -38,8 +44,6 @@ const FIGURES = [
 ];
 
 export default function About() {
-  const reduced = useReducedMotion();
-
   return (
     <Section
       id="about"
@@ -48,54 +52,63 @@ export default function About() {
       description="The person behind the work, and the habits the work came from."
       className="bg-ink"
     >
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)] lg:gap-14">
-        <div>
-          <TiltCard tilt={3} className="plate p-2.5">
-            <motion.div
-              className="overflow-hidden rounded-tile"
-              initial={reduced ? undefined : { clipPath: "inset(100% 0% 0% 0%)" }}
-              whileInView={reduced ? undefined : { clipPath: "inset(0% 0% 0% 0%)" }}
-              viewport={{ once: true, margin: "-120px" }}
-              transition={{ duration: 1.1, ease: EASE }}
-            >
-              <Image
-                src="/images/portrait.jpg"
-                alt={`Portrait of ${site.name}`}
-                width={1200}
-                height={1500}
-                sizes="(max-width: 1024px) 100vw, 30vw"
-                className="aspect-4/5 w-full rounded-tile object-cover"
-              />
-            </motion.div>
-          </TiltCard>
+      {/* ---- the statement, alone ------------------------------- */}
+      <MaskedWords
+        as="h3"
+        words={STATEMENT}
+        className="text-editorial max-w-4xl text-[clamp(1.7rem,4vw,3.1rem)]"
+        wordClassName={(i) =>
+          STRONG.has(i)
+            ? "font-semibold text-text-primary"
+            : "font-light text-text-secondary"
+        }
+      />
 
-          <Stagger className="mt-4 grid grid-cols-2 gap-3" stagger={0.06}>
-            {FACTS.map((f) => (
-              <StaggerItem key={f.label} className="h-full">
-                <div className="plate h-full px-4 py-3.5">
-                  <p className="meta text-text-muted">{f.label}</p>
-                  <p className="mt-2 text-sm leading-snug text-text-primary">
-                    {f.value}
-                  </p>
-                </div>
-              </StaggerItem>
-            ))}
-          </Stagger>
+      {/* ---- portrait and prose --------------------------------- */}
+      <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="relative">
+          {/* The reveal wraps TiltCard rather than sitting inside it.
+              Nested within TiltCard's 3D-transformed layer, the viewport
+              observer never fired — and a clip-path reveal that never fires
+              does not degrade to "unanimated", it leaves the portrait
+              permanently invisible. Every other reveal on this page sits
+              outside a transformed ancestor and works; this one now does
+              too. */}
+          <Reveal y={22}>
+            <TiltCard tilt={3} className="plate p-2.5 lg:-rotate-1">
+              <div className="relative overflow-hidden rounded-tile">
+                <Image
+                  src="/images/portrait.jpg"
+                  alt={`Portrait of ${site.name}`}
+                  width={1200}
+                  height={1500}
+                  sizes="(max-width: 1024px) 100vw, 28vw"
+                  className="aspect-4/5 w-full rounded-tile object-cover"
+                />
+                <span className="meta absolute left-3 top-3 rounded-full bg-surface/90 px-3 py-1.5 text-text-secondary backdrop-blur">
+                  {site.location}
+                </span>
+              </div>
+            </TiltCard>
+          </Reveal>
+
+          {/* The signature plate, leaning against the portrait's tilt —
+              the same device the hero uses on its pile. */}
+          <Reveal delay={0.25}>
+            <div className="plate absolute -bottom-6 -right-3 z-10 flex items-center gap-3 px-4 py-3 lg:rotate-2">
+              <span className="script text-2xl leading-none text-text-primary">
+                {site.shortName.toLowerCase()}
+              </span>
+              <span className="h-7 w-px bg-line" aria-hidden="true" />
+              <span className="meta text-primary-strong">
+                {new Date().getFullYear()}
+              </span>
+            </div>
+          </Reveal>
         </div>
 
         <div className="flex flex-col justify-center">
-          <MaskedWords
-            as="h3"
-            words={STATEMENT}
-            className="text-editorial text-[clamp(1.5rem,3.4vw,2.6rem)] text-text-primary"
-            wordClassName={(i) =>
-              STRONG.has(i)
-                ? "font-bold text-text-primary"
-                : "font-light text-text-secondary"
-            }
-          />
-
-          <div className="mt-8 grid gap-6 text-pretty leading-relaxed text-text-secondary sm:grid-cols-2">
+          <div className="space-y-5 text-pretty leading-relaxed text-text-secondary">
             <Reveal delay={0.05}>
               <p>
                 My work begins with the data. Before a screen exists there is a
@@ -114,17 +127,42 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-8">
-            {FIGURES.map((f, i) => (
-              <Reveal key={f.label} delay={i * 0.08}>
-                <p className="text-display text-[clamp(1.8rem,4vw,2.8rem)] text-primary">
-                  <Counter value={f.value} suffix={f.suffix} />
-                </p>
-                <p className="meta mt-2.5 text-text-muted">{f.label}</p>
-              </Reveal>
+          {/* Facts as a spec table, not four boxes. Hairlines are enough
+              separation at this size, and boxes here would compete with the
+              portrait plate sitting right beside them. */}
+          <Stagger
+            className="mt-10 grid grid-cols-2 gap-x-8 border-t border-line"
+            stagger={0.06}
+          >
+            {FACTS.map((f) => (
+              <StaggerItem key={f.label}>
+                <div className="border-b border-line py-4">
+                  <p className="meta text-primary-strong">{f.label}</p>
+                  <p className="mt-2 text-sm leading-snug text-text-primary">
+                    {f.value}
+                  </p>
+                </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
+      </div>
+
+      {/* ---- the figures, as a strip ---------------------------- */}
+      <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-card border border-line-panel bg-line sm:grid-cols-3">
+        {FIGURES.map((f, i) => (
+          <Reveal key={f.label} delay={i * 0.08} className="h-full">
+            {/* Each cell is opaque over a 1px gap, so the "dividers" are the
+                container showing through — one rule between cells, and none
+                on the outside where the border already is. */}
+            <div className="h-full bg-surface px-6 py-8">
+              <p className="text-mega text-[clamp(2.2rem,5vw,3.4rem)] text-primary">
+                <Counter value={f.value} suffix={f.suffix} />
+              </p>
+              <p className="meta mt-3 text-text-muted">{f.label}</p>
+            </div>
+          </Reveal>
+        ))}
       </div>
     </Section>
   );
