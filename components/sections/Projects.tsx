@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion-primitives";
 import Section from "@/components/ui/Section";
 import TiltCard from "@/components/ui/TiltCard";
-import { projects, coverFor, statusCopy, type Project } from "@/lib/projects";
+import { projects, coverFor, statusCopy } from "@/lib/projects";
 
 /**
  * Selected work.
@@ -38,10 +38,10 @@ export default function Projects() {
           <TiltCard tilt={2}>
             <Link
               href={`/projects/${lead.slug}`}
-              className="plate lift group block p-2.5"
+              className="plate lift group block p-2"
             >
-              <div className="grid gap-2.5 sm:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-tile sm:aspect-auto sm:min-h-[340px]">
+              <div className="grid gap-2 sm:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-[14px] sm:aspect-auto sm:min-h-[360px]">
                   <Image
                     src={coverFor(lead.slug)}
                     alt=""
@@ -49,29 +49,27 @@ export default function Projects() {
                     sizes="(max-width: 640px) 100vw, 45vw"
                     className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   />
+                  <Badge>Featured</Badge>
                 </div>
 
-                <div className="flex flex-col justify-center p-5 sm:p-8">
-                  <Meta project={lead} number="01" />
-
-                  <h3 className="text-display mt-4 text-[clamp(1.7rem,3.3vw,2.6rem)] text-text-primary transition-colors group-hover:text-primary-strong">
-                    {lead.name}
-                  </h3>
+                <div className="flex flex-col justify-center px-4 py-6 sm:px-7">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="meta text-text-muted">
+                        {lead.year} · {statusCopy[lead.status]}
+                      </p>
+                      <h3 className="text-display mt-2 text-[clamp(1.7rem,3.3vw,2.6rem)] text-text-primary transition-colors group-hover:text-primary-strong">
+                        {lead.name}
+                      </h3>
+                    </div>
+                    <Arrow size={22} className="mt-2" />
+                  </div>
 
                   <p className="mt-4 text-pretty text-lg leading-relaxed text-text-secondary">
                     {lead.summary}
                   </p>
 
                   <Stack items={lead.stack.slice(0, 5)} />
-
-                  <span className="mt-7 inline-flex items-center gap-2 font-geometric text-[0.95rem] font-medium text-primary-strong">
-                    Read the case study
-                    <ArrowUpRight
-                      size={16}
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    />
-                  </span>
                 </div>
               </div>
             </Link>
@@ -83,11 +81,17 @@ export default function Projects() {
         {rest.map((p, i) => (
           <StaggerItem key={p.slug} className="h-full">
             <TiltCard tilt={4} className="h-full">
+              {/* Built to the hero card's proportions: p-2 around the media,
+                  a badge sitting on the image, then a tight meta-over-name
+                  row with the arrow held at the right edge. The inner radius
+                  is the card's 22px minus its 8px padding, which is what
+                  keeps the image corner concentric with the card corner
+                  instead of drifting inside it. */}
               <Link
                 href={`/projects/${p.slug}`}
-                className="plate lift group flex h-full flex-col p-2.5"
+                className="plate lift group flex h-full flex-col p-2"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-tile">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[14px]">
                   <Image
                     src={coverFor(p.slug)}
                     alt=""
@@ -95,25 +99,27 @@ export default function Projects() {
                     sizes="(max-width: 640px) 100vw, 33vw"
                     className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                   />
+                  <Badge>{String(i + 2).padStart(2, "0")}</Badge>
                 </div>
 
-                <div className="flex flex-1 flex-col p-4 sm:p-5">
-                  <Meta project={p} number={String(i + 2).padStart(2, "0")} />
+                <div className="flex flex-1 flex-col px-3 pb-2 pt-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="meta truncate text-text-muted">
+                        {p.year} · {statusCopy[p.status]}
+                      </p>
+                      <h3 className="mt-1.5 truncate font-geometric text-xl font-medium text-text-primary transition-colors group-hover:text-primary-strong">
+                        {p.name}
+                      </h3>
+                    </div>
+                    <Arrow size={18} className="mt-1.5" />
+                  </div>
 
-                  <h3 className="text-editorial mt-3 flex items-baseline justify-between gap-3 text-2xl text-text-primary transition-colors group-hover:text-primary-strong">
-                    {p.name}
-                    <ArrowUpRight
-                      size={17}
-                      aria-hidden="true"
-                      className="shrink-0 text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                    />
-                  </h3>
-
-                  <p className="mt-2.5 text-pretty leading-relaxed text-text-secondary">
+                  <p className="mt-3 text-pretty leading-relaxed text-text-secondary">
                     {p.summary}
                   </p>
 
-                  <Stack items={p.stack.slice(0, 3)} className="mt-auto pt-4" />
+                  <Stack items={p.stack.slice(0, 3)} className="mt-auto pt-5" />
                 </div>
               </Link>
             </TiltCard>
@@ -124,18 +130,23 @@ export default function Projects() {
   );
 }
 
-/** Number, year and status — the same line on every card. */
-function Meta({ project, number }: { project: Project; number: string }) {
+/** The pill the hero sits on its cover. */
+function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-      <span className="meta text-text-muted">
-        {number} / {project.year}
-      </span>
-      <span className="meta flex items-center gap-2 text-text-secondary">
-        <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
-        {statusCopy[project.status]}
-      </span>
-    </div>
+    <span className="meta absolute left-3 top-3 rounded-full bg-surface/90 px-3 py-1.5 text-text-secondary backdrop-blur">
+      {children}
+    </span>
+  );
+}
+
+/** The corner arrow, with the hero's lift-and-slide on hover. */
+function Arrow({ size, className = "" }: { size: number; className?: string }) {
+  return (
+    <ArrowUpRight
+      size={size}
+      aria-hidden="true"
+      className={`shrink-0 text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary ${className}`}
+    />
   );
 }
 
