@@ -123,7 +123,7 @@ export default function About() {
               <StaggerItem key={f.label}>
                 <div className="border-b border-line py-4">
                   <p className="meta text-primary-strong">{f.label}</p>
-                  <p className="mt-2 text-sm leading-snug text-text-primary">
+                  <p className="mt-2 leading-snug text-text-primary">
                     {f.value}
                   </p>
                 </div>
@@ -141,7 +141,7 @@ export default function About() {
                 container showing through — one rule between cells, and none
                 on the outside where the border already is. */}
             <div className="h-full bg-surface px-6 py-8">
-              <p className="text-mega text-[clamp(2.2rem,5vw,3.4rem)] text-primary">
+              <p className="text-mega text-[clamp(2.6rem,5.6vw,4rem)] text-primary">
                 <Counter value={f.value} suffix={f.suffix} />
               </p>
               <p className="meta mt-3 text-text-muted">{f.label}</p>

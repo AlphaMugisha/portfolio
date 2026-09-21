@@ -63,7 +63,7 @@ export default function Section({
 
           <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
             <Reveal delay={0.05} y={18}>
-              <h2 className="text-mega max-w-4xl text-[clamp(2rem,5.2vw,3.8rem)] text-text-primary">
+              <h2 className="text-mega max-w-4xl text-[clamp(2.2rem,5.6vw,4.2rem)] text-text-primary">
                 {title}{" "}
                 <span className="text-primary">{accent}</span>
               </h2>
@@ -78,7 +78,7 @@ export default function Section({
 
           {description && (
             <Reveal delay={0.14} y={16}>
-              <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-text-secondary">
+              <p className="mt-6 max-w-2xl text-pretty text-xl leading-relaxed text-text-secondary">
                 {description}
               </p>
             </Reveal>

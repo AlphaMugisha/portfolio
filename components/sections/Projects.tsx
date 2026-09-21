@@ -53,17 +53,17 @@ export default function Projects() {
                 <div className="flex flex-col justify-center p-5 sm:p-8">
                   <Meta project={lead} number="01" />
 
-                  <h3 className="text-display mt-4 text-[clamp(1.5rem,3vw,2.3rem)] text-text-primary transition-colors group-hover:text-primary-strong">
+                  <h3 className="text-display mt-4 text-[clamp(1.7rem,3.3vw,2.6rem)] text-text-primary transition-colors group-hover:text-primary-strong">
                     {lead.name}
                   </h3>
 
-                  <p className="mt-4 text-pretty leading-relaxed text-text-secondary">
+                  <p className="mt-4 text-pretty text-lg leading-relaxed text-text-secondary">
                     {lead.summary}
                   </p>
 
                   <Stack items={lead.stack.slice(0, 5)} />
 
-                  <span className="mt-7 inline-flex items-center gap-2 font-geometric text-sm font-medium text-primary-strong">
+                  <span className="mt-7 inline-flex items-center gap-2 font-geometric text-[0.95rem] font-medium text-primary-strong">
                     Read the case study
                     <ArrowUpRight
                       size={16}
@@ -99,7 +99,7 @@ export default function Projects() {
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
                   <Meta project={p} number={String(i + 2).padStart(2, "0")} />
 
-                  <h3 className="text-editorial mt-3 flex items-baseline justify-between gap-3 text-xl text-text-primary transition-colors group-hover:text-primary-strong">
+                  <h3 className="text-editorial mt-3 flex items-baseline justify-between gap-3 text-2xl text-text-primary transition-colors group-hover:text-primary-strong">
                     {p.name}
                     <ArrowUpRight
                       size={17}
@@ -108,7 +108,7 @@ export default function Projects() {
                     />
                   </h3>
 
-                  <p className="mt-2.5 text-pretty text-sm leading-relaxed text-text-secondary">
+                  <p className="mt-2.5 text-pretty leading-relaxed text-text-secondary">
                     {p.summary}
                   </p>
 
@@ -150,7 +150,7 @@ function Stack({
       {items.map((t) => (
         <li
           key={t}
-          className="chip px-3 py-1 font-geometric text-[11px] text-text-muted"
+          className="chip px-3.5 py-1.5 font-geometric text-text-muted"
         >
           {t}
         </li>

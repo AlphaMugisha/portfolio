@@ -156,6 +156,13 @@
   body {
     color: var(--color-text-primary);
     font-family: var(--font-sans);
+    /* 17px rather than the 16px default. At the measure this page runs, 16px
+       reads small and cramped; the extra pixel is the difference between
+       text you skim and text you settle into. Set here rather than on <html>
+       so Tailwind's rem-based SPACING scale is left alone — bumping the root
+       would inflate every margin and gap on the site along with the type. */
+    font-size: 1.0625rem;
+    line-height: 1.65;
     font-feature-settings: "cv02", "cv03", "cv04", "ss03";
     overflow-x: clip;
     background-color: #FFFFFF;
@@ -225,7 +232,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.038em;
-  line-height: 0.92;
+  line-height: 0.95;
 }
 
 @utility text-display {
@@ -255,9 +262,12 @@
    sampled #0A6EFA would sit at 3.73:1 on the ground. */
 @utility eyebrow {
   font-family: var(--font-geometric);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  /* Tracking comes DOWN as the size goes up. Wide letterspacing is what
+     makes tiny caps legible; at a larger size the same value just looks
+     loose. */
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-primary-strong);
 }
@@ -265,9 +275,9 @@
 /* The workhorse small label — the dashboard chrome face. */
 @utility meta {
   font-family: var(--font-geometric);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
@@ -333,6 +343,8 @@
   background-color: var(--color-bg-raised);
   border: 1px solid var(--color-line);
   border-radius: 999px;
+  font-size: 0.78rem;
+  line-height: 1.1;
 }
 
 /* Buttons. Rest → lift with a widening shadow → press back down. */

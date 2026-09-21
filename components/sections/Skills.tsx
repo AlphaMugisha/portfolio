@@ -36,28 +36,32 @@ export default function Skills() {
       aside={<p className="meta text-text-muted">{total} tools</p>}
       className="bg-ink"
     >
-<div className="space-y-12">
+<div className="space-y-14">
         {skillGroups.map((group, gi) => (
           <Reveal key={group.id} delay={gi * 0.05} y={18}>
-            <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
-              <h3 className="meta text-primary-strong">{group.title}</h3>
-              <p className="text-sm text-text-muted">{group.blurb}</p>
+            <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1 border-b border-line pb-4">
+              <h3 className="eyebrow">{group.title}</h3>
+              <p className="text-text-muted">{group.blurb}</p>
             </div>
 
             <Stagger
-              className="mt-5 grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-8"
+              className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-7"
               stagger={0.03}
             >
               {group.skills.map((s) => (
                 <StaggerItem key={s.name}>
                   {/* `title` carries what the tool is actually used for —
                       the detail that used to be buried in a chip tooltip. */}
+                  {/* The hover tints the whole tile rather than only its
+                      border. On a white page a 1px colour change is almost
+                      nothing; a wash of the accent at 4% reads instantly and
+                      still leaves the logo the brightest thing in the box. */}
                   <div
                     title={s.detail}
-                    className="group flex aspect-square flex-col items-center justify-center gap-2.5 rounded-tile border border-line bg-surface p-2 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[var(--shadow-card)]"
+                    className="group flex aspect-square flex-col items-center justify-center gap-3 rounded-tile border border-line bg-surface p-3 transition-[border-color,transform,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:border-primary hover:bg-[rgba(10,110,250,0.04)] hover:shadow-[var(--shadow-card)]"
                   >
-                    <TechIcon name={s.name} size={24} />
-                    <span className="w-full truncate px-1 text-center font-geometric text-[10.5px] leading-none text-text-muted transition-colors duration-300 group-hover:text-text-primary">
+                    <TechIcon name={s.name} size={30} />
+                    <span className="w-full truncate px-1 text-center font-geometric text-[0.8rem] leading-none text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
                       {s.name}
                     </span>
                   </div>

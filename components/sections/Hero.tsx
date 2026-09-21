@@ -312,7 +312,7 @@ export default function Hero() {
 
               <Tail>
                 <TailItem>
-                  <p className="mt-7 max-w-lg text-pretty text-lg leading-relaxed text-on-band-muted">
+                  <p className="mt-7 max-w-xl text-pretty text-xl leading-relaxed text-on-band-muted">
                     {site.tagline} I build web platforms, embedded electronics
                     and applied AI systems from {site.location}.
                   </p>
@@ -322,7 +322,7 @@ export default function Hero() {
                   <Magnetic pull={8} contentPull={4} radius={90}>
                     <Link
                       href="#projects"
-                      className="btn-depth group inline-flex items-center gap-2.5 rounded-pill bg-primary px-6 py-3.5 font-geometric text-sm font-medium text-on-primary"
+                      className="btn-depth group inline-flex items-center gap-2.5 rounded-pill bg-primary px-7 py-4 font-geometric text-[0.95rem] font-medium text-on-primary"
                     >
                       See my work
                       <motion.span
@@ -338,7 +338,7 @@ export default function Hero() {
                   <Magnetic pull={8} contentPull={4} radius={90}>
                     <Link
                       href="#contact"
-                      className="btn-depth inline-flex items-center rounded-pill border border-line-strong bg-surface px-6 py-3.5 font-geometric text-sm font-medium text-on-band"
+                      className="btn-depth inline-flex items-center rounded-pill border border-line-strong bg-surface px-7 py-4 font-geometric text-[0.95rem] font-medium text-on-band"
                     >
                       Get in touch
                     </Link>
@@ -390,7 +390,7 @@ export default function Hero() {
                       <p className="meta truncate text-text-muted">
                         {featured.year} · {statusCopy[featured.status]}
                       </p>
-                      <p className="truncate font-geometric text-sm font-medium text-text-primary transition-colors group-hover:text-primary-strong">
+                      <p className="truncate font-geometric text-base font-medium text-text-primary transition-colors group-hover:text-primary-strong">
                         {featured.name}
                       </p>
                     </div>

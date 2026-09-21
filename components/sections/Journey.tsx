@@ -202,7 +202,7 @@ export default function Journey() {
 
       <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
         <Reveal delay={0.05} y={18}>
-          <h2 className="text-mega max-w-3xl text-[clamp(2rem,5.2vw,3.8rem)] text-text-primary">
+          <h2 className="text-mega max-w-3xl text-[clamp(2.2rem,5.6vw,4.2rem)] text-text-primary">
             How I got <span className="text-primary">here.</span>
           </h2>
         </Reveal>
