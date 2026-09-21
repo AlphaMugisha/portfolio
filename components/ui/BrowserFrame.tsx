@@ -21,29 +21,44 @@ export default function BrowserFrame({
   children,
   label,
   className = "",
+  compact = false,
+  as: Tag = "figure",
 }: {
   children: ReactNode;
   label: string;
   className?: string;
+  /** Slimmer bar for use inside a card, where a full one eats the cover. */
+  compact?: boolean;
+  as?: "figure" | "div";
 }) {
+  const dot = compact ? "h-2 w-2" : "h-2.5 w-2.5";
+
   return (
-    <figure className={`plate overflow-hidden p-0 ${className}`}>
+    <Tag
+      className={`overflow-hidden rounded-[14px] border border-line-panel bg-bg-raised ${className}`}
+    >
       <div
         aria-hidden="true"
-        className="flex items-center gap-2 border-b border-line-panel bg-bg-raised px-4 py-3"
+        className={`flex items-center gap-2 border-b border-line-panel px-3 ${
+          compact ? "py-2" : "py-3 sm:px-4"
+        }`}
       >
         <span className="flex shrink-0 gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
-          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
-          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className={`${dot} rounded-full bg-line-strong`} />
+          <span className={`${dot} rounded-full bg-line-strong`} />
+          <span className={`${dot} rounded-full bg-line-strong`} />
         </span>
-        <span className="mx-auto max-w-[60%] truncate rounded-full bg-surface px-4 py-1 font-geometric text-[11px] text-text-muted">
+        <span
+          className={`mx-auto max-w-[62%] truncate rounded-full bg-surface px-3 font-geometric text-text-muted ${
+            compact ? "py-0.5 text-[0.7rem]" : "py-1 text-[0.75rem]"
+          }`}
+        >
           {label}
         </span>
         {/* Balances the dots so the label sits optically centred. */}
-        <span className="w-[42px] shrink-0" />
+        <span className={compact ? "w-[34px] shrink-0" : "w-[42px] shrink-0"} />
       </div>
       {children}
-    </figure>
+    </Tag>
   );
 }

@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion-primitives";
 import Section from "@/components/ui/Section";
 import TiltCard from "@/components/ui/TiltCard";
+import BrowserFrame from "@/components/ui/BrowserFrame";
 import { projects, coverFor, statusCopy } from "@/lib/projects";
 
 /**
@@ -41,16 +42,26 @@ export default function Projects() {
               className="plate lift group block p-2"
             >
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-[14px] sm:aspect-auto sm:min-h-[360px]">
-                  <Image
-                    src={coverFor(lead.slug)}
-                    alt=""
-                    fill
-                    sizes="(max-width: 640px) 100vw, 45vw"
-                    className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
+                {/* The cover sits in window chrome. A gradient in a rounded
+                    box is a swatch; the same gradient behind an address bar
+                    is a screenshot of something that exists — which is the
+                    claim a work section is making. */}
+                <BrowserFrame
+                  as="div"
+                  label={lead.name}
+                  className="relative sm:min-h-[360px]"
+                >
+                  <div className="relative aspect-[16/10] sm:absolute sm:inset-0 sm:top-[37px] sm:aspect-auto">
+                    <Image
+                      src={coverFor(lead.slug)}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, 45vw"
+                      className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    />
+                  </div>
                   <Badge>Featured</Badge>
-                </div>
+                </BrowserFrame>
 
                 <div className="flex flex-col justify-center px-4 py-6 sm:px-7">
                   <div className="flex items-start justify-between gap-4">
@@ -70,6 +81,15 @@ export default function Projects() {
                   </p>
 
                   <Stack items={lead.stack.slice(0, 5)} />
+
+                  <span className="btn-depth mt-7 inline-flex w-fit items-center gap-2 rounded-pill bg-primary px-5 py-3 font-geometric text-[0.9rem] font-medium text-on-primary">
+                    Read the case study
+                    <ArrowUpRight
+                      size={16}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </span>
                 </div>
               </div>
             </Link>
@@ -91,16 +111,18 @@ export default function Projects() {
                 href={`/projects/${p.slug}`}
                 className="plate lift group flex h-full flex-col p-2"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[14px]">
-                  <Image
-                    src={coverFor(p.slug)}
-                    alt=""
-                    fill
-                    sizes="(max-width: 640px) 100vw, 33vw"
-                    className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-                  />
+                <BrowserFrame as="div" compact label={p.name} className="relative">
+                  <div className="relative aspect-[16/10]">
+                    <Image
+                      src={coverFor(p.slug)}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    />
+                  </div>
                   <Badge>{String(i + 2).padStart(2, "0")}</Badge>
-                </div>
+                </BrowserFrame>
 
                 <div className="flex flex-1 flex-col px-3 pb-2 pt-4">
                   <div className="flex items-start justify-between gap-3">
@@ -133,7 +155,7 @@ export default function Projects() {
 /** The pill the hero sits on its cover. */
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="meta absolute left-3 top-3 rounded-full bg-surface/90 px-3 py-1.5 text-text-secondary backdrop-blur">
+    <span className="meta absolute right-3 top-2.5 z-10 rounded-full bg-primary px-3 py-1 text-on-primary">
       {children}
     </span>
   );

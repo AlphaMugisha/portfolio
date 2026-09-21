@@ -29,11 +29,19 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * Hover drives it on a mouse; tap and keyboard focus drive it everywhere
  * else, which is why each tile is a real button rather than a div.
  */
+/* The reader opens on whichever tool is tied to the most case studies. An
+   empty panel with one line of instruction was a large white void at the top
+   of the section, and it taught the interaction worse than simply showing it
+   already working. */
+const DEFAULT_TOOL = Object.values(toolIndex).reduce((best, t) =>
+  t.projects.length > best.projects.length ? t : best
+);
+
 export default function Skills() {
   const [active, setActive] = useState<string | null>(null);
   const reduced = useReducedMotion();
   const total = Object.keys(toolIndex).length;
-  const current = active ? toolIndex[active] : null;
+  const current = active ? toolIndex[active] : DEFAULT_TOOL;
 
   return (
     <Section
@@ -144,84 +152,70 @@ function Reader({
   current,
   reduced,
 }: {
-  current: ToolRef | null;
+  current: ToolRef;
   reduced: boolean;
 }) {
   return (
     <div
-      className="plate flex min-h-[148px] items-center px-6 py-5 sm:min-h-[124px]"
+      className="flex min-h-[132px] items-center rounded-card border border-line bg-bg-raised px-6 py-5 sm:min-h-[116px]"
       aria-live="polite"
     >
       <AnimatePresence mode="wait" initial={false}>
-        {current ? (
-          <motion.div
-            key={current.name}
-            initial={reduced ? undefined : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduced ? undefined : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: EASE }}
-            className="flex w-full flex-wrap items-center gap-x-8 gap-y-4"
-          >
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-tile border border-line bg-bg-raised">
-              <TechIcon name={current.name} size={26} />
-            </span>
+        <motion.div
+          key={current.name}
+          initial={reduced ? undefined : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduced ? undefined : { opacity: 0, y: -8 }}
+          transition={{ duration: 0.22, ease: EASE }}
+          className="flex w-full flex-wrap items-center gap-x-8 gap-y-4"
+        >
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-tile border border-line bg-surface">
+            <TechIcon name={current.name} size={26} />
+          </span>
 
-            <div className="min-w-[14rem] flex-1">
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <p className="font-geometric text-lg font-medium text-text-primary">
-                  {current.name}
-                </p>
-                <span className="meta text-text-muted">{current.group}</span>
-              </div>
-              <p className="mt-1 text-pretty leading-snug text-text-secondary">
-                {current.detail}
+          <div className="min-w-[14rem] flex-1">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p className="font-geometric text-lg font-medium text-text-primary">
+                {current.name}
               </p>
+              <span className="meta text-text-muted">{current.group}</span>
             </div>
+            <p className="mt-1 text-pretty leading-snug text-text-secondary">
+              {current.detail}
+            </p>
+          </div>
 
-            {current.projects.length > 0 ? (
-              <div className="flex min-w-0 flex-col gap-2">
-                <span className="meta text-primary-strong">
-                  Named in {current.projects.length} case{" "}
-                  {current.projects.length === 1 ? "study" : "studies"}
-                </span>
-                <ul className="flex flex-wrap gap-2">
-                  {current.projects.map((p) => (
-                    <li key={p.slug}>
-                      <Link
-                        href={`/projects/${p.slug}`}
-                        className="chip group inline-flex items-center gap-1.5 px-3 py-1.5 text-text-secondary transition-colors hover:border-primary hover:text-primary-strong"
-                      >
-                        {p.name}
-                        <ArrowUpRight
-                          size={13}
-                          aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                        />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <p className="max-w-[17rem] text-sm leading-snug text-text-muted">
-                Not named in a case-study stack — those list only what defines
-                each build.
-              </p>
-            )}
-          </motion.div>
-        ) : (
-          <motion.p
-            key="idle"
-            initial={reduced ? undefined : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduced ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.22, ease: EASE }}
-            className="text-pretty text-text-muted"
-          >
-            Hover, tap or tab through a tool below to see what it is for and
-            which case studies name it.
-          </motion.p>
-        )}
+          {current.projects.length > 0 ? (
+            <div className="flex min-w-0 flex-col gap-2">
+              <span className="meta text-primary-strong">
+                Named in {current.projects.length} case{" "}
+                {current.projects.length === 1 ? "study" : "studies"}
+              </span>
+              <ul className="flex flex-wrap gap-2">
+                {current.projects.map((p) => (
+                  <li key={p.slug}>
+                    <Link
+                      href={`/projects/${p.slug}`}
+                      className="chip group inline-flex items-center gap-1.5 px-3 py-1.5 text-text-secondary transition-colors hover:border-primary hover:bg-surface hover:text-primary-strong"
+                    >
+                      {p.name}
+                      <ArrowUpRight
+                        size={13}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="max-w-[17rem] text-sm leading-snug text-text-muted">
+              Not named in a case-study stack — those list only what defines
+              each build.
+            </p>
+          )}
+        </motion.div>
       </AnimatePresence>
     </div>
   );
