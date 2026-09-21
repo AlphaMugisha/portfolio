@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Download } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
 import { Reveal } from "@/components/ui/motion-primitives";
 import Marquee from "@/components/ui/Marquee";
@@ -41,79 +41,94 @@ export default function Contact() {
               </p>
             </Reveal>
 
-            <Reveal delay={0.1}>
-              <Magnetic pull={9} contentPull={5} radius={110} className="mt-9 inline-block">
+            {/* The email is the one control that matters on this page, so it
+                is a filled button at the size of a heading rather than an
+                address sitting in an outlined box. Everything secondary sits
+                under it as a row, which is also what fills the dead half-
+                screen this column used to end on. */}
+            <Reveal delay={0.08}>
+              <Magnetic pull={10} contentPull={5} radius={130} className="mt-9 inline-block">
                 <a
                   href={`mailto:${site.email}`}
-                  className="plate lift group inline-flex flex-wrap items-center gap-4 px-6 py-4"
+                  className="btn-depth group inline-flex flex-wrap items-center gap-4 rounded-card bg-primary px-7 py-5 text-on-primary"
                 >
-                  <span className="text-editorial text-[clamp(1.1rem,2.6vw,1.8rem)] font-medium text-text-primary transition-colors group-hover:text-primary-strong">
+                  <span className="font-geometric text-[clamp(1.1rem,2.4vw,1.6rem)] font-medium">
                     {site.email}
                   </span>
                   <ArrowUpRight
-                    size={20}
+                    size={22}
                     aria-hidden="true"
-                    className="text-text-muted transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary"
+                    className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
                   />
                 </a>
               </Magnetic>
             </Reveal>
+
+            <Reveal delay={0.14}>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href={site.cv}
+                  download
+                  className="btn-depth inline-flex items-center gap-2.5 rounded-pill border border-line-strong bg-surface px-5 py-3 font-geometric text-[0.9rem] font-medium text-text-primary transition-colors hover:border-primary hover:text-primary-strong"
+                >
+                  <Download size={16} aria-hidden="true" />
+                  Download CV
+                </a>
+
+                {social.map((sn) => {
+                  const Icon = sn.icon;
+                  return (
+                    <a
+                      key={sn.label}
+                      href={sn.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-depth group inline-flex items-center gap-2.5 rounded-pill border border-line-strong bg-surface px-5 py-3 font-geometric text-[0.9rem] font-medium text-text-primary transition-colors hover:border-primary hover:text-primary-strong"
+                    >
+                      <Icon size={16} />
+                      {sn.label}
+                      <ArrowUpRight
+                        size={14}
+                        aria-hidden="true"
+                        className="text-text-muted transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </a>
+                  );
+                })}
+              </div>
+            </Reveal>
           </div>
 
-          <Reveal delay={0.14}>
+          <Reveal delay={0.18}>
             <dl className="space-y-4">
               <TiltCard tilt={0} glow={190}>
                 <div className="plate lift px-5 py-4">
-                  <dt className="meta text-text-muted">Location</dt>
-                  <dd className="mt-2.5 text-text-primary">{site.location}</dd>
+                  <dt className="meta text-primary-strong">Location</dt>
+                  <dd className="mt-2 text-text-primary">{site.location}</dd>
                 </div>
               </TiltCard>
 
               <TiltCard tilt={0} glow={190}>
                 <div className="plate lift px-5 py-4">
-                  <dt className="meta text-text-muted">Availability</dt>
-                  <dd className="mt-2.5 flex items-center gap-2.5 text-text-primary">
-                    <span
-                      aria-hidden="true"
-                      className="h-1.5 w-1.5 rounded-full bg-primary"
-                    />
+                  <dt className="meta text-primary-strong">Availability</dt>
+                  <dd className="mt-2 flex items-center gap-2.5 text-text-primary">
+                    <span className="relative grid h-2 w-2 place-items-center">
+                      <span className="absolute h-2 w-2 animate-ping rounded-full bg-primary opacity-60 motion-reduce:hidden" />
+                      <span className="relative h-2 w-2 rounded-full bg-primary" />
+                    </span>
                     Open to new work
                   </dd>
                 </div>
               </TiltCard>
 
-              <div>
-                <dt className="meta mb-3 text-text-muted">Elsewhere</dt>
-                <dd className="space-y-3">
-                  {social.map((s) => {
-                    const Icon = s.icon;
-                    return (
-                      <a
-                        key={s.label}
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="plate lift group flex items-center justify-between px-5 py-3.5"
-                      >
-                        <span className="flex items-center gap-3">
-                          <Icon
-                            size={14}
-                            className="text-text-muted transition-colors group-hover:text-primary"
-                          />
-                          <span className="text-sm text-text-secondary transition-colors group-hover:text-text-primary">
-                            {s.label}
-                          </span>
-                        </span>
-                        <ArrowUpRight
-                          size={14}
-                          aria-hidden="true"
-                          className="text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                        />
-                      </a>
-                    );
-                  })}
-                </dd>
-              </div>
+              <TiltCard tilt={0} glow={190}>
+                <div className="plate lift px-5 py-4">
+                  <dt className="meta text-primary-strong">Based around</dt>
+                  <dd className="mt-2 text-text-primary">
+                    Web platforms · Embedded · Applied AI
+                  </dd>
+                </div>
+              </TiltCard>
             </dl>
           </Reveal>
         </div>
