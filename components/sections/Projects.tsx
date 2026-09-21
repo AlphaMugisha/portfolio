@@ -30,6 +30,7 @@ export default function Projects() {
       accent="built and shipped."
       description="Platforms, connected hardware and applied AI — built for real organisations, not for a tutorial."
       aside={<p className="meta text-text-muted">{projects.length} projects</p>}
+      wash="left"
       className="bg-ink"
     >
       {lead && (

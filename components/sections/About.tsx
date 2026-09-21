@@ -47,6 +47,7 @@ export default function About() {
       title="I build systems where"
       accent="software meets hardware."
       description="How I got into this, what I reach for first, and the habits the work came from."
+      wash="left"
       className="bg-ink"
     >
       {/* ---- portrait and prose --------------------------------- */}

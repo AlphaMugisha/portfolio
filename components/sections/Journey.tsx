@@ -14,6 +14,7 @@ import {
 } from "framer-motion";
 import { Reveal, EASE } from "@/components/ui/motion-primitives";
 import TiltCard from "@/components/ui/TiltCard";
+import Wash from "@/components/ui/Wash";
 import { journey } from "@/lib/journey";
 
 /**
@@ -229,6 +230,7 @@ export default function Journey() {
         data-band="dark"
         className="relative scroll-mt-24 bg-ink"
       >
+        <Wash side="left" />
         <div
           ref={(el) => {
             outer.current = el;
@@ -289,8 +291,9 @@ export default function Journey() {
         outer.current = el;
       }}
       data-band="dark"
-      className="scroll-mt-24 bg-ink py-24 sm:py-28"
+      className="relative scroll-mt-24 bg-ink py-24 sm:py-28"
     >
+      <Wash side="left" />
       {header}
 
       <div

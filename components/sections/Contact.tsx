@@ -28,6 +28,7 @@ export default function Contact() {
         title="Let's build"
         accent="something."
         description="Open to freelance work, full-time roles and collaboration."
+        wash="right"
         className="bg-ink"
       >
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">

@@ -43,74 +43,81 @@ export default function Skills() {
       accent="actually use."
       description={`${total} technologies across four layers of the same craft. Pick one up and it will show you the case studies that name it.`}
       aside={<p className="meta text-text-muted">{total} tools</p>}
+      wash="right"
       className="bg-ink"
     >
       <Reveal>
         <Reader current={current} reduced={!!reduced} />
       </Reveal>
 
-      <div className="mt-12 space-y-14">
+      {/* Category cards of rows, not a grid of square tiles. A row gives a
+          name room to be read in full — the tiles were truncating "Tailwind
+          CSS" and "Arduino Uno" at the exact moment the point was
+          recognition — and it leaves space on the right for the count. */}
+      <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {skillGroups.map((group, gi) => (
-          <Reveal key={group.id} delay={gi * 0.05} y={18}>
-            <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1 border-b border-line pb-4">
+          <Reveal key={group.id} delay={gi * 0.05} y={18} className="h-full">
+            <section className="plate h-full p-6 sm:p-7">
               <h3 className="eyebrow">{group.title}</h3>
-              <p className="text-text-muted">{group.blurb}</p>
-            </div>
+              <p className="mt-2 text-sm leading-relaxed text-text-muted">
+                {group.blurb}
+              </p>
 
-            <ul className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-7">
-              {group.skills.map((s) => {
-                const ref = toolIndex[s.name];
-                const used = ref.projects.length;
-                const on = active === s.name;
-                return (
-                  <li key={s.name}>
-                    <button
-                      type="button"
-                      onMouseEnter={() => setActive(s.name)}
-                      onFocus={() => setActive(s.name)}
-                      onClick={() => setActive(on ? null : s.name)}
-                      aria-pressed={on}
-                      aria-label={
-                        used
-                          ? `${s.name} — named in ${used} case ${
-                              used === 1 ? "study" : "studies"
-                            }`
-                          : s.name
-                      }
-                      className={`relative flex aspect-square w-full flex-col items-center justify-center gap-3 rounded-tile border p-3 transition-[border-color,transform,box-shadow,background-color] duration-300 ${
-                        on
-                          ? "-translate-y-1 border-primary bg-[rgba(10,110,250,0.06)] shadow-[var(--shadow-card)]"
-                          : "border-line bg-surface hover:-translate-y-1 hover:border-primary hover:bg-[rgba(10,110,250,0.04)] hover:shadow-[var(--shadow-card)]"
-                      }`}
-                    >
-                      {/* The count is visible without interaction, so the
-                          cross-reference is scannable rather than hidden
-                          behind a hover nobody knows to try. */}
-                      {used > 0 && (
-                        <span
-                          aria-hidden="true"
-                          className={`absolute right-2 top-2 grid h-5 min-w-5 place-items-center rounded-full px-1 font-geometric text-[0.65rem] font-semibold transition-colors ${
-                            on
-                              ? "bg-primary text-on-primary"
-                              : "bg-bg-raised text-text-muted"
-                          }`}
-                        >
-                          {used}
-                        </span>
-                      )}
-                      <TechIcon name={s.name} size={30} />
-                      <span
-                        className={`w-full truncate px-1 text-center font-geometric text-[0.8rem] leading-none transition-colors duration-300 ${
-                          on ? "text-text-primary" : "text-text-secondary"
+              <ul className="mt-5">
+                {group.skills.map((s) => {
+                  const used = toolIndex[s.name].projects.length;
+                  const on = active === s.name;
+                  return (
+                    <li key={s.name} className="border-b border-line last:border-0">
+                      <button
+                        type="button"
+                        onMouseEnter={() => setActive(s.name)}
+                        onFocus={() => setActive(s.name)}
+                        onClick={() => setActive(on ? null : s.name)}
+                        aria-pressed={on}
+                        aria-label={
+                          used
+                            ? `${s.name} — named in ${used} case ${
+                                used === 1 ? "study" : "studies"
+                              }`
+                            : s.name
+                        }
+                        className={`flex w-full items-center gap-3 rounded-pill px-2 py-2.5 text-left transition-colors duration-200 ${
+                          on ? "bg-[rgba(10,110,250,0.07)]" : "hover:bg-bg-raised"
                         }`}
                       >
-                        {s.name}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                        <span className="grid h-6 w-6 shrink-0 place-items-center">
+                          <TechIcon name={s.name} size={20} />
+                        </span>
+
+                        <span
+                          className={`min-w-0 flex-1 truncate font-geometric text-[0.95rem] transition-colors ${
+                            on ? "text-primary-strong" : "text-text-primary"
+                          }`}
+                        >
+                          {s.name}
+                        </span>
+
+                        {/* Real data on the right, where his proficiency pill
+                            sits. A self-assessed "Strong" would be a claim
+                            nobody has made; a project count is checkable. */}
+                        {used > 0 && (
+                          <span
+                            className={`shrink-0 rounded-full px-2.5 py-1 font-geometric text-[0.7rem] font-medium transition-colors ${
+                              on
+                                ? "bg-primary text-on-primary"
+                                : "bg-bg-raised text-text-muted"
+                            }`}
+                          >
+                            {used} {used === 1 ? "project" : "projects"}
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
           </Reveal>
         ))}
       </div>

@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/ui/motion-primitives";
+import Wash from "@/components/ui/Wash";
 
 /* ------------------------------------------------------------------
    The section header.
@@ -35,6 +36,7 @@ export default function Section({
   children,
   className = "",
   aside,
+  wash = "left",
 }: {
   id: string;
   /** Small accent label above the heading — "Toolbox", "Selected work". */
@@ -49,13 +51,17 @@ export default function Section({
   className?: string;
   /** Sits opposite the heading on wide screens — a count, a link. */
   aside?: ReactNode;
+  /** Which way the background wash leans. Alternate it down the page. */
+  wash?: "left" | "right";
 }) {
   return (
     <section
       id={id}
-      className={`scroll-mt-28 py-20 sm:py-28 lg:py-32 ${className}`}
+      className={`relative scroll-mt-28 py-20 sm:py-28 lg:py-32 ${className}`}
     >
-      <div className={MEASURE}>
+      <Wash side={wash} />
+
+      <div className={`relative ${MEASURE}`}>
         <header>
           <Reveal y={14}>
             <p className="eyebrow">{eyebrow}</p>
