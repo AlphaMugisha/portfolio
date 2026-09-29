@@ -7,7 +7,6 @@ import {
   StaggerItem,
   Counter,
 } from "@/components/ui/motion-primitives";
-import TiltCard from "@/components/ui/TiltCard";
 import Section from "@/components/ui/Section";
 import { site } from "@/lib/site";
 
@@ -20,9 +19,10 @@ import { site } from "@/lib/site";
  * the same thing twice at the same size, and the better sentence deserved
  * the bigger position.
  *
- * The portrait carries a small overlapping plate, the same opposed-tilt
- * device the hero uses, so the two image moments on the page belong to one
- * language rather than being unrelated treatments.
+ * The portrait is a plain framed image now: no plate padding, no tilt, no
+ * 3D response to the pointer. A photograph in a luxury layout is held by its
+ * own edge and by the white around it, and every device added on top of that
+ * — a mount, a rotation, a glow following the cursor — reads as a widget.
  */
 
 const FACTS = [
@@ -51,42 +51,31 @@ export default function About() {
       className="bg-ink"
     >
       {/* ---- portrait and prose --------------------------------- */}
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)] lg:gap-16">
+      <div className="grid gap-16 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] lg:gap-20">
         <div className="relative">
-          {/* The reveal wraps TiltCard rather than sitting inside it.
-              Nested within TiltCard's 3D-transformed layer, the viewport
-              observer never fired — and a clip-path reveal that never fires
-              does not degrade to "unanimated", it leaves the portrait
-              permanently invisible. Every other reveal on this page sits
-              outside a transformed ancestor and works; this one now does
-              too. */}
           <Reveal y={22}>
-            <TiltCard tilt={3} className="plate p-2.5 lg:-rotate-1">
-              <div className="relative overflow-hidden rounded-tile">
-                <Image
-                  src="/images/portrait.jpg"
-                  alt={`Portrait of ${site.name}`}
-                  width={1200}
-                  height={1500}
-                  sizes="(max-width: 1024px) 100vw, 28vw"
-                  className="aspect-4/5 w-full rounded-tile object-cover"
-                />
-                <span className="meta absolute left-3 top-3 rounded-full bg-surface/90 px-3 py-1.5 text-text-secondary backdrop-blur">
-                  {site.location}
-                </span>
-              </div>
-            </TiltCard>
+            <div className="relative overflow-hidden rounded-card border border-line-panel">
+              <Image
+                src="/images/portrait.jpg"
+                alt={`Portrait of ${site.name}`}
+                width={1200}
+                height={1500}
+                sizes="(max-width: 1024px) 100vw, 28vw"
+                className="aspect-4/5 w-full object-cover"
+              />
+            </div>
           </Reveal>
 
-          {/* The signature plate, leaning against the portrait's tilt —
-              the same device the hero uses on its pile. */}
-          <Reveal delay={0.25}>
-            <div className="plate absolute -bottom-6 -right-3 z-10 flex items-center gap-3 px-4 py-3 lg:rotate-2">
+          {/* The signature, sitting on the rule under the portrait rather
+              than floating over its corner on an angle. */}
+          <Reveal delay={0.2}>
+            <div className="mt-5 flex items-center gap-4 border-t border-line pt-4">
               <span className="script text-2xl leading-none text-text-primary">
                 {site.shortName.toLowerCase()}
               </span>
-              <span className="h-7 w-px bg-line" aria-hidden="true" />
-              <span className="meta text-primary-strong">
+              <span className="h-5 w-px bg-line" aria-hidden="true" />
+              <span className="meta text-text-muted">{site.location}</span>
+              <span className="meta ml-auto text-primary-strong">
                 {new Date().getFullYear()}
               </span>
             </div>
@@ -94,7 +83,7 @@ export default function About() {
         </div>
 
         <div className="flex flex-col justify-center">
-          <div className="space-y-5 text-pretty leading-relaxed text-text-secondary">
+          <div className="space-y-6 text-pretty text-text-secondary">
             <Reveal delay={0.05}>
               <p>
                 My work begins with the data. Before a screen exists there is a
@@ -115,16 +104,16 @@ export default function About() {
 
           {/* Facts as a spec table, not four boxes. Hairlines are enough
               separation at this size, and boxes here would compete with the
-              portrait plate sitting right beside them. */}
+              portrait beside them. */}
           <Stagger
-            className="mt-10 grid grid-cols-2 gap-x-8 border-t border-line"
+            className="mt-14 grid grid-cols-2 gap-x-10 border-t border-line"
             stagger={0.06}
           >
             {FACTS.map((f) => (
               <StaggerItem key={f.label}>
-                <div className="border-b border-line py-4">
+                <div className="border-b border-line py-5">
                   <p className="meta text-primary-strong">{f.label}</p>
-                  <p className="mt-2 leading-snug text-text-primary">
+                  <p className="text-editorial mt-2 text-lg text-text-primary">
                     {f.value}
                   </p>
                 </div>
@@ -134,18 +123,27 @@ export default function About() {
         </div>
       </div>
 
-      {/* ---- the figures, as a strip ---------------------------- */}
-      <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-card border border-line-panel bg-line sm:grid-cols-3">
+      {/* ---- the figures ----------------------------------------
+          Three numbers on one rule, separated by hairlines. They used to sit
+          in a bordered strip of filled cells; at this size the numeral is
+          the object, and putting a box around a numeral only makes it a
+          statistic on a dashboard. */}
+      <div className="mt-24 grid grid-cols-1 border-t border-line sm:grid-cols-3">
         {FIGURES.map((f, i) => (
           <Reveal key={f.label} delay={i * 0.08} className="h-full">
-            {/* Each cell is opaque over a 1px gap, so the "dividers" are the
-                container showing through — one rule between cells, and none
-                on the outside where the border already is. */}
-            <div className="h-full bg-surface px-6 py-8">
-              <p className="text-mega text-[clamp(2.6rem,5.6vw,4rem)] text-primary">
+            {/* The divider is decided by the index, not by `first:`. Each cell
+                is wrapped in its own Reveal, so every cell IS the first child
+                of its wrapper and a `first:` variant would strip the rule off
+                all three. */}
+            <div
+              className={`h-full border-b border-line py-10 sm:border-b-0 sm:py-12 ${
+                i > 0 ? "sm:border-l sm:pl-10" : ""
+              }`}
+            >
+              <p className="text-mega text-[clamp(3.2rem,7vw,5.5rem)] text-primary">
                 <Counter value={f.value} suffix={f.suffix} />
               </p>
-              <p className="meta mt-3 text-text-muted">{f.label}</p>
+              <p className="meta mt-4 text-text-muted">{f.label}</p>
             </div>
           </Reveal>
         ))}

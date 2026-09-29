@@ -7,25 +7,26 @@ import Wash from "@/components/ui/Wash";
 /* ------------------------------------------------------------------
    The section header.
 
-   Three lines, stacked, then the content at full width beneath:
+   A hairline across the full measure, the section name and any aside
+   sitting on it as small tracked capitals, then the heading in the display
+   serif with its closing clause in italic, then one supporting line.
 
-     a small accent eyebrow naming the section,
-     a real sentence for a heading with its closing clause in the accent,
-     one supporting line.
+   The rule is the part that does the work. It is what every luxury
+   property and fashion site opens a section with, and it is why the header
+   reads as a masthead rather than as a large paragraph: the reader sees the
+   division of the page before they read a word of it.
 
    The heading is a SENTENCE, not a label. "Work" tells a reader what the
    section is filed under; "Things I have built and shipped" tells them what
-   they are about to look at, and the accent on the closing clause is what
-   stops a long heading reading as a paragraph.
-
-   This replaces a sticky label column. That version kept the section name on
-   screen the whole way down, but it spent a quarter of every row on a word
-   and pushed all the content into the remaining three-quarters — so nothing
-   ever got the full measure, and the page never opened up.
+   they are about to look at, and the italic on the closing clause is what
+   stops a long serif heading reading as prose.
    ------------------------------------------------------------------ */
 
 /** The shared measure. Everything on the page lines up to this. */
 export const MEASURE = "mx-auto w-full max-w-[1320px] px-6 sm:px-10";
+
+/** The vertical rhythm. 90 / 133 / 180 — the reference's top three steps. */
+export const SECTION_PAD = "py-[90px] sm:py-[133px] lg:py-[180px]";
 
 export default function Section({
   id,
@@ -39,17 +40,17 @@ export default function Section({
   wash = "left",
 }: {
   id: string;
-  /** Small accent label above the heading — "Toolbox", "Selected work". */
+  /** Small accent label on the rule — "Toolbox", "Selected work". */
   eyebrow: string;
-  /** The heading, up to the accent clause. */
+  /** The heading, up to the italic clause. */
   title: string;
-  /** The closing clause, set in the accent colour. */
+  /** The closing clause, set in italic serif and the accent colour. */
   accent: string;
   /** One supporting line under the heading. */
   description?: string;
   children: ReactNode;
   className?: string;
-  /** Sits opposite the heading on wide screens — a count, a link. */
+  /** Sits opposite the section name on the rule — a count, a link. */
   aside?: ReactNode;
   /** Which way the background wash leans. Alternate it down the page. */
   wash?: "left" | "right";
@@ -57,41 +58,39 @@ export default function Section({
   return (
     <section
       id={id}
-      className={`relative scroll-mt-28 py-20 sm:py-28 lg:py-32 ${className}`}
+      className={`relative scroll-mt-24 ${SECTION_PAD} ${className}`}
     >
       <Wash side={wash} />
 
       <div className={`relative ${MEASURE}`}>
         <header>
-          <Reveal y={14}>
-            <p className="eyebrow">{eyebrow}</p>
+          <Reveal y={10}>
+            {/* Name and aside sit ON the rule, not above it. */}
+            <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2 border-t border-line pt-5">
+              <p className="eyebrow">{eyebrow}</p>
+              {aside}
+            </div>
           </Reveal>
 
-          <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-            <Reveal delay={0.05} y={18}>
-              <h2 className="text-mega max-w-4xl text-[clamp(2.2rem,5.6vw,4.2rem)] text-text-primary">
-                {title}{" "}
-                <span className="text-primary">{accent}</span>
-              </h2>
-            </Reveal>
-
-            {aside && (
-              <Reveal delay={0.12} y={14}>
-                {aside}
-              </Reveal>
-            )}
-          </div>
+          <Reveal delay={0.06} y={16}>
+            <h2 className="text-mega mt-10 max-w-[19ch] text-[clamp(2.6rem,7vw,7.1rem)] text-text-primary sm:mt-14">
+              {title} <span className="text-clause">{accent}</span>
+            </h2>
+          </Reveal>
 
           {description && (
-            <Reveal delay={0.14} y={16}>
-              <p className="mt-6 max-w-2xl text-pretty text-xl leading-relaxed text-text-secondary">
+            <Reveal delay={0.12} y={14}>
+              {/* Held to the right of the heading's left edge on wide
+                  screens — the offset is what keeps a two-part header from
+                  stacking into one block of flush-left text. */}
+              <p className="lead mt-8 max-w-[46ch] text-text-secondary lg:ml-[34%]">
                 {description}
               </p>
             </Reveal>
           )}
         </header>
 
-        <div className="mt-12 sm:mt-16">{children}</div>
+        <div className="mt-16 sm:mt-24">{children}</div>
       </div>
     </section>
   );

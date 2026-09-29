@@ -1,21 +1,24 @@
 import type { ReactNode } from "react";
 
 /**
- * A browser window around a screenshot.
+ * A captioned frame around a screenshot.
  *
- * A cropped image of a website could be a mockup, a concept, or a render. The
- * same image inside window chrome reads as a thing that exists and was
- * opened — which is the claim a case study is making, and the cheapest way
- * to make it credibly.
+ * This used to draw browser chrome — three traffic-light dots and a pill
+ * holding the project name — on the argument that an image inside window
+ * chrome reads as a thing that exists rather than a render. That argument
+ * still holds, but the dots are the single most product-page-looking object
+ * a layout can contain, and they were sitting at the top of every card in
+ * the work section.
  *
- * The chrome is drawn, not photographed: three dots and a label bar built
- * from the site's own tokens, so it inherits the palette instead of pasting
- * some other operating system onto the page. `label` takes the project name
- * rather than a fake URL — inventing a plausible address for a site that may
- * not be public would be a small lie in a section about verified work.
+ * So the claim is made a different way: the media sits in a hairline frame
+ * with the project's name set across a caption bar above it, in the same
+ * tracked capitals every label on the site uses. It reads as a plate in a
+ * catalogue — which is a stronger frame for finished work than a browser
+ * window, and it is the site's own language rather than an operating
+ * system's pasted onto the page.
  *
- * Decorative throughout: the chrome is `aria-hidden`, so a screen reader
- * hears only whatever the caller puts inside.
+ * Decorative throughout: the bar is `aria-hidden`, so a screen reader hears
+ * only whatever the caller puts inside.
  */
 export default function BrowserFrame({
   children,
@@ -31,32 +34,20 @@ export default function BrowserFrame({
   compact?: boolean;
   as?: "figure" | "div";
 }) {
-  const dot = compact ? "h-2 w-2" : "h-2.5 w-2.5";
-
   return (
     <Tag
-      className={`overflow-hidden rounded-[14px] border border-line-panel bg-bg-raised ${className}`}
+      className={`overflow-hidden rounded-card border border-line-panel bg-surface ${className}`}
     >
       <div
         aria-hidden="true"
-        className={`flex items-center gap-2 border-b border-line-panel px-3 ${
-          compact ? "py-2" : "py-3 sm:px-4"
+        className={`flex items-center justify-between gap-4 border-b border-line-panel px-4 ${
+          compact ? "py-2.5" : "py-3 sm:px-5"
         }`}
       >
-        <span className="flex shrink-0 gap-1.5">
-          <span className={`${dot} rounded-full bg-line-strong`} />
-          <span className={`${dot} rounded-full bg-line-strong`} />
-          <span className={`${dot} rounded-full bg-line-strong`} />
-        </span>
-        <span
-          className={`mx-auto max-w-[62%] truncate rounded-full bg-surface px-3 font-geometric text-text-muted ${
-            compact ? "py-0.5 text-[0.7rem]" : "py-1 text-[0.75rem]"
-          }`}
-        >
-          {label}
-        </span>
-        {/* Balances the dots so the label sits optically centred. */}
-        <span className={compact ? "w-[34px] shrink-0" : "w-[42px] shrink-0"} />
+        <span className="meta min-w-0 truncate text-text-muted">{label}</span>
+        {/* A rule rather than an icon: it fills the bar to the right edge and
+            makes the label sit on something. */}
+        <span className="h-px w-10 shrink-0 bg-line" />
       </div>
       {children}
     </Tag>

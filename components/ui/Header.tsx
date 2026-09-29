@@ -7,7 +7,7 @@ import { Menu, X, Download } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
 import { site, navItems } from "@/lib/site";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.7, 0, 0.3, 1] as const;
 
 /**
  * Site header — an ordinary one, on purpose.
@@ -17,9 +17,14 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * the hero and picks up a glass fill and a hairline once the page has
  * scrolled, which is the whole of its cleverness.
  *
+ * The links are small tracked capitals rather than sentence case at 13.5px:
+ * at this scale a navigation label is a mark on the page, not something a
+ * reader parses, and tracking it out is what turns five words into a rule.
+ * They sit on the same 1320px measure as every section, so the wordmark
+ * lands on the same grid line as every heading below it.
+ *
  * The underline on the active link is a shared `layoutId`, so moving between
- * sections slides one rule rather than cross-fading five. That is the single
- * detail worth having here; everything else should be unsurprising.
+ * sections slides one rule rather than cross-fading five.
  */
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -77,7 +82,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${
           scrolled || open
             ? "border-b border-line bg-surface/85 backdrop-blur-xl"
             : "border-b border-transparent"
@@ -87,17 +92,17 @@ export default function Header() {
             pad inside and the wordmark lands 40px right of the grid the
             rest of the page is built on. */}
         <div className="px-6 sm:px-10">
-          <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-6 sm:h-[72px]">
+          <div className="mx-auto flex h-16 max-w-[1320px] items-center justify-between gap-6 sm:h-[90px]">
           <Link
             href="/"
-            className="script shrink-0 text-2xl leading-none text-text-primary"
+            className="script shrink-0 text-[1.75rem] leading-none text-text-primary"
           >
             {site.shortName.toLowerCase()}
           </Link>
 
           {/* ---- links ------------------------------------------- */}
           <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-1">
+            <ul className="flex items-center gap-2">
               {navItems.map((item) => {
                 const id = item.href.split("#")[1];
                 const on = active === id;
@@ -106,7 +111,7 @@ export default function Header() {
                     <Link
                       href={item.href}
                       aria-current={on ? "page" : undefined}
-                      className={`relative block px-3.5 py-2 font-geometric text-[13.5px] transition-colors ${
+                      className={`meta relative block px-4 py-2 transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${
                         on
                           ? "text-text-primary"
                           : "text-text-secondary hover:text-text-primary"
@@ -117,7 +122,7 @@ export default function Header() {
                         <motion.span
                           layoutId="nav-underline"
                           aria-hidden="true"
-                          className="absolute inset-x-3.5 -bottom-0.5 h-[2px] rounded-full bg-primary"
+                          className="absolute inset-x-4 -bottom-0.5 h-px bg-primary"
                           transition={
                             reduced
                               ? { duration: 0 }
@@ -137,9 +142,9 @@ export default function Header() {
             <a
               href={site.cv}
               download
-              className="btn-depth hidden items-center gap-2 rounded-full bg-primary px-4 py-2 font-geometric text-[13px] font-medium text-on-primary sm:inline-flex"
+              className="btn-depth label-ui hidden items-center gap-2.5 rounded-pill bg-primary px-5 py-3 text-on-primary hover:bg-primary-strong sm:inline-flex"
             >
-              <Download size={15} aria-hidden="true" />
+              <Download size={14} aria-hidden="true" />
               CV
             </a>
 
@@ -148,7 +153,7 @@ export default function Header() {
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
               aria-label={open ? "Close menu" : "Open menu"}
-              className="grid h-9 w-9 place-items-center rounded-full text-text-primary transition-colors hover:bg-bg-raised md:hidden"
+              className="grid h-10 w-10 place-items-center rounded-pill border border-line text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] hover:border-primary hover:text-primary md:hidden"
             >
               {open ? <X size={19} /> : <Menu size={19} />}
             </button>
@@ -165,7 +170,7 @@ export default function Header() {
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.28, ease: EASE }}
+            transition={{ duration: 0.4, ease: EASE }}
             className="fixed inset-x-0 top-16 z-40 border-b border-line bg-surface px-6 pb-8 pt-4 shadow-[var(--shadow-card)] md:hidden"
           >
             <ul className="flex flex-col">
@@ -174,7 +179,7 @@ export default function Header() {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="block border-b border-line py-3.5 font-geometric text-base text-text-primary"
+                    className="text-editorial block border-b border-line py-4 text-2xl text-text-primary"
                   >
                     {item.label}
                   </Link>
@@ -186,9 +191,9 @@ export default function Header() {
               <a
                 href={site.cv}
                 download
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 font-geometric text-[13px] font-medium text-on-primary"
+                className="label-ui inline-flex flex-1 items-center justify-center gap-2.5 rounded-pill bg-primary px-4 py-4 text-on-primary"
               >
-                <Download size={15} aria-hidden="true" />
+                <Download size={14} aria-hidden="true" />
                 Download CV
               </a>
               <a
@@ -196,7 +201,7 @@ export default function Header() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
-                className="grid h-11 w-11 place-items-center rounded-full border border-line text-text-secondary"
+                className="grid h-12 w-12 place-items-center rounded-pill border border-line text-text-secondary"
               >
                 <GithubIcon size={17} />
               </a>
@@ -205,7 +210,7 @@ export default function Header() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
-                className="grid h-11 w-11 place-items-center rounded-full border border-line text-text-secondary"
+                className="grid h-12 w-12 place-items-center rounded-pill border border-line text-text-secondary"
               >
                 <LinkedinIcon size={17} />
               </a>

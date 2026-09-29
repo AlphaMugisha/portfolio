@@ -53,9 +53,15 @@ export default function SplitText({
   const go = trigger === "mount" || inView;
 
   if (reduced) {
+    /* The static branch still has to carry `letterClassName`. It used to
+       render the bare string, which silently dropped it — and since that
+       class is what makes the hero's second line italic and accented, the
+       headline lost its one piece of emphasis for every reader with reduced
+       motion switched on. A fallback may skip the animation; it may not skip
+       the styling the animation happened to be attached to. */
     return (
       <Tag className={className} style={style} {...rest}>
-        {text}
+        <span className={letterClassName}>{text}</span>
       </Tag>
     );
   }
@@ -85,7 +91,7 @@ export default function SplitText({
             transition={{
               duration: 1.1,
               delay: delay + i * stagger,
-              ease: [0.16, 1, 0.3, 1],
+              ease: [0.7, 0, 0.3, 1],
             }}
           >
             {char === " " ? " " : char}

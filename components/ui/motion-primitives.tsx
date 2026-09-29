@@ -16,15 +16,17 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
    Four rules the whole site obeys, so the animation reads as one system
    rather than a collection of effects:
 
-   1. Everything eases OUT (expo). Content arrives and settles; it never
-      bounces, springs past, or draws attention to its own arrival.
+   1. Everything runs on ONE symmetric curve — cubic-bezier(0.7, 0, 0.3, 1).
+      An ease-out curve leaves fast and settles slowly, which reads as eager;
+      this one accelerates and decelerates equally, so nothing on the page
+      ever arrives in a hurry.
    2. Motion enters from below or fades. Never sideways, never rotating.
-   3. Durations sit between 0.6s and 1.1s — slow enough to feel deliberate,
-      short enough never to hold the reader up.
+   3. Durations are 0.4s, 1s or 1.6s and nothing else. Reveals take the full
+      second: at this weight of type, a fast reveal reads as a flicker.
    4. Every primitive returns a plain static element under reduced motion.
    ------------------------------------------------------------------ */
 
-export const EASE = [0.16, 1, 0.3, 1] as const;
+export const EASE = [0.7, 0, 0.3, 1] as const;
 
 /* ---------- Reveal ------------------------------------------------ */
 
@@ -69,7 +71,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y }}
       animate={inView ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration: 0.85, delay, ease: EASE }}
+      transition={{ duration: 1, delay, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -128,7 +130,7 @@ export function StaggerItem({
       className={className}
       variants={{
         hidden: { opacity: 0, y: 22 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
+        visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
       }}
     >
       {children}

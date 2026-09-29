@@ -15,12 +15,11 @@ import {
 import SplitText from "@/components/ui/SplitText";
 import Marquee from "@/components/ui/Marquee";
 import Magnetic from "@/components/ui/Magnetic";
-import TechIcon from "@/components/ui/TechIcon";
 import { MEASURE } from "@/components/ui/Section";
 import { projects, coverFor, statusCopy } from "@/lib/projects";
 import { site } from "@/lib/site";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.7, 0, 0.3, 1] as const;
 
 const TICKER = [
   "Software",
@@ -33,13 +32,6 @@ const TICKER = [
 
 const LINE_ONE = "Software";
 const LINE_TWO = "Engineer.";
-
-/** Marks floating beside the composition — the stack, at a glance. */
-const FLOATERS = [
-  { name: "React", className: "-left-5 top-[18%]", delay: 0 },
-  { name: "ESP32", className: "-right-4 top-[8%]", delay: 0.8 },
-  { name: "PostgreSQL", className: "-right-6 bottom-[26%]", delay: 1.6 },
-] as const;
 
 /* ------------------------------------------------------------------
    The opening timeline. One set of beats rather than a hand-tuned delay on
@@ -61,7 +53,7 @@ const TAIL = {
 
 const TAIL_ITEM = {
   hidden: { opacity: 0, y: 22 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } },
+  shown: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
 };
 
 /* ---------- orchestration helpers --------------------------------- */
@@ -102,7 +94,7 @@ function Beat({
       className={className}
       initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.85, delay: at, ease: EASE }}
+      transition={{ duration: 1, delay: at, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -141,11 +133,10 @@ function usePointerDrift(enabled: boolean) {
 /**
  * Two soft colour fields and nothing else.
  *
- * There was a survey grid here. On a white page it read as graph paper —
- * a texture the rest of the site never repeats, competing with the type it
- * was supposed to sit behind. What the hero actually needs from a backdrop
- * is a suggestion that the white is lit rather than blank, and two very wide
- * washes do that without drawing a single line.
+ * What the hero needs from a backdrop is a suggestion that the white is lit
+ * rather than blank, and two very wide washes do that without drawing a
+ * single line. They are fainter than they were: under a light serif at 7rem,
+ * anything you can actually see behind the type reads as dirt.
  */
 function Backdrop() {
   return (
@@ -160,42 +151,18 @@ function Backdrop() {
   );
 }
 
-/* ---------- floating mark ------------------------------------------ */
-
-/** A logo on a small card, drifting. Decorative; the stack is listed for
-    real in Expertise, so these are hidden from assistive technology. */
-function Floater({
-  name,
-  className,
-  delay,
-}: {
-  name: string;
-  className: string;
-  delay: number;
-}) {
-  const reduced = useReducedMotion();
-  return (
-    <motion.div
-      aria-hidden="true"
-      className={`absolute z-20 grid h-14 w-14 place-items-center rounded-tile border border-line bg-surface shadow-[var(--shadow-card)] ${className}`}
-      animate={reduced ? undefined : { y: [0, -9, 0] }}
-      transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut", delay }}
-    >
-      <TechIcon name={name} size={24} />
-    </motion.div>
-  );
-}
-
 /* ---------- hero ---------------------------------------------------- */
 
 /**
- * Hero — an asymmetric split with a layered composition.
+ * Hero — an asymmetric split, squared up.
  *
- * Seven columns of introduction, five of a stack: an abstract panel, the
- * newest project overlapping its corner, and three marks from the toolkit
- * drifting around the edges. The tilts are small and opposed — the panel
- * leans one way, the card the other — which is what makes two rectangles
- * read as a pile rather than a mistake.
+ * Seven columns of introduction and five of image, with the newest project
+ * sitting across the foot of the panel. The previous version tilted both
+ * plates a couple of degrees against each other and scattered three logo
+ * chips around the edges; both belong to a product page. Here nothing
+ * rotates and nothing floats — the composition is held by the grid and by
+ * the rules drawn across it, which is what lets a light serif at this size
+ * stay the loudest thing on screen.
  *
  * Motion is two systems that never touch. ENTRY is time-driven: the headline
  * builds glyph by glyph and the tail staggers behind it, once, on mount.
@@ -245,9 +212,9 @@ export default function Hero() {
   const { px, py } = usePointerDrift(!reduced);
   const driftX = useTransform(px, [-1, 1], [30, -30]);
   const driftY = useTransform(py, [-1, 1], [22, -22]);
-  const typeDriftX = useTransform(px, [-1, 1], [-9, 9]);
-  const artDriftX = useTransform(px, [-1, 1], [14, -14]);
-  const artDriftY = useTransform(py, [-1, 1], [10, -10]);
+  const typeDriftX = useTransform(px, [-1, 1], [-6, 6]);
+  const artDriftX = useTransform(px, [-1, 1], [10, -10]);
+  const artDriftY = useTransform(py, [-1, 1], [8, -8]);
 
   return (
     <section
@@ -271,7 +238,7 @@ export default function Hero() {
         )}
       </div>
 
-      <div className="relative flex flex-1 items-center pt-28 pb-16 sm:pt-32">
+      <div className="relative flex flex-1 items-center pb-24 pt-32 sm:pt-40">
         <motion.div
           className={MEASURE}
           style={
@@ -280,16 +247,25 @@ export default function Hero() {
               : { y: contentY, opacity: contentFade, visibility: departed }
           }
         >
-          <div className="grid grid-cols-12 items-center gap-x-8 gap-y-16">
+          {/* One column until `lg`, twelve after. A twelve-track grid does
+              not collapse on a phone just because every child spans all of
+              it: the eleven 40px gaps are still laid out, so the grid's own
+              minimum width is 440px — wider than the 342px a 390px screen
+              actually has, and the whole band overflowed by a hundred
+              pixels. The tracks only exist where they are used. */}
+          <div className="grid grid-cols-1 items-center gap-y-24 lg:grid-cols-12 lg:gap-x-10">
             {/* ---- introduction ---------------------------------- */}
-            <div className="col-span-12 lg:col-span-7">
+            <div className="lg:col-span-7">
               <Beat at={OPEN.badge}>
-                <p className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface py-2 pl-3 pr-4 shadow-[var(--shadow-card)]">
-                  <span className="relative grid h-2 w-2 place-items-center">
+                {/* A rule with a label on it, not a pill. A floating capsule
+                    is a notification; a hairline carrying the availability in
+                    tracked capitals is a masthead. */}
+                <p className="flex items-center gap-3 border-t border-line pt-5">
+                  <span className="relative grid h-1.5 w-1.5 place-items-center">
                     {!reduced && (
-                      <span className="absolute h-2 w-2 animate-ping rounded-full bg-primary opacity-60" />
+                      <span className="absolute h-1.5 w-1.5 animate-ping rounded-full bg-primary opacity-60" />
                     )}
-                    <span className="relative h-2 w-2 rounded-full bg-primary" />
+                    <span className="relative h-1.5 w-1.5 rounded-full bg-primary" />
                   </span>
                   <span className="meta text-text-secondary">
                     Open to new work — {site.location}
@@ -298,31 +274,34 @@ export default function Hero() {
               </Beat>
 
               <motion.div style={reduced ? undefined : { y: headlineY, x: typeDriftX }}>
-                <h1 className="text-mega mt-7 text-[clamp(2.9rem,8vw,6.5rem)]">
+                <h1 className="text-mega mt-10 text-[clamp(3.2rem,9.5vw,7.1rem)]">
                   <SplitText text={LINE_ONE} delay={OPEN.headline} stagger={OPEN.letter} />
                   <br />
+                  {/* The second line is the italic clause the whole page is
+                      built on — the same move every section heading makes,
+                      established here first. */}
                   <SplitText
                     text={LINE_TWO}
                     delay={LINE_TWO_AT}
                     stagger={OPEN.letter}
-                    letterClassName="text-primary"
+                    letterClassName="text-clause"
                   />
                 </h1>
               </motion.div>
 
               <Tail>
                 <TailItem>
-                  <p className="mt-7 max-w-xl text-pretty text-xl leading-relaxed text-on-band-muted">
+                  <p className="lead mt-10 max-w-[44ch] text-on-band-muted">
                     {site.tagline} I build web platforms, embedded electronics
                     and applied AI systems from {site.location}.
                   </p>
                 </TailItem>
 
-                <TailItem className="mt-9 flex flex-wrap items-center gap-4">
-                  <Magnetic pull={8} contentPull={4} radius={90}>
+                <TailItem className="mt-12 flex flex-wrap items-center gap-4">
+                  <Magnetic pull={6} contentPull={3} radius={90}>
                     <Link
                       href="#projects"
-                      className="btn-depth group inline-flex items-center gap-2.5 rounded-pill bg-primary px-7 py-4 font-geometric text-[0.95rem] font-medium text-on-primary"
+                      className="btn-depth label-ui group inline-flex items-center gap-3 rounded-pill bg-primary px-8 py-4 text-on-primary hover:bg-primary-strong"
                     >
                       See my work
                       <motion.span
@@ -331,14 +310,14 @@ export default function Hero() {
                         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                         className="inline-flex"
                       >
-                        <ArrowDown size={15} />
+                        <ArrowDown size={14} />
                       </motion.span>
                     </Link>
                   </Magnetic>
-                  <Magnetic pull={8} contentPull={4} radius={90}>
+                  <Magnetic pull={6} contentPull={3} radius={90}>
                     <Link
                       href="#contact"
-                      className="btn-depth inline-flex items-center rounded-pill border border-line-strong bg-surface px-7 py-4 font-geometric text-[0.95rem] font-medium text-on-band"
+                      className="btn-depth label-ui inline-flex items-center rounded-pill border border-line-strong bg-surface px-8 py-4 text-on-band hover:border-primary hover:text-primary-strong"
                     >
                       Get in touch
                     </Link>
@@ -347,64 +326,57 @@ export default function Hero() {
               </Tail>
             </div>
 
-            {/* ---- the pile -------------------------------------- */}
-            <Beat at={TAIL_AT} className="col-span-12 lg:col-span-5">
+            {/* ---- the panel ------------------------------------- */}
+            <Beat at={TAIL_AT} className="lg:col-span-5">
               <motion.div
                 className="relative mx-auto max-w-sm lg:max-w-none"
                 style={reduced ? undefined : { y: artY, x: artDriftX }}
               >
-                {/* The panel, leaning one way. */}
                 <motion.div
                   style={reduced ? undefined : { y: artDriftY }}
-                  className="plate overflow-hidden p-2.5 lg:-rotate-2"
+                  className="relative aspect-4/5 overflow-hidden rounded-card border border-line-panel"
                 >
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-tile">
-                    <Image
-                      src="/images/hero/primary.jpg"
-                      alt=""
-                      fill
-                      sizes="(max-width: 1024px) 24rem, 36vw"
-                      priority
-                      className="object-cover"
-                    />
-                  </div>
+                  <Image
+                    src="/images/hero/primary.jpg"
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 24rem, 36vw"
+                    priority
+                    className="object-cover"
+                  />
                 </motion.div>
 
-                {/* The newest project, leaning the other — which is what
-                    makes two rectangles read as a pile and not a mistake. */}
+                {/* The newest project, as a caption across the foot of the
+                    panel. Squared to the panel's own edge rather than tilted
+                    against it: the overlap is what reads as depth, and the
+                    rotation was only ever noise on top of it. */}
                 <Link
                   href={`/projects/${featured.slug}`}
-                  className="plate lift group absolute -bottom-8 -left-4 z-10 w-[72%] p-2 lg:rotate-[2.5deg]"
+                  className="plate lift group absolute -bottom-10 left-0 right-10 z-10 flex items-center gap-4 p-3"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-[11px]">
+                  <div className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-tile sm:w-20">
                     <Image
                       src={coverFor(featured.slug)}
                       alt=""
                       fill
-                      sizes="(max-width: 1024px) 18rem, 26vw"
-                      className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                      sizes="5rem"
+                      className="media-hover object-cover"
                     />
                   </div>
-                  <div className="flex items-center justify-between gap-3 px-2 pb-1 pt-3">
-                    <div className="min-w-0">
-                      <p className="meta truncate text-text-muted">
-                        {featured.year} · {statusCopy[featured.status]}
-                      </p>
-                      <p className="truncate font-geometric text-base font-medium text-text-primary transition-colors group-hover:text-primary-strong">
-                        {featured.name}
-                      </p>
-                    </div>
-                    <ArrowUpRight
-                      size={16}
-                      aria-hidden="true"
-                      className="shrink-0 text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                    />
+                  <div className="min-w-0 flex-1">
+                    <p className="meta truncate text-text-muted">
+                      {featured.year} · {statusCopy[featured.status]}
+                    </p>
+                    <p className="text-editorial mt-1 truncate text-xl text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong">
+                      {featured.name}
+                    </p>
                   </div>
+                  <ArrowUpRight
+                    size={18}
+                    aria-hidden="true"
+                    className="mr-2 shrink-0 text-text-muted transition-all duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+                  />
                 </Link>
-
-                {FLOATERS.map((f) => (
-                  <Floater key={f.name} {...f} />
-                ))}
               </motion.div>
             </Beat>
           </div>
@@ -421,8 +393,8 @@ export default function Hero() {
         >
           <Marquee
             items={TICKER}
-            duration={34}
-            className="border-t border-line py-4"
+            duration={48}
+            className="border-t border-line py-5"
             itemClassName="meta text-on-band-muted"
           />
         </motion.div>

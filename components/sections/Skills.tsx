@@ -10,7 +10,7 @@ import TechIcon from "@/components/ui/TechIcon";
 import { skillGroups } from "@/lib/skills";
 import { toolIndex, referencedCount, type ToolRef } from "@/lib/tool-usage";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.7, 0, 0.3, 1] as const;
 
 /**
  * Expertise — a toolbox that cross-references itself against the work.
@@ -62,16 +62,18 @@ export default function Skills() {
           name room to be read in full — the tiles were truncating "Tailwind
           CSS" and "Arduino Uno" at the exact moment the point was
           recognition — and it leaves space on the right for the count. */}
-      <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {skillGroups.map((group, gi) => (
           <Reveal key={group.id} delay={gi * 0.05} y={18} className="h-full">
-            <section className="plate h-full p-6 sm:p-7">
-              <h3 className="eyebrow">{group.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
+            <section className="plate h-full p-7 sm:p-8">
+              <h3 className="eyebrow border-b border-line pb-4">
+                {group.title}
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-text-muted">
                 {group.blurb}
               </p>
 
-              <ul className="mt-5">
+              <ul className="mt-6">
                 {group.skills.map((s) => {
                   const used = toolIndex[s.name].projects.length;
                   const on = active === s.name;
@@ -90,8 +92,8 @@ export default function Skills() {
                               }`
                             : s.name
                         }
-                        className={`flex w-full items-center gap-3 rounded-pill px-2 py-2.5 text-left transition-colors duration-200 ${
-                          on ? "bg-[rgba(10,110,250,0.07)]" : "hover:bg-bg-raised"
+                        className={`flex w-full items-center gap-3.5 rounded-pill px-3 py-3 text-left transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${
+                          on ? "bg-accent-soft" : "hover:bg-bg-raised"
                         }`}
                       >
                         <span className="grid h-6 w-6 shrink-0 place-items-center">
@@ -99,7 +101,7 @@ export default function Skills() {
                         </span>
 
                         <span
-                          className={`min-w-0 flex-1 truncate font-geometric text-[0.95rem] transition-colors ${
+                          className={`min-w-0 flex-1 truncate font-geometric text-[0.95rem] font-light tracking-[0.02em] transition-colors duration-[400ms] ${
                             on ? "text-primary-strong" : "text-text-primary"
                           }`}
                         >
@@ -111,10 +113,10 @@ export default function Skills() {
                             nobody has made; a project count is checkable. */}
                         {used > 0 && (
                           <span
-                            className={`shrink-0 rounded-full px-2.5 py-1 font-geometric text-[0.7rem] font-medium transition-colors ${
+                            className={`meta shrink-0 rounded-pill border px-2.5 py-1 text-[0.625rem] transition-colors duration-[400ms] ${
                               on
-                                ? "bg-primary text-on-primary"
-                                : "bg-bg-raised text-text-muted"
+                                ? "border-primary bg-primary text-on-primary"
+                                : "border-line text-text-muted"
                             }`}
                           >
                             {used} {used === 1 ? "project" : "projects"}
@@ -130,7 +132,7 @@ export default function Skills() {
         ))}
       </div>
 
-      <p className="mt-12 max-w-3xl text-sm leading-relaxed text-text-muted">
+      <p className="mt-16 max-w-[62ch] border-t border-line pt-6 text-sm leading-relaxed text-text-muted">
         {referencedCount} of these {total} can be traced to a case study on
         this site. The rest are real but unlisted — a project&rsquo;s stack
         names the handful of technologies that define the build, not
@@ -157,7 +159,7 @@ function Reader({
 }) {
   return (
     <div
-      className="flex min-h-[132px] items-center rounded-card border border-line bg-bg-raised px-6 py-5 sm:min-h-[116px]"
+      className="flex min-h-[140px] items-center rounded-card border border-line bg-bg-raised px-7 py-6 sm:min-h-[124px]"
       aria-live="polite"
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -166,16 +168,16 @@ function Reader({
           initial={reduced ? undefined : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={reduced ? undefined : { opacity: 0, y: -8 }}
-          transition={{ duration: 0.22, ease: EASE }}
+          transition={{ duration: 0.4, ease: EASE }}
           className="flex w-full flex-wrap items-center gap-x-8 gap-y-4"
         >
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-tile border border-line bg-surface">
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-tile border border-line bg-surface">
             <TechIcon name={current.name} size={26} />
           </span>
 
           <div className="min-w-[14rem] flex-1">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-geometric text-lg font-medium text-text-primary">
+              <p className="text-editorial text-2xl text-text-primary">
                 {current.name}
               </p>
               <span className="meta text-text-muted">{current.group}</span>
@@ -196,7 +198,7 @@ function Reader({
                   <li key={p.slug}>
                     <Link
                       href={`/projects/${p.slug}`}
-                      className="chip group inline-flex items-center gap-1.5 px-3 py-1.5 text-text-secondary transition-colors hover:border-primary hover:bg-surface hover:text-primary-strong"
+                      className="chip group inline-flex items-center gap-2 px-3.5 py-2 text-text-secondary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] hover:border-primary hover:text-primary-strong"
                     >
                       {p.name}
                       <ArrowUpRight

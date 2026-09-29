@@ -11,7 +11,7 @@ function Bar({ className }: { className: string }) {
   return (
     <div
       aria-hidden
-      className={`animate-shimmer rounded-sm bg-white/12 ${className}`}
+      className={`animate-shimmer rounded-sm bg-bg-raised ${className}`}
     />
   );
 }
@@ -39,9 +39,9 @@ export default function Loading() {
 
         {/* Categories */}
         <div className="mt-7 flex flex-wrap gap-2">
-          <Bar className="h-6 w-24 rounded-full" />
-          <Bar className="h-6 w-20 rounded-full" />
-          <Bar className="h-6 w-28 rounded-full" />
+          <Bar className="h-7 w-24 rounded-pill" />
+          <Bar className="h-7 w-20 rounded-pill" />
+          <Bar className="h-7 w-28 rounded-pill" />
         </div>
 
         {/* Summary */}

@@ -13,7 +13,6 @@ import {
   useInView,
 } from "framer-motion";
 import { Reveal, EASE } from "@/components/ui/motion-primitives";
-import TiltCard from "@/components/ui/TiltCard";
 import Wash from "@/components/ui/Wash";
 import { journey } from "@/lib/journey";
 
@@ -73,9 +72,9 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
       transition={{ duration: 0.9, ease: EASE }}
       className="w-[80vw] shrink-0 snap-start sm:w-[440px] lg:w-[480px]"
     >
-      <TiltCard tilt={3} className="group h-full">
-        <article className="plate h-full p-2.5 transition-colors duration-300 group-hover:border-primary">
-          <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="group h-full">
+        <article className="plate lift h-full overflow-hidden">
+          <div className="relative aspect-16/10 overflow-hidden border-b border-line-panel">
             <motion.div
               initial={reduced ? undefined : { clipPath: "inset(0% 100% 0% 0%)" }}
               animate={
@@ -89,31 +88,31 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
                 alt=""
                 fill
                 sizes="(max-width: 640px) 80vw, 480px"
-                className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                className="media-hover object-cover group-hover:scale-[1.04]"
               />
             </motion.div>
           </div>
 
-          <div className="p-4 sm:p-5">
-            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <div className="p-7 sm:p-8">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-line pb-4">
               <span className="meta text-primary">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className="meta text-text-muted">{entry.period}</span>
-              <span className="meta text-text-muted opacity-60">
+              <span className="meta ml-auto text-text-muted opacity-70">
                 {entry.discipline}
               </span>
             </div>
 
-            <h3 className="text-editorial mt-3 text-xl font-medium text-text-primary sm:text-2xl">
+            <h3 className="text-display mt-5 text-2xl text-text-primary sm:text-3xl">
               {entry.title}
             </h3>
 
-            <p className="mt-3 text-pretty text-sm leading-relaxed text-text-secondary">
+            <p className="mt-4 text-pretty text-sm leading-relaxed text-text-secondary">
               {entry.body}
             </p>
 
-            <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+            <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
               {entry.highlights.map((h) => (
                 <li key={h} className="meta text-text-muted">
                   {h}
@@ -122,7 +121,7 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
             </ul>
           </div>
         </article>
-      </TiltCard>
+      </div>
     </motion.li>
   );
 }
@@ -197,20 +196,25 @@ export default function Journey() {
       {/* The same header shape as every other section. Journey cannot use
           the Section component itself — it is pinned and its track runs edge
           to edge — so the pattern is reproduced rather than imported. */}
-      <Reveal y={14}>
-        <p className="eyebrow">How it developed</p>
+      <Reveal y={10}>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2 border-t border-line pt-5">
+          <p className="eyebrow">How it developed</p>
+          <Counter active={active} />
+        </div>
       </Reveal>
 
-      <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-        <Reveal delay={0.05} y={18}>
-          <h2 className="text-mega max-w-3xl text-[clamp(2.2rem,5.6vw,4.2rem)] text-text-primary">
-            How I got <span className="text-primary">here.</span>
-          </h2>
-        </Reveal>
-        <Counter active={active} />
-      </div>
+      <Reveal delay={0.06} y={16}>
+        {/* Held below the other section headings on purpose: this one shares
+            a pinned viewport with a row of cards, and at the full display
+            size the track would be pushed off the bottom of the screen. */}
+        <h2 className="text-mega mt-8 max-w-3xl text-[clamp(2.4rem,5vw,4.6rem)] text-text-primary sm:mt-10">
+          How I got <span className="text-clause">here.</span>
+        </h2>
+      </Reveal>
 
-      <div className="relative mt-6 h-px w-full bg-line">
+      {/* The progress rail — the one place a filled bar earns its keep, since
+          it is reporting position on a road the reader is driving. */}
+      <div className="relative mt-8 h-px w-full bg-line">
         <motion.div
           style={{ scaleX: pinned ? rail : (active + 1) / n }}
           className="absolute inset-0 origin-left bg-primary"
@@ -251,7 +255,7 @@ export default function Journey() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -40 }}
                   transition={{ duration: 0.6, ease: EASE }}
-                  className="text-mega whitespace-nowrap text-ghost/70"
+                  className="text-mega whitespace-nowrap text-ghost/60"
                   style={{ fontSize: "min(30svh, 17vw)" }}
                 >
                   {journey[active].period}
@@ -261,11 +265,11 @@ export default function Journey() {
 
             <div className="relative">{header}</div>
 
-            <div ref={host} className="relative mt-10 w-full overflow-hidden">
+            <div ref={host} className="relative mt-12 w-full overflow-hidden">
               <motion.ul
                 ref={track}
                 style={{ x }}
-                className="measure-pad flex w-max gap-6"
+                className="measure-pad flex w-max gap-8"
               >
                 {cards}
               </motion.ul>
@@ -291,7 +295,7 @@ export default function Journey() {
         outer.current = el;
       }}
       data-band="dark"
-      className="relative scroll-mt-24 bg-ink py-24 sm:py-28"
+      className="relative scroll-mt-24 bg-ink py-[90px] sm:py-[133px] lg:py-[180px]"
     >
       <Wash side="left" />
       {header}
@@ -299,12 +303,12 @@ export default function Journey() {
       <div
         ref={host}
         onScroll={onCarouselScroll}
-        className="mt-10 overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mt-16 overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <ul className="measure-pad flex w-max gap-6">{cards}</ul>
+        <ul className="measure-pad flex w-max gap-8">{cards}</ul>
       </div>
 
-      <p className="meta measure-pad mt-8 text-text-muted">
+      <p className="meta measure-pad mt-10 text-text-muted">
         Swipe — the road runs right
       </p>
     </section>

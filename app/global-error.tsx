@@ -24,7 +24,7 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#E6E9EF",
+          backgroundColor: "#FFFFFF",
           color: "#393A3D",
           fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "1.5rem",
@@ -33,8 +33,8 @@ export default function GlobalError({
         <div style={{ maxWidth: "32rem", textAlign: "center" }}>
           <p
             style={{
-              fontSize: "0.6875rem",
-              letterSpacing: "0.2em",
+              fontSize: "0.625rem",
+              letterSpacing: "0.26em",
               textTransform: "uppercase",
               color: "#0A6EFA",
               margin: 0,
@@ -45,9 +45,10 @@ export default function GlobalError({
 
           <h1
             style={{
-              fontSize: "clamp(1.75rem, 5vw, 2.75rem)",
-              fontWeight: 600,
-              letterSpacing: "-0.028em",
+              fontFamily: '"Times New Roman", Times, serif',
+              fontSize: "clamp(2rem, 6vw, 3.5rem)",
+              fontWeight: 400,
+              letterSpacing: "-0.012em",
               margin: "1.25rem 0 0",
             }}
           >
@@ -84,12 +85,14 @@ export default function GlobalError({
             style={{
               marginTop: "2rem",
               padding: "0.875rem 2rem",
-              borderRadius: "999px",
+              borderRadius: "10px",
               border: "none",
               backgroundColor: "#0A6EFA",
-              color: "#E6E9EF",
-              fontSize: "0.875rem",
-              fontWeight: 500,
+              color: "#FFFFFF",
+              fontSize: "0.8125rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              fontWeight: 400,
               cursor: "pointer",
             }}
           >

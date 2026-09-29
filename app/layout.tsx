@@ -1,44 +1,38 @@
 import type { Metadata, Viewport } from "next";
 import {
-  Inter,
-  Space_Grotesk,
+  Cormorant_Garamond,
+  Jost,
   Mrs_Saint_Delafield,
-  Poppins,
 } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/ui/Header";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
 
-/* Three roles, three faces.
+/* Two working faces and a signature.
 
-   Inter carries body, navigation and every small tracked label. Anton is the
-   display face for the big headings. Mrs Saint Delafield supplies the
-   signature: the wordmark and the corner credit. */
-const inter = Inter({
-  variable: "--font-inter",
+   The display serif, standing in for TT Ramillas: high contrast, a long
+   ascender, and enough of a modern cut that it never reads as a book. It is
+   only ever set LIGHT and LARGE — the size carries the emphasis, so the
+   weight never has to, which is the whole difference between this and the
+   bold grotesque it replaces. The italic is loaded because the closing
+   clause of every section heading is set in it. */
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-/* The display face. Anton was an ultra-compressed all-caps grotesque, which
-   meant every heading on the site had to shout in capitals. Space Grotesk
-   carries weight at mixed case, so a headline can be large and heavy without
-   being a wall of uppercase — and it keeps enough character not to read as a
-   system font. */
-const display = Space_Grotesk({
-  variable: "--font-display-face",
+/* The sans, standing in for TT Commons Pro: body, navigation, every tracked
+   label and every control. One sans rather than the three the page used to
+   run — once the headings are set in a serif, the contrast a reader sees is
+   serif against sans, and a second sans only muddies it. */
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
-/* The dashboard chrome face, named in the reference: navigation, labels
-   and buttons. Running paragraphs stay on Inter. */
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500"],
   display: "swap",
 });
 
@@ -95,7 +89,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${display.variable} ${script.variable} ${poppins.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${jost.variable} ${script.variable} h-full antialiased`}
     >
       <body className="relative min-h-full">
         <ScrollProgress />

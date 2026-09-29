@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion-primitives";
 import Section from "@/components/ui/Section";
-import TiltCard from "@/components/ui/TiltCard";
 import BrowserFrame from "@/components/ui/BrowserFrame";
 import { projects, coverFor, statusCopy } from "@/lib/projects";
 
@@ -16,6 +15,12 @@ import { projects, coverFor, statusCopy } from "@/lib/projects";
  * own; everything after it sits in a two-up grid. A page where every project
  * is the same size tells a visitor nothing about which one to read, and that
  * was the flaw in the uniform grid this replaces.
+ *
+ * Each entry is a catalogue plate: a framed cover, then the facts underneath
+ * on a hairline — index, year, status, the name in the display serif. The
+ * pointer does one thing and one thing only, over a second and a half: the
+ * cover comes back to full colour and creeps up in scale. Nothing rotates,
+ * nothing lifts, no light follows the cursor across the surface.
  *
  * The hero already carries `projects[0]`, so this starts at [1] — the same
  * cover twice on one screen reads as a bug.
@@ -36,115 +41,101 @@ export default function Projects() {
     >
       {lead && (
         <Reveal>
-          <TiltCard tilt={2}>
-            <Link
-              href={`/projects/${lead.slug}`}
-              className="plate lift group block p-2"
-            >
-              <div className="grid gap-2 sm:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-                {/* The cover sits in window chrome. A gradient in a rounded
-                    box is a swatch; the same gradient behind an address bar
-                    is a screenshot of something that exists — which is the
-                    claim a work section is making. */}
-                <BrowserFrame
-                  as="div"
-                  label={lead.name}
-                  className="relative sm:min-h-[360px]"
-                >
-                  <div className="relative aspect-[16/10] sm:absolute sm:inset-0 sm:top-[37px] sm:aspect-auto">
-                    <Image
-                      src={coverFor(lead.slug)}
-                      alt=""
-                      fill
-                      sizes="(max-width: 640px) 100vw, 45vw"
-                      className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                    />
-                  </div>
-                  <Badge>Featured</Badge>
-                </BrowserFrame>
-
-                <div className="flex flex-col justify-center px-4 py-6 sm:px-7">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="meta text-text-muted">
-                        {lead.year} · {statusCopy[lead.status]}
-                      </p>
-                      <h3 className="text-display mt-2 text-[clamp(1.7rem,3.3vw,2.6rem)] text-text-primary transition-colors group-hover:text-primary-strong">
-                        {lead.name}
-                      </h3>
-                    </div>
-                    <Arrow size={22} className="mt-2" />
-                  </div>
-
-                  <p className="mt-4 text-pretty text-lg leading-relaxed text-text-secondary">
-                    {lead.summary}
-                  </p>
-
-                  <Stack items={lead.stack.slice(0, 5)} />
-
-                  <span className="btn-depth mt-7 inline-flex w-fit items-center gap-2 rounded-pill bg-primary px-5 py-3 font-geometric text-[0.9rem] font-medium text-on-primary">
-                    Read the case study
-                    <ArrowUpRight
-                      size={16}
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    />
-                  </span>
+          <Link
+            href={`/projects/${lead.slug}`}
+            className="plate lift group block overflow-hidden"
+          >
+            <div className="grid sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className="relative overflow-hidden border-b border-line-panel sm:border-b-0 sm:border-r">
+                <div className="relative aspect-16/10 sm:h-full sm:min-h-[420px]">
+                  <Image
+                    src={coverFor(lead.slug)}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, 45vw"
+                    className="media-hover object-cover group-hover:scale-[1.03]"
+                  />
                 </div>
+                <Badge>Featured</Badge>
               </div>
-            </Link>
-          </TiltCard>
+
+              <div className="flex flex-col justify-center p-7 sm:p-12">
+                <div className="flex items-start justify-between gap-6 border-b border-line pb-4">
+                  <p className="meta text-text-muted">
+                    {lead.year} · {statusCopy[lead.status]}
+                  </p>
+                  <Arrow size={20} />
+                </div>
+
+                <h3 className="text-display mt-7 text-[clamp(2rem,3.6vw,3.2rem)] text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong">
+                  {lead.name}
+                </h3>
+
+                <p className="mt-5 max-w-[46ch] text-pretty text-text-secondary">
+                  {lead.summary}
+                </p>
+
+                <Stack items={lead.stack.slice(0, 5)} />
+
+                <span className="btn-depth label-ui mt-10 inline-flex w-fit items-center gap-3 rounded-pill bg-primary px-7 py-4 text-on-primary group-hover:bg-primary-strong">
+                  Read the case study
+                  <ArrowUpRight size={15} aria-hidden="true" />
+                </span>
+              </div>
+            </div>
+          </Link>
         </Reveal>
       )}
 
-      <Stagger className="mt-6 grid gap-6 sm:grid-cols-2" stagger={0.09}>
+      <Stagger className="mt-8 grid gap-8 sm:grid-cols-2" stagger={0.09}>
         {rest.map((p, i) => (
           <StaggerItem key={p.slug} className="h-full">
-            <TiltCard tilt={4} className="h-full">
-              {/* Built to the hero card's proportions: p-2 around the media,
-                  a badge sitting on the image, then a tight meta-over-name
-                  row with the arrow held at the right edge. The inner radius
-                  is the card's 22px minus its 8px padding, which is what
-                  keeps the image corner concentric with the card corner
-                  instead of drifting inside it. */}
-              <Link
-                href={`/projects/${p.slug}`}
-                className="plate lift group flex h-full flex-col p-2"
+            <Link
+              href={`/projects/${p.slug}`}
+              className="group flex h-full flex-col"
+            >
+              <BrowserFrame
+                as="div"
+                compact
+                label={p.name}
+                className="lift relative"
               >
-                <BrowserFrame as="div" compact label={p.name} className="relative">
-                  <div className="relative aspect-[16/10]">
-                    <Image
-                      src={coverFor(p.slug)}
-                      alt=""
-                      fill
-                      sizes="(max-width: 640px) 100vw, 33vw"
-                      className="media-hover object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-                    />
-                  </div>
-                  <Badge>{String(i + 2).padStart(2, "0")}</Badge>
-                </BrowserFrame>
-
-                <div className="flex flex-1 flex-col px-3 pb-2 pt-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="meta truncate text-text-muted">
-                        {p.year} · {statusCopy[p.status]}
-                      </p>
-                      <h3 className="mt-1.5 truncate font-geometric text-xl font-medium text-text-primary transition-colors group-hover:text-primary-strong">
-                        {p.name}
-                      </h3>
-                    </div>
-                    <Arrow size={18} className="mt-1.5" />
-                  </div>
-
-                  <p className="mt-3 text-pretty leading-relaxed text-text-secondary">
-                    {p.summary}
-                  </p>
-
-                  <Stack items={p.stack.slice(0, 3)} className="mt-auto pt-5" />
+                <div className="relative aspect-16/10 overflow-hidden">
+                  <Image
+                    src={coverFor(p.slug)}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                    className="media-hover object-cover group-hover:scale-[1.04]"
+                  />
                 </div>
-              </Link>
-            </TiltCard>
+              </BrowserFrame>
+
+              {/* The facts sit on a rule below the frame rather than inside a
+                  second box — the plate holds the image, the page holds the
+                  caption. */}
+              <div className="flex flex-1 flex-col border-t border-line pt-5">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="meta truncate text-text-muted">
+                    <span className="text-primary">
+                      {String(i + 2).padStart(2, "0")}
+                    </span>{" "}
+                    · {p.year} · {statusCopy[p.status]}
+                  </p>
+                  <Arrow size={16} />
+                </div>
+
+                <h3 className="text-display mt-3 text-2xl text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong sm:text-3xl">
+                  {p.name}
+                </h3>
+
+                <p className="mt-3 text-pretty text-text-secondary">
+                  {p.summary}
+                </p>
+
+                <Stack items={p.stack.slice(0, 3)} className="mt-auto pt-6" />
+              </div>
+            </Link>
           </StaggerItem>
         ))}
       </Stagger>
@@ -152,29 +143,29 @@ export default function Projects() {
   );
 }
 
-/** The pill the hero sits on its cover. */
+/** The mark on the lead cover. Square-cornered, like everything else. */
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="meta absolute right-3 top-2.5 z-10 rounded-full bg-primary px-3 py-1 text-on-primary">
+    <span className="meta absolute left-4 top-4 z-10 rounded-pill bg-primary px-3 py-1.5 text-on-primary">
       {children}
     </span>
   );
 }
 
-/** The corner arrow, with the hero's lift-and-slide on hover. */
+/** The corner arrow, with the site's lift-and-slide on hover. */
 function Arrow({ size, className = "" }: { size: number; className?: string }) {
   return (
     <ArrowUpRight
       size={size}
       aria-hidden="true"
-      className={`shrink-0 text-text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary ${className}`}
+      className={`shrink-0 text-text-muted transition-all duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary ${className}`}
     />
   );
 }
 
 function Stack({
   items,
-  className = "mt-6",
+  className = "mt-7",
 }: {
   items: string[];
   className?: string;
@@ -182,10 +173,7 @@ function Stack({
   return (
     <ul className={`flex flex-wrap gap-2 ${className}`}>
       {items.map((t) => (
-        <li
-          key={t}
-          className="chip px-3.5 py-1.5 font-geometric text-text-muted"
-        >
+        <li key={t} className="chip px-3.5 py-2 text-text-muted">
           {t}
         </li>
       ))}
