@@ -1,404 +1,292 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
 import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import SplitText from "@/components/ui/SplitText";
+  Bot,
+  Code2,
+  Cpu,
+  Database,
+  MousePointer2,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import Floaty from "@/components/ui/Floaty";
 import Marquee from "@/components/ui/Marquee";
-import Magnetic from "@/components/ui/Magnetic";
-import { MEASURE } from "@/components/ui/Section";
-import { projects, coverFor, statusCopy } from "@/lib/projects";
 import { site } from "@/lib/site";
 
-const EASE = [0.4, 0, 0.2, 1] as const;
-
-const TICKER = [
-  "Software",
-  "Hardware",
-  "Applied AI",
-  "Web platforms",
-  "Embedded systems",
-  "Kigali, Rwanda",
-];
-
-const LINE_ONE = "Software";
-const LINE_TWO = "Engineer.";
-
 /* ------------------------------------------------------------------
-   The opening timeline. One set of beats rather than a hand-tuned delay on
-   every element: the second headline line is placed relative to the first,
-   and the tail hangs off the end of that. Change the letter stagger and the
-   sequence still holds its shape.
+   The stickers.
+
+   Each one carries its own tilt, bob distance and period. Nothing here is
+   on a shared timing: the moment two of these share a duration the group
+   starts pulsing together and reads as one animated block rather than as
+   several separate objects loose in the air.
+
+   `pos` keeps them clear of the headline column in the middle. They are
+   draggable — `Floaty` wires that up — and bounded to the hero, so you can
+   throw one and it springs back inside the frame.
    ------------------------------------------------------------------ */
-const OPEN = { badge: 0.05, headline: 0.18, letter: 0.042 } as const;
+const CARDS = [
+  {
+    title: "Full-stack",
+    tag: "Next.js · Prisma · Postgres",
+    pos: "left-[-2%] top-[11%]",
+    rotate: -15,
+    float: 9,
+    dur: 7.5,
+    fill: "bg-accent text-accent-ink",
+    icon: <Code2 size={16} />,
+  },
+  {
+    title: "Embedded",
+    tag: "ESP32 · C++ · sensors",
+    pos: "left-[1%] top-[35%]",
+    rotate: -7,
+    float: 12,
+    dur: 6.5,
+    fill: "bg-neutral-900 text-white dark:bg-panel-dark",
+    icon: <Cpu size={16} />,
+  },
+  {
+    title: "Applied AI",
+    tag: "Agents · APIs · local models",
+    pos: "left-[4%] top-[59%]",
+    rotate: 6,
+    float: 10,
+    dur: 8,
+    fill: "bg-white text-neutral-900",
+    icon: <Sparkles size={16} />,
+  },
+] as const;
 
-const LINE_TWO_AT = OPEN.headline + LINE_ONE.length * OPEN.letter + 0.14;
-const TAIL_AT = LINE_TWO_AT + 0.2;
-const TAIL_STEP = 0.12;
-const MARQUEE_AT = TAIL_AT + TAIL_STEP * 2;
-
-const TAIL = {
-  hidden: {},
-  shown: { transition: { delayChildren: TAIL_AT, staggerChildren: TAIL_STEP } },
-};
-
-const TAIL_ITEM = {
-  hidden: { opacity: 0, y: 22 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
-};
-
-/* ---------- orchestration helpers --------------------------------- */
-
-function Tail({ children, className }: { children: ReactNode; className?: string }) {
-  const reduced = useReducedMotion();
-  if (reduced) return <div className={className}>{children}</div>;
-  return (
-    <motion.div className={className} variants={TAIL} initial="hidden" animate="shown">
-      {children}
-    </motion.div>
-  );
-}
-
-function TailItem({ children, className }: { children: ReactNode; className?: string }) {
-  const reduced = useReducedMotion();
-  if (reduced) return <div className={className}>{children}</div>;
-  return (
-    <motion.div className={className} variants={TAIL_ITEM}>
-      {children}
-    </motion.div>
-  );
-}
-
-function Beat({
-  children,
-  at,
-  className,
+function SkillCard({
+  title,
+  tag,
+  fill,
+  icon,
 }: {
-  children: ReactNode;
-  at: number;
-  className?: string;
+  title: string;
+  tag: string;
+  fill: string;
+  icon: React.ReactNode;
 }) {
-  const reduced = useReducedMotion();
-  if (reduced) return <div className={className}>{children}</div>;
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 22 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: at, ease: EASE }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-/* ---------- pointer drift ------------------------------------------ */
-
-/**
- * Pointer position as two springs in [-1, 1], relative to the viewport.
- * Never attaches on a coarse pointer or under reduced motion — a touch
- * device would otherwise carry a listener that can never fire. The values
- * are MotionValues, so moving the pointer never re-renders the hero.
- */
-function usePointerDrift(enabled: boolean) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  useEffect(() => {
-    if (!enabled) return;
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-    const onMove = (e: PointerEvent) => {
-      x.set((e.clientX / window.innerWidth - 0.5) * 2);
-      y.set((e.clientY / window.innerHeight - 0.5) * 2);
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [enabled, x, y]);
-
-  const spring = { stiffness: 55, damping: 20, mass: 0.7 };
-  return { px: useSpring(x, spring), py: useSpring(y, spring) };
-}
-
-/* ---------- backdrop ----------------------------------------------- */
-
-/**
- * Two soft colour fields and nothing else.
- *
- * What the hero needs from a backdrop is a suggestion that the white is lit
- * rather than blank, and two very wide washes do that without drawing a
- * single line. They are fainter than they were: under a light serif at 7rem,
- * anything you can actually see behind the type reads as dirt.
- */
-function Backdrop() {
   return (
     <div
-      className="absolute inset-[-25%]"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse 52% 48% at 22% 26%, var(--grid-wash-accent), transparent 68%)," +
-          "radial-gradient(ellipse 46% 44% at 84% 68%, var(--grid-wash-ink), transparent 66%)",
-      }}
-    />
+      className={`pointer-events-none flex h-[142px] w-[246px] flex-col justify-between rounded-[1.6rem] border border-white/40 p-6 shadow-[var(--shadow-sticker)] dark:border-white/15 ${fill}`}
+    >
+      <div className="flex items-start justify-between">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+          Area
+        </span>
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/10">
+          {icon}
+        </span>
+      </div>
+      <div>
+        <p className="font-display text-[25px] font-semibold leading-none">{title}</p>
+        <p className="mt-2 text-[11px] font-medium opacity-65">{tag}</p>
+      </div>
+    </div>
   );
 }
 
-/* ---------- hero ---------------------------------------------------- */
-
-/**
- * Hero — an asymmetric split, squared up.
- *
- * Seven columns of introduction and five of image, with the newest project
- * sitting across the foot of the panel. The previous version tilted both
- * plates a couple of degrees against each other and scattered three logo
- * chips around the edges; both belong to a product page. Here nothing
- * rotates and nothing floats — the composition is held by the grid and by
- * the rules drawn across it, which is what lets a light serif at this size
- * stay the loudest thing on screen.
- *
- * Motion is two systems that never touch. ENTRY is time-driven: the headline
- * builds glyph by glyph and the tail staggers behind it, once, on mount.
- * DEPARTURE is scroll-driven: as the band leaves, its layers separate.
- *
- * One `useScroll` feeds one spring and every layer is a `useTransform` off
- * it, so the whole parallax field costs a single scroll subscription and no
- * React renders. Only `transform` and `opacity` animate, and every layer
- * collapses to a static element under reduced motion.
- */
 export default function Hero() {
+  const stage = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const featured = projects[0];
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
-  const p = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.35,
-  });
-
-  const backdropY = useTransform(p, [0, 1], [0, 210]);
-  const backdropScale = useTransform(p, [0, 1], [1, 1.16]);
-  const contentY = useTransform(p, [0, 1], [0, -158]);
-  const headlineY = useTransform(p, [0, 1], [0, -72]);
-  const artY = useTransform(p, [0, 1], [0, -40]);
-
-  // Deliberately the mildest layer: the ticker sits on the band's bottom
-  // edge, so travel there is clipped by the section rather than read as
-  // depth — pushed as hard as the rest it just vanishes.
-  const marqueeY = useTransform(p, [0, 1], [0, 58]);
-
-  const contentFade = useTransform(p, [0, 0.58], [1, 0]);
-  const marqueeFade = useTransform(p, [0, 0.82], [1, 0]);
-
-  // Faded-out is not gone: an opacity-0 link still takes clicks, tab focus
-  // and screen-reader announcement, and these stay on screen for ~200px
-  // after they finish fading.
-  const departed = useTransform(p, (v) => (v >= 0.58 ? "hidden" : "visible"));
-  const marqueeGone = useTransform(p, (v) => (v >= 0.82 ? "hidden" : "visible"));
-
-  const { px, py } = usePointerDrift(!reduced);
-  const driftX = useTransform(px, [-1, 1], [30, -30]);
-  const driftY = useTransform(py, [-1, 1], [22, -22]);
-  const typeDriftX = useTransform(px, [-1, 1], [-6, 6]);
-  const artDriftX = useTransform(px, [-1, 1], [10, -10]);
-  const artDriftY = useTransform(py, [-1, 1], [8, -8]);
+  const rise = (delay: number) =>
+    reduced
+      ? {}
+      : {
+          initial: { opacity: 0, y: 24 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.8, delay, ease: [0.21, 0.5, 0.3, 1] as const },
+        };
 
   return (
-    <section
-      ref={ref}
-      id="hero"
-      data-band="light"
-      className="relative flex min-h-svh flex-col overflow-hidden bg-band-light text-on-band"
-    >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        {reduced ? (
-          <Backdrop />
-        ) : (
-          <motion.div
-            className="absolute inset-0"
-            style={{ y: backdropY, scale: backdropScale }}
-          >
-            <motion.div className="absolute inset-0" style={{ x: driftX, y: driftY }}>
-              <Backdrop />
-            </motion.div>
-          </motion.div>
-        )}
-      </div>
-
-      <div className="relative flex flex-1 items-center pb-24 pt-32 sm:pt-40">
-        <motion.div
-          className={MEASURE}
-          style={
-            reduced
-              ? undefined
-              : { y: contentY, opacity: contentFade, visibility: departed }
-          }
+    <section className="relative">
+      <div className="relative flex min-h-screen flex-col overflow-hidden">
+        <div
+          ref={stage}
+          className="relative flex flex-1 flex-col items-center justify-center px-6 pb-28 pt-36 text-center"
         >
-          {/* One column until `lg`, twelve after. A twelve-track grid does
-              not collapse on a phone just because every child spans all of
-              it: the eleven 40px gaps are still laid out, so the grid's own
-              minimum width is 440px — wider than the 342px a 390px screen
-              actually has, and the whole band overflowed by a hundred
-              pixels. The tracks only exist where they are used. */}
-          <div className="grid grid-cols-1 items-center gap-y-24 lg:grid-cols-12 lg:gap-x-10">
-            {/* ---- introduction ---------------------------------- */}
-            <div className="lg:col-span-7">
-              <Beat at={OPEN.badge}>
-                {/* A rule with a label on it, not a pill. A floating capsule
-                    is a notification; a hairline carrying the availability in
-                    tracked capitals is a masthead. */}
-                <p className="flex items-center gap-3 border-t border-line pt-5">
-                  <span className="relative grid h-1.5 w-1.5 place-items-center">
-                    {!reduced && (
-                      <span className="absolute h-1.5 w-1.5 animate-ping rounded-full bg-primary opacity-60" />
-                    )}
-                    <span className="relative h-1.5 w-1.5 rounded-full bg-primary" />
-                  </span>
-                  <span className="meta text-text-secondary">
-                    Open to new work — {site.location}
-                  </span>
-                </p>
-              </Beat>
+          <motion.p
+            {...rise(0)}
+            className="relative z-10 mb-7 inline-flex items-center gap-2 rounded-full border border-black/[0.06] bg-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-accent-deep shadow-sm dark:border-white/10 dark:bg-panel-dark dark:text-accent"
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-70 motion-reduce:hidden" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+            </span>
+            Open to new work — {site.location}
+          </motion.p>
 
-              <motion.div style={reduced ? undefined : { y: headlineY, x: typeDriftX }}>
-                <h1 className="text-mega mt-10 text-[clamp(3.2rem,9.5vw,7.1rem)]">
-                  <SplitText text={LINE_ONE} delay={OPEN.headline} stagger={OPEN.letter} />
-                  <br />
-                  {/* The second line is the italic clause the whole page is
-                      built on — the same move every section heading makes,
-                      established here first. */}
-                  <SplitText
-                    text={LINE_TWO}
-                    delay={LINE_TWO_AT}
-                    stagger={OPEN.letter}
-                    letterClassName="text-clause"
-                  />
-                </h1>
-              </motion.div>
+          <motion.h1
+            {...rise(0.08)}
+            className="relative z-10 max-w-[18ch] font-display text-5xl font-bold leading-[0.9] tracking-[-0.04em] text-ink sm:text-6xl lg:text-[5.5rem] xl:text-[6.75rem] dark:text-ink-invert"
+          >
+            <span className="block">Software</span>
+            <span className="block">that actually</span>
+            <span className="block text-accent-deep dark:text-accent">works.</span>
+          </motion.h1>
 
-              <Tail>
-                <TailItem>
-                  <p className="lead mt-10 max-w-[44ch] text-on-band-muted">
-                    {site.tagline} I build web platforms, embedded electronics
-                    and applied AI systems from {site.location}.
-                  </p>
-                </TailItem>
+          <motion.p
+            {...rise(0.22)}
+            className="relative z-10 mt-10 max-w-md text-lg leading-relaxed text-ink-muted dark:text-ink-invert-muted"
+          >
+            {site.tagline} I build web platforms, embedded electronics and applied AI
+            systems from {site.location}.
+          </motion.p>
 
-                <TailItem className="mt-12 flex flex-wrap items-center gap-4">
-                  <Magnetic pull={6} contentPull={3} radius={90}>
-                    <Link
-                      href="#projects"
-                      className="btn-depth label-ui group inline-flex items-center gap-3 rounded-pill bg-primary px-8 py-4 text-on-primary hover:bg-primary-strong"
-                    >
-                      See my work
-                      <motion.span
-                        aria-hidden="true"
-                        animate={reduced ? undefined : { y: [0, 3, 0] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                        className="inline-flex"
-                      >
-                        <ArrowDown size={14} />
-                      </motion.span>
-                    </Link>
-                  </Magnetic>
-                  <Magnetic pull={6} contentPull={3} radius={90}>
-                    <Link
-                      href="#contact"
-                      className="btn-depth label-ui inline-flex items-center rounded-pill border border-line-strong bg-surface px-8 py-4 text-on-band hover:border-text-primary hover:text-text-primary"
-                    >
-                      Get in touch
-                    </Link>
-                  </Magnetic>
-                </TailItem>
-              </Tail>
+          <motion.div
+            {...rise(0.34)}
+            className="relative z-10 mt-11 flex flex-col gap-4 sm:flex-row"
+          >
+            <Link href="/#work" className="btn-accent px-12 py-5 text-lg">
+              <span className="relative z-10">See my work</span>
+            </Link>
+            <Link href="/#about" className="btn-ghost px-10 py-5 text-lg">
+              About me
+            </Link>
+          </motion.div>
+
+          {/* The floating layer. Hidden below `lg` — there is no room for it
+              beside the headline on a narrow screen, and stickers stacked on
+              top of the copy are worse than no stickers. */}
+          <div className="pointer-events-none absolute inset-0 z-20 hidden lg:block">
+            <div
+              aria-hidden="true"
+              className="absolute left-[2%] top-[24%] -rotate-12 select-none font-display text-[10rem] font-bold leading-none text-black/[0.045] dark:text-white/[0.05]"
+            >
+              AM
             </div>
 
-            {/* ---- the panel ------------------------------------- */}
-            <Beat at={TAIL_AT} className="lg:col-span-5">
-              <motion.div
-                className="relative mx-auto max-w-sm lg:max-w-none"
-                style={reduced ? undefined : { y: artY, x: artDriftX }}
+            {CARDS.map((c, i) => (
+              <Floaty
+                key={c.title}
+                constraints={stage}
+                rotate={c.rotate}
+                className={c.pos}
+                z={20 + i}
+                float={c.float}
+                duration={c.dur}
+                delay={i * 0.2}
               >
-                <motion.div
-                  style={reduced ? undefined : { y: artDriftY }}
-                  className="relative aspect-4/5 overflow-hidden rounded-card border border-line-panel"
-                >
-                  <Image
-                    src="/images/hero/primary.jpg"
-                    alt=""
-                    fill
-                    sizes="(max-width: 1024px) 24rem, 36vw"
-                    priority
-                    className="object-cover"
-                  />
-                </motion.div>
+                <SkillCard title={c.title} tag={c.tag} fill={c.fill} icon={c.icon} />
+              </Floaty>
+            ))}
 
-                {/* The newest project, as a caption across the foot of the
-                    panel. Squared to the panel's own edge rather than tilted
-                    against it: the overlap is what reads as depth, and the
-                    rotation was only ever noise on top of it. */}
-                <Link
-                  href={`/projects/${featured.slug}`}
-                  className="plate lift group absolute -bottom-10 left-0 right-10 z-10 flex items-center gap-4 p-3"
-                >
-                  <div className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-tile sm:w-20">
-                    <Image
-                      src={coverFor(featured.slug)}
-                      alt=""
-                      fill
-                      sizes="5rem"
-                      className="media-hover object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="meta truncate text-text-muted">
-                      {featured.year} · {statusCopy[featured.status]}
-                    </p>
-                    <p className="text-editorial mt-1 truncate text-xl text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-text-primary">
-                      {featured.name}
-                    </p>
-                  </div>
-                  <ArrowUpRight
-                    size={18}
-                    aria-hidden="true"
-                    className="mr-2 shrink-0 text-text-muted transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text-primary"
-                  />
-                </Link>
-              </motion.div>
-            </Beat>
+            <Floaty
+              constraints={stage}
+              rotate={-10}
+              className="left-[19%] top-[83%]"
+              z={26}
+              float={7}
+              duration={6}
+            >
+              <MousePointer2
+                size={52}
+                className="pointer-events-none fill-accent text-accent drop-shadow-[0_8px_14px_rgba(0,0,0,0.4)]"
+              />
+            </Floaty>
+
+            {/* The portrait. Kept to a small square card rather than a big
+                cut-out — at this size it is one object among the stickers,
+                not the subject of the page. */}
+            <Floaty
+              constraints={stage}
+              rotate={6}
+              className="right-[4%] top-[11%]"
+              z={34}
+              float={14}
+              duration={7.5}
+            >
+              <div className="pointer-events-none h-[190px] w-[190px] overflow-hidden rounded-[2rem] border-4 border-white shadow-[0_30px_56px_-16px_rgba(0,0,0,0.55)] dark:border-neutral-800">
+                <Image
+                  src="/images/portrait.jpg"
+                  alt=""
+                  width={380}
+                  height={380}
+                  priority
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </Floaty>
+
+            <Floaty
+              constraints={stage}
+              rotate={-8}
+              className="right-[17%] top-[46%]"
+              z={32}
+              float={14}
+              duration={6.8}
+              delay={0.4}
+            >
+              <div className="pointer-events-none flex h-[96px] w-[96px] items-center justify-center rounded-[1.8rem] border-4 border-white bg-neutral-900 shadow-[0_28px_50px_-16px_rgba(0,0,0,0.55)] dark:border-neutral-800">
+                <Zap size={44} className="fill-accent text-accent" />
+              </div>
+            </Floaty>
+
+            <Floaty
+              constraints={stage}
+              rotate={7}
+              className="right-[23%] top-[80%]"
+              z={31}
+              float={12}
+              duration={7.2}
+              delay={0.6}
+            >
+              <div className="pointer-events-none flex h-[86px] w-[86px] items-center justify-center rounded-[1.8rem] border-4 border-white bg-white/70 shadow-[0_28px_50px_-16px_rgba(0,0,0,0.4)] backdrop-blur-md dark:border-neutral-800 dark:bg-white/10">
+                <Database size={40} className="text-accent-deep dark:text-accent" />
+              </div>
+            </Floaty>
+
+            <Floaty
+              constraints={stage}
+              rotate={11}
+              className="right-[6%] top-[66%]"
+              z={33}
+              float={15}
+              duration={7}
+              delay={0.2}
+            >
+              <div className="pointer-events-none flex h-[98px] w-[98px] items-center justify-center rounded-[2rem] border-4 border-white bg-accent shadow-[0_30px_56px_-16px_rgba(254,176,2,0.7)] dark:border-neutral-800">
+                <Bot size={40} className="text-accent-ink" />
+              </div>
+            </Floaty>
+
+            <Floaty
+              constraints={stage}
+              rotate={-4}
+              className="right-[20%] top-[21%]"
+              z={30}
+              float={16}
+              duration={7.5}
+            >
+              <div className="pointer-events-none flex h-[62px] w-[112px] items-center justify-end rounded-full border-4 border-white bg-accent px-2 shadow-[0_24px_44px_-14px_rgba(0,0,0,0.4)] dark:border-neutral-800">
+                <div className="h-[44px] w-[44px] rounded-full bg-white shadow-md" />
+              </div>
+            </Floaty>
           </div>
-        </motion.div>
-      </div>
+        </div>
 
-      <Beat at={MARQUEE_AT} className="relative">
-        <motion.div
-          style={
-            reduced
-              ? undefined
-              : { y: marqueeY, opacity: marqueeFade, visibility: marqueeGone }
-          }
-        >
-          <Marquee
-            items={TICKER}
-            duration={48}
-            className="border-t border-line py-5"
-            itemClassName="meta text-on-band-muted"
-          />
-        </motion.div>
-      </Beat>
+        <Marquee
+          items={[
+            "Web platforms",
+            "Embedded systems",
+            "Applied AI",
+            "REST APIs",
+            site.location,
+            "Open to new work",
+          ]}
+          duration={48}
+          className="relative z-10 border-y border-black/[0.08] py-5 dark:border-white/10"
+          itemClassName="text-[11px] font-bold uppercase tracking-[0.25em] text-ink-subtle dark:text-ink-invert-subtle"
+        />
+      </div>
     </section>
   );
 }

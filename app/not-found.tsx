@@ -3,36 +3,26 @@ import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <section className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-6 text-center">
-      {/* Even the dead end is a place in the room, not a blank page. */}
-      <span
+    <section className="relative flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <p
         aria-hidden="true"
-        className="text-mega pointer-events-none absolute select-none whitespace-nowrap text-ghost/20"
-        style={{ fontSize: "min(38svh, 26vw)" }}
+        className="pointer-events-none absolute select-none font-display text-[28vw] font-bold leading-none tracking-tighter text-black/[0.05] dark:text-white/[0.05]"
       >
         404
-      </span>
-
-      <p className="eyebrow relative mb-6 block">Error 404</p>
-
-      <h1 className="text-display relative text-[clamp(2.5rem,10vw,6rem)] text-text-primary">
-        Page not found
-      </h1>
-
-      <p className="lead relative mt-8 max-w-md text-text-secondary">
-        The page you are looking for does not exist or may have been moved.
       </p>
-
-      <Link
-        href="/"
-        className="btn-depth label-ui group relative mt-12 inline-flex items-center gap-3 rounded-pill bg-primary px-8 py-4 text-on-primary hover:bg-primary-hover"
-      >
-        <ArrowLeft
-          size={14}
-          className="transition-transform duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-x-0.5"
-        />
-        Back to start
-      </Link>
+      <div className="relative">
+        <p className="eyebrow">Error 404</p>
+        <h1 className="mt-5 font-display text-5xl font-semibold tracking-tight text-ink md:text-7xl dark:text-ink-invert">
+          Page not found
+        </h1>
+        <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-ink-muted dark:text-ink-invert-muted">
+          The page you are looking for does not exist, or may have been moved.
+        </p>
+        <Link href="/" className="btn-accent group mt-10 px-10 py-4">
+          <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+          Back to start
+        </Link>
+      </div>
     </section>
   );
 }

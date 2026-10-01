@@ -1,581 +1,418 @@
 @import "tailwindcss";
 
+/* Class-based dark mode, toggled in the navbar and persisted in
+   localStorage. The page opens DARK — see the inline script in layout.tsx. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================================
    DESIGN TOKENS
 
-   The whole visual language now comes from the extracted token sheet for
-   tuyishimireeric.github.io. Nothing in the palette is invented: the seven
-   colours below ARE the sheet, role for role.
+   The structure of this system — a soft grey canvas with white panels
+   floating on it, 2rem corners, wide low-opacity drop shadows, an organic
+   blob behind every card, a corner-fold button, a grain overlay and a
+   custom cursor — is the Levi-Portfolio language.
 
-     #FFFFFF  the ground, and the card
-     #F2F2F2  the one raised fill — inactive tiles, skeletons
-     #161616  the dark ground, and the ink of every heading
-     #4F4F4F  body ink
-     #828282  the lightest grey the sheet carries
-     #FEB002  amber — the accent, as a FILL on light, as TEXT on dark
-     #70FF00  acid  — the live mark, dark ground only
+   The COLOUR is ours: #FEB002, the amber from the token sheet, in place of
+   that reference's blue. One rule governs where it can go, and it comes
+   straight out of the contrast maths:
 
-   Three deliberate departures from the sheet, each because the sheet's own
-   accessibility rules demand it:
+     amber on the dark canvas  (#0D0D0D) ... 10.57:1  — text, freely
+     amber on the light canvas (#ECECEC) ...  1.90:1  — FILLS ONLY
 
-   1. #828282 is 3.84:1 on white. That clears AA for large text and for
-      non-text marks and NOTHING else, so body-scale secondary copy uses a
-      tonal step on the same grey ramp — #6B6B6B, 5.33:1 — and #828282 is
-      kept for the dark ground (4.71:1 there) and for decoration.
-   2. Both accents are near-white in luminance: amber is 1.8:1 on white and
-      acid is 1.3:1. Neither can be text on the light ground, and acid
-      cannot even be a 1px rule. So the accent relationship is inverted —
-      amber is a FILL carrying #161616 ink (9.85:1), and both accents become
-      text only inside a dark band, where they run 9.85:1 and 13.8:1.
-   3. The sheet names no hairline colour. Hairlines are #161616 at low alpha
-      rather than a new hue, so the palette stays closed.
+   So on the light canvas the accent is a button, a chip, a blob or an icon
+   tile — never a word — and anywhere a word genuinely has to be amber in
+   light mode it takes `--color-accent-deep` (#8A6000, 4.73:1), which is the
+   same hue walked down the ramp until it passes.
 
-   Typography is the sheet's stack, three faces to three roles:
-     Times New Roman  display, the italic clause, the signature
-     Roboto           body, leads, prose
-     Courier Prime    every tracked label — eyebrows, metadata, controls, nav
-
-   Shape is the sheet's signature: ONE notched corner, 0 0 0 24px, on every
-   editorial surface, with 6px on controls and 50% on round marks.
+   That is also why the site opens in the dark theme. On black the amber is
+   legible everywhere, so the palette stops needing workarounds.
    ============================================================ */
 @theme {
-  /* -- core ------------------------------------------------ */
-  --color-ink: #FFFFFF;      /* the section ground — plain white */
-  --color-void: #F2F2F2;
-  --color-panel: #FFFFFF;    /* the card */
-  --color-paper: #FFFFFF;
-  --color-cyan: #FEB002;
-  --color-ember: #161616;
-  --color-ghost: #828282;    /* oversized display type used as texture */
+  --font-sans: "Clash Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Clash Display", "Clash Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-  /* -- semantic surfaces ---------------------------------- */
-  --color-bg: #FFFFFF;
-  --color-bg-raised: #F2F2F2;
-  --color-surface: #FFFFFF;
-  --color-surface-raised: #FFFFFF;
-  --color-bg-invert: #161616;
-  --color-surface-invert: #161616;
+  /* -- the accent ramp ------------------------------------- */
+  --color-accent: #feb002;        /* the brand hue */
+  --color-accent-bright: #ffc233; /* hover / the lit step */
+  --color-accent-deep: #8a6000;   /* amber as TEXT on the light canvas */
+  --color-accent-ink: #121212;    /* what sits ON an amber fill — 10.6:1 */
+  --color-accent-soft: #fff0cc;   /* the lightest tint, for light-mode fills */
 
-  --color-band-light: #FFFFFF;
-  --color-band-deep: #161616;
+  /* -- canvases and panels --------------------------------- */
+  --color-canvas: #ececec;
+  --color-canvas-dark: #0d0d0d;
+  --color-panel: #ffffff;
+  --color-panel-dark: #1a1a1a;
+  --color-sunken-dark: #141414;
 
   /* -- ink -------------------------------------------------
-     A three-step ramp with real separation — 18.9 : 8.2 : 5.3 — rather than
-     four greys a reader cannot tell apart. Headings take the sheet's dark
-     ground colour as ink; body takes the sheet's Text Primary. */
-  --color-text-primary: #161616;   /* 18.88:1 on white — display + strong */
-  --color-text-secondary: #4F4F4F; /*  8.19:1 on white — body, leads */
-  --color-text-muted: #6B6B6B;     /*  5.33:1 on white — metadata */
-  --color-text-invert: #FFFFFF;
-  --color-text-invert-muted: #828282;
+     Light: #121212 / #4f4f4f / #6b6b6b  (18.6 : 8.2 : 5.3 on #ececec)
+     Dark:  #f5f5f5 / #b4b4b4 / #8a8a8a  (17.4 :  8.4 : 4.9 on #0d0d0d) */
+  --color-ink: #121212;
+  --color-ink-muted: #4f4f4f;
+  --color-ink-subtle: #6b6b6b;
+  --color-ink-invert: #f5f5f5;
+  --color-ink-invert-muted: #b4b4b4;
+  --color-ink-invert-subtle: #8a8a8a;
 
-  --color-on-band: #161616;
-  --color-on-band-muted: #6B6B6B;
+  --color-rule: rgb(0 0 0 / 0.08);
+  --color-rule-strong: rgb(0 0 0 / 0.14);
 
-  --color-on-panel: #161616;
-  --color-on-panel-muted: #6B6B6B;
+  /* -- type scale ------------------------------------------ */
+  --text-meta: 0.6875rem;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.22em;
+  --text-display-sm: clamp(1.75rem, 1rem + 2vw, 2.5rem);
+  --text-display-sm--line-height: 1.08;
+  --text-display-md: clamp(2.25rem, 1.2rem + 3.2vw, 3.75rem);
+  --text-display-md--line-height: 0.98;
+  --text-display-lg: clamp(2.75rem, 1rem + 6vw, 7rem);
+  --text-display-lg--line-height: 0.9;
 
-  --color-panel-mid: #F2F2F2;
-  --color-on-panel-mid: #161616;
-  --color-on-panel-mid-lift: #4F4F4F;
-
-  /* -- interactive ----------------------------------------
-     The accent as a fill. Amber ground, #161616 ink — 9.85:1, which is the
-     only way this palette produces a coloured button that passes. */
-  --color-primary: #FEB002;
-  --color-primary-strong: #E5A002;  /* tonal step for hover / pressed */
-  --color-primary-hover: #E5A002;
-  --color-primary-light: #FFF0CC;   /* tonal step for soft fills */
-  --color-on-primary: #161616;
-
-  /* -- accent ---------------------------------------------- */
-  --color-accent: #FEB002;
-  --color-accent-text: #161616;     /* the accent's role when it must read */
-  --color-accent-soft: #FFF0CC;
-  --color-live: #70FF00;            /* dark ground only — 13.8:1 there */
-
-  /* -- lines ----------------------------------------------
-     The sheet names no line colour, so these are the dark ground at low
-     alpha. 12% lands on #E0E0E0, which is a visible 1px rule on white
-     without reading as a border. */
-  --color-line: rgba(22, 22, 22, 0.12);
-  --color-line-strong: rgba(22, 22, 22, 0.24);
-  --color-line-invert: rgba(255, 255, 255, 0.16);
-  --color-line-band: rgba(22, 22, 22, 0.14);
-  --color-line-panel: rgba(22, 22, 22, 0.10);
-
-  /* -- type -----------------------------------------------
-     Times New Roman is a system face, so the display costs nothing to load
-     and never swaps. Roboto and Courier Prime are the two webfonts. The
-     contrast a reader sees is serif against monospace, with Roboto holding
-     the middle. */
-  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Times New Roman", Times, serif;
-  --font-serif: "Times New Roman", Times, serif;
-  /* The signature is the display serif in italic rather than a fourth face —
-     the sheet carries no script. */
-  --font-script: "Times New Roman", Times, serif;
-  /* Kept under its old name so every existing `font-geometric` call site
-     resolves. It is the monospace now — this is the slot Courier Prime is
-     in the sheet's stack to fill. */
-  --font-geometric: var(--font-courier), ui-monospace, "Courier New", monospace;
-  --font-mono: var(--font-courier), ui-monospace, "Courier New", monospace;
-
-  /* -- radii ----------------------------------------------
-     The sheet's three shapes. `0 0 0 24px` is the signature — a single
-     notched bottom-left corner on every editorial surface, which is the one
-     thing that makes this system recognisable at a glance. Controls take
-     6px, round marks take 50%. The names are unchanged so nothing has to be
-     renamed at the call site. */
-  --radius-card: 0px 0px 0px 24px;
-  --radius-tile: 6px;
-  --radius-pill: 6px;
-  --radius-round: 50%;
+  /* -- shape ----------------------------------------------
+     The reference's corner set, unchanged. The 2rem panel is the single
+     loudest signal that a page belongs to this family. */
+  --radius-panel: 2rem;
+  --radius-card: 1.9rem;
+  --radius-media: 1.3rem;
+  --radius-control: 1rem;
 
   /* -- elevation ------------------------------------------
-     The sheet carries five shadows and no hairline tokens, so this system
-     is elevated rather than edged. Two of the five are usable on a white
-     ground: the 0.24 sm for rest, and the two-layer 0.19/0.23 for lift. The
-     md/lg/xl trio runs 0.53–0.60 alpha, which is a scrape off dark-ground
-     elements and would read as soot here. */
-  --shadow-card: rgba(0, 0, 0, 0.24) 0px 3px 8px 0px;
-  --shadow-lift: rgba(0, 0, 0, 0.19) 0px 10px 20px 0px,
-                 rgba(0, 0, 0, 0.23) 0px 6px 6px 0px;
-  --ring-hover: rgba(254, 176, 2, 0.9);
-
-  /* The two washes behind a section. Amber is how this palette puts colour
-     on a white ground without putting it anywhere near a contrast ratio. */
-  --grid-wash-accent: rgba(254, 176, 2, 0.14);
-  --grid-wash-ink: rgba(22, 22, 22, 0.04);
-
-  /* -- motion ---------------------------------------------
-     The sheet's curve is `ease-in-out` and its steps are 0.2 / 0.3 / 0.4 /
-     0.5, with 3s and 6s float loops. Three durations here, plus the floats. */
-  --ease-out-expo: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-in-out-quart: cubic-bezier(0.4, 0, 0.2, 1);
-  --duration-fast: 0.2s;
-  --duration-slow: 0.3s;
-  --duration-slower: 0.5s;
-  --duration-float: 3s;
-  --duration-float-long: 6s;
-
-  /* -- spacing -------------------------------------------
-     46px is the sheet's large step; the page's vertical rhythm is multiples
-     of it — 92 / 138 / 184 — rather than Tailwind's 20 / 28 / 32. */
-  --spacing-section: 92px;
-  --spacing-section-md: 138px;
-  --spacing-section-lg: 184px;
-}
-
-/* ============================================================
-   THE DARK BAND
-
-   Everything inside `[data-band="dark"]` re-points the ink, line and accent
-   tokens rather than overriding colours at the call site — so a section
-   moves from the light ground to the dark one by changing one attribute,
-   and every `text-text-muted` inside it is simply correct.
-
-   This is also the only place the two accents get to be TEXT: amber reads
-   9.85:1 here and acid reads 13.8:1, against 1.8:1 and 1.3:1 on white.
-   ============================================================ */
-[data-band="dark"] {
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #F2F2F2;
-  --color-text-muted: #828282;     /* 4.71:1 on #161616 */
-
-  --color-surface: #161616;
-  --color-bg-raised: #2A2A2A;      /* tonal step — the raised fill on dark */
-  --color-ghost: #F2F2F2;
-
-  --color-line: rgba(255, 255, 255, 0.14);
-  --color-line-strong: rgba(255, 255, 255, 0.28);
-  --color-line-panel: rgba(255, 255, 255, 0.12);
-
-  /* Acid is the live mark and the hover; amber stays the accent. */
-  --color-primary: #70FF00;
-  --color-primary-strong: #70FF00;
-  --color-accent: #FEB002;
-
-  color: #F2F2F2;
-}
-
-[data-band="dark"] ::selection {
-  background-color: #70FF00;
-  color: #161616;
-}
-
-[data-band="dark"] :focus-visible {
-  outline-color: #70FF00;
+     Wide, soft and very low-opacity: a panel should look like it is
+     hovering a few centimetres off the canvas, not like it has a border. */
+  --shadow-float: 0 28px 60px -34px rgb(15 15 15 / 0.32);
+  --shadow-float-lg: 0 40px 80px -40px rgb(15 15 15 / 0.42);
+  --shadow-sticker: 0 30px 60px -22px rgb(0 0 0 / 0.45);
+  --shadow-accent: 0 18px 44px -14px rgb(254 176 2 / 0.55);
 }
 
 /* ============================================================
    BASE
    ============================================================ */
 @layer base {
-  /* Tailwind's preflight leaves border-color at `currentColor`, so any
-     `border-t` written without a colour would come out as ink. */
-  * {
-    border-color: var(--color-line);
-  }
-
   html {
-    scroll-behavior: auto;
-    -webkit-text-size-adjust: 100%;
-    background-color: #FFFFFF;
+    scroll-behavior: auto; /* Lenis does the smoothing */
   }
 
   body {
-    /* The sheet's Text Primary, for prose that carries no class. */
-    color: #4F4F4F;
+    background: var(--color-canvas);
+    color: var(--color-ink);
     font-family: var(--font-sans);
-    /* Roboto runs a tall x-height, so the same measure reads at a smaller
-       size and tighter leading than the previous serif-paired sans wanted.
-       Set here rather than on <html> so Tailwind's rem spacing scale is
-       left alone. */
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.7;
-    letter-spacing: 0;
-    overflow-x: clip;
-    background-color: #FFFFFF;
+    letter-spacing: -0.011em;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .dark body {
+    background: var(--color-canvas-dark);
+    color: var(--color-ink-invert);
+  }
+
+  h1, h2, h3 {
+    letter-spacing: -0.03em;
   }
 
   ::selection {
-    background-color: #FEB002;
-    color: #161616;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 
   :focus-visible {
-    outline: 2px solid #161616;
+    outline: 2px solid var(--color-accent);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 8px;
   }
 
-  ::-webkit-scrollbar { width: 9px; }
-  ::-webkit-scrollbar-track { background: #FFFFFF; }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: #828282;
-    border: 3px solid #FFFFFF;
+    background: rgb(0 0 0 / 0.18);
+    border-radius: 99px;
+    border: 3px solid transparent;
+    background-clip: content-box;
   }
-  ::-webkit-scrollbar-thumb:hover { background: #4F4F4F; }
-}
-
-/* ============================================================
-   CARDS
-   ============================================================ */
-
-/* The interactive surface. It rises: this system is defined by elevation,
-   not by its edge, so a hover takes the shadow from the sheet's sm step to
-   its two-layer step and the amber edge comes up underneath. */
-.lift {
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out-expo),
-    border-color var(--duration-fast) var(--ease-out-expo),
-    background-color var(--duration-fast) var(--ease-out-expo);
-}
-.lift:hover {
-  box-shadow: var(--shadow-lift);
-  border-color: var(--ring-hover);
-}
-@media (prefers-reduced-motion: reduce) {
-  .lift,
-  .lift:hover { transition: none; }
-}
-
-/* ============================================================
-   TYPE UTILITIES
-   ============================================================ */
-
-/* The display headline. Times New Roman at 400 and very large: it has no
-   light cut, so the size carries the emphasis and the tracking is pulled in
-   hard — Times set large and tracked at zero falls apart into words. */
-@utility text-mega {
-  font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.028em;
-  line-height: 0.98;
-}
-
-@utility text-display {
-  font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.018em;
-  line-height: 1.08;
-  text-wrap: balance;
-}
-
-/* The mid-weight heading — card titles, sub-sections. */
-@utility text-editorial {
-  font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.008em;
-  line-height: 1.16;
-  text-wrap: balance;
-}
-
-/* The closing clause of a heading. Italic, and amber only once it is on the
-   dark ground — on white it takes the body grey, because amber text there
-   is 1.8:1. The italic is what lets a serif heading turn a corner
-   mid-sentence; the tonal drop is what marks it on the light ground. */
-@utility text-clause {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  color: var(--color-text-secondary);
-}
-[data-band="dark"] .text-clause {
-  color: #FEB002;
-}
-
-/* The opening paragraph under a heading. Roboto, not the serif — a lead set
-   in the display face competes with the heading above it. */
-@utility lead {
-  font-family: var(--font-sans);
-  font-size: clamp(1.0625rem, 0.92rem + 0.6vw, 1.375rem);
-  font-weight: 300;
-  line-height: 1.6;
-  letter-spacing: 0;
-  text-wrap: pretty;
-}
-
-/* The signature. The display serif in italic rather than a fourth face. */
-@utility script {
-  font-family: var(--font-script);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-}
-
-/* The small accent label above a heading. Courier Prime, and tracked well
-   back from where a proportional face wanted it — monospace is already wide,
-   so 0.26em on Courier reads as spaced-out letters rather than as a rule. */
-@utility eyebrow {
-  font-family: var(--font-geometric);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  line-height: 1.6;
-  color: var(--color-text-primary);
-}
-
-/* The workhorse label — metadata, counts, navigation, footer. */
-@utility meta {
-  font-family: var(--font-geometric);
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1.5;
-}
-
-/* A control's label. */
-@utility label-ui {
-  font-family: var(--font-geometric);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1;
+  .dark ::-webkit-scrollbar-thumb { background: rgb(255 255 255 / 0.18); background-clip: content-box; }
 }
 
 /* ============================================================
    SURFACES
-
-   One card: white, the notched corner, and the sheet's resting shadow.
    ============================================================ */
-@utility card {
-  background-color: var(--color-surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
+
+/* The floating panel. White on the light canvas, one step up from black on
+   the dark one — on a true black a 4%-white panel is invisible, so this
+   uses a solid lifted grey instead of a translucent film. */
+@utility glass-card {
+  background: var(--color-panel);
+  border: 1px solid rgb(0 0 0 / 0.06);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-float);
+}
+.dark .glass-card {
+  background: var(--color-panel-dark);
+  border-color: rgb(255 255 255 / 0.09);
+  box-shadow: 0 28px 60px -34px rgb(0 0 0 / 0.8);
 }
 
-.card-hover {
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out-expo),
-    border-color var(--duration-fast) var(--ease-out-expo);
-}
-.card-hover:hover {
-  box-shadow: var(--shadow-lift);
-}
-@media (prefers-reduced-motion: reduce) {
-  .card-hover,
-  .card-hover:hover { transition: none; }
-}
-
-/* Translucent chrome — the floating header. */
-@utility glass {
-  background-color: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(18px) saturate(1.1);
-  -webkit-backdrop-filter: blur(18px) saturate(1.1);
-  border: 1px solid var(--color-line);
-}
-
-/* The same card under its original name, so every section keeps working. */
-@utility plate {
-  background-color: var(--color-surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-}
-
-/* A chip is an outline at 6px — the sheet's control corner. */
-@utility chip {
-  background-color: transparent;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-pill);
-  font-family: var(--font-geometric);
-  font-size: 0.6875rem;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-}
-
-/* Controls. The sheet's 0.2s colour step, with the elevation coming up
-   underneath on 0.3s. */
-.btn-depth {
-  transition:
-    background-color var(--duration-fast) var(--ease-out-expo),
-    border-color var(--duration-fast) var(--ease-out-expo),
-    color var(--duration-fast) var(--ease-out-expo),
-    box-shadow var(--duration-slow) var(--ease-out-expo);
-}
-.btn-depth:hover {
-  box-shadow: var(--shadow-lift);
-}
-.btn-depth:active {
-  transform: translateY(1px);
-  transition-duration: 0.1s;
-}
-@media (prefers-reduced-motion: reduce) {
-  .btn-depth,
-  .btn-depth:hover,
-  .btn-depth:active { transform: none; transition: none; }
-}
-
-/* An underline that draws in from the left on hover — the one link gesture
-   the page uses, in place of a colour change. */
-.link-rule {
-  position: relative;
-}
-.link-rule::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.35em;
-  height: 1px;
-  background-color: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--duration-slow) var(--ease-out-expo);
-}
-.link-rule:hover::after,
-.link-rule:focus-visible::after {
-  transform: scaleX(1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .link-rule::after { transition: none; }
-}
-
-/* Horizontal tracks run edge to edge and cannot use the measure's
-   `mx-auto max-w`. This reproduces the same left edge with padding. */
-.measure-pad {
-  padding-left: max(1.5rem, calc((100vw - 1320px) / 2 + 1.5rem));
-  padding-right: max(1.5rem, calc((100vw - 1320px) / 2 + 1.5rem));
-}
-@media (min-width: 640px) {
-  .measure-pad {
-    padding-left: max(2.5rem, calc((100vw - 1320px) / 2 + 2.5rem));
-    padding-right: max(2.5rem, calc((100vw - 1320px) / 2 + 2.5rem));
+/* The hover gesture for anything card-shaped: it rises, and the shadow
+   under it opens. Levitation, not a colour change. */
+@utility lift {
+  transition: transform 0.35s cubic-bezier(0.21, 0.5, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.21, 0.5, 0.3, 1);
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-float-lg);
   }
+}
+.dark .lift:hover { box-shadow: 0 40px 80px -36px rgb(0 0 0 / 0.9); }
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  /* Amber is 1.9:1 on the light canvas, so light mode takes the deep step
+     of the same hue and only the dark theme gets the brand amber itself. */
+  color: var(--color-accent-deep);
+}
+.dark .eyebrow { color: var(--color-accent); }
+
+@utility nav-blur {
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  background: rgb(236 236 236 / 0.82);
+  border-bottom: 1px solid rgb(0 0 0 / 0.06);
+}
+.dark .nav-blur {
+  background: rgb(13 13 13 / 0.82);
+  border-bottom-color: rgb(255 255 255 / 0.09);
 }
 
 /* ============================================================
-   ANIMATION
+   CONTROLS
    ============================================================ */
 
+/* The primary. The reference runs a near-black button with a small coloured
+   triangle folded into its bottom-right corner; ours inverts that — the
+   amber is the whole button and the fold is the dark note — because a 30px
+   triangle is not enough amber to carry a brand, and an amber fill is the
+   one place this hue is unambiguously legible on both canvases. */
+@utility btn-accent {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  box-shadow: var(--shadow-accent);
+  transition: transform 0.2s ease, background 0.2s ease;
+  &:hover { transform: scale(1.02); background: var(--color-accent-bright); }
+  &:active { transform: scale(0.97); }
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-bottom: 30px solid var(--color-accent-ink);
+    transition: border-bottom-color 0.3s ease;
+  }
+  &:hover::after { border-bottom-color: #2e2305; }
+}
+
+/* The reference's dark button, kept for secondary emphasis — near-black with
+   the amber fold. In dark mode it inverts to a light panel so it does not
+   vanish into the canvas. */
+@utility btn-dark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: #121212;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  box-shadow: 0 24px 50px -18px rgb(0 0 0 / 0.6);
+  transition: transform 0.2s ease, background 0.2s ease;
+  &:hover { transform: scale(1.02); background: #262626; }
+  &:active { transform: scale(0.97); }
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-bottom: 30px solid var(--color-accent);
+  }
+}
+.dark .btn-dark {
+  background: #f5f5f5;
+  color: #121212;
+  &:hover { background: #ffffff; }
+}
+
+/* The secondary. An outline on a panel fill. */
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: var(--radius-control);
+  border: 1px solid rgb(0 0 0 / 0.12);
+  background: var(--color-panel);
+  color: var(--color-ink);
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  &:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+}
+.dark .btn-ghost {
+  background: var(--color-panel-dark);
+  color: var(--color-ink-invert);
+  border-color: rgb(255 255 255 / 0.12);
+  &:hover { border-color: var(--color-accent); }
+}
+
+/* A small pill. Amber text is only safe on the dark canvas, so the light
+   variant is an amber TINT carrying dark ink. */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgb(0 0 0 / 0.1);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-ink-muted);
+  background: var(--color-panel);
+}
+.dark .chip {
+  color: var(--color-ink-invert-muted);
+  background: rgb(255 255 255 / 0.05);
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+@utility chip-accent {
+  color: #6b4a00;
+  background: var(--color-accent-soft);
+  border-color: rgb(254 176 2 / 0.4);
+}
+.dark .chip-accent {
+  color: var(--color-accent);
+  background: rgb(254 176 2 / 0.12);
+  border-color: rgb(254 176 2 / 0.3);
+}
+
+@utility rule-fade {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.08), transparent);
+}
+.dark .rule-fade {
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.08), transparent);
+}
+
+/* ============================================================
+   TEXTURE
+
+   A fixed film of fractal noise over the whole page. It is the thing that
+   stops a flat canvas reading as an empty div — at 5% it is never
+   consciously seen, only missed when removed.
+   ============================================================ */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.dark .grain {
+  mix-blend-mode: screen;
+  opacity: 0.055;
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+@media (hover: hover) and (pointer: fine) {
+  .has-custom-cursor,
+  .has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-100px, -100px, 0);
+  will-change: transform;
+  transition: opacity 0.25s ease;
+  --cur-fill: #121212;
+  --cur-stroke: #ffffff;
+}
+.dark .custom-cursor {
+  --cur-fill: var(--color-accent);
+  --cur-stroke: #121212;
+}
+.custom-cursor svg {
+  display: block;
+  fill: var(--cur-fill);
+  stroke: var(--cur-stroke);
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.35));
+  transform-origin: 0 0;
+  transform: translate(-3px, -2px) rotate(-8deg) scale(1);
+  transition: transform 0.13s ease;
+}
+.custom-cursor.is-hover svg { transform: translate(-3px, -2px) rotate(-8deg) scale(1.45); }
+.custom-cursor.is-down svg { transform: translate(-3px, -2px) rotate(-8deg) scale(0.82); }
+
+/* ============================================================
+   MARQUEE
+   ============================================================ */
 @keyframes marquee-left {
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(-50%, 0, 0); }
-}
-@keyframes marquee-right {
-  from { transform: translate3d(-50%, 0, 0); }
-  to   { transform: translate3d(0, 0, 0); }
 }
 .marquee-track {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: marquee-left var(--marquee-duration, 38s) linear infinite;
+  animation: marquee-left var(--marquee-duration, 42s) linear infinite;
 }
-.marquee-track[data-direction="right"] {
-  animation-name: marquee-right;
-}
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
+.marquee:hover .marquee-track { animation-play-state: paused; }
 
-/* The sheet's two float loops. Transform-only, so they stay on the
-   compositor. */
-@keyframes float {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50%      { transform: translate3d(0, -8px, 0); }
-}
-.animate-float {
-  animation: float var(--duration-float) ease-in-out infinite;
-}
-.animate-float-long {
-  animation: float var(--duration-float-long) ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  100% { transform: translateX(100%); }
-}
-.animate-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.animate-shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    rgba(22, 22, 22, 0.07),
-    transparent
-  );
-  animation: shimmer var(--duration-float) ease-in-out infinite;
-}
-
+/* ============================================================
+   MOTION ACCESSIBILITY
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 120ms !important;
     scroll-behavior: auto !important;
   }
   .marquee-track { animation: none !important; }
-  .animate-float,
-  .animate-float-long { animation: none !important; }
-}
-
-/* Media rests desaturated and comes back to full colour under the pointer
-   on the sheet's slowest interactive step. */
-@utility media-hover {
-  filter: saturate(0.8) brightness(1.01);
-  transition:
-    filter var(--duration-slower) var(--ease-out-expo),
-    transform var(--duration-slower) var(--ease-out-expo);
-}
-.group:hover .media-hover {
-  filter: saturate(1.05) brightness(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .media-hover { filter: none; transition: none; }
-  .link-sweep-line { transition: none; }
+  .lift:hover { transform: none; }
 }

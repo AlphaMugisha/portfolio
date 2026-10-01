@@ -82,7 +82,7 @@ function displayColour(hex: string): string {
   const lin = (c: number) =>
     c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-  return L < 0.12 ? "#161616" : `#${hex}`;
+  return L < 0.12 ? "currentColor" : `#${hex}`;
 }
 
 export default function TechIcon({
@@ -119,7 +119,7 @@ export default function TechIcon({
         size={size}
         strokeWidth={1.4}
         aria-hidden="true"
-        className={`text-text-primary ${className}`}
+        className={className}
       />
     );
   }
@@ -129,7 +129,7 @@ export default function TechIcon({
     <span
       aria-hidden="true"
       style={{ width: size, height: size, fontSize: size * 0.4 }}
-      className={`grid place-items-center rounded-sm border border-line-strong font-semibold text-text-muted ${className}`}
+      className={`grid place-items-center rounded-md border border-black/15 font-semibold dark:border-white/20 ${className}`}
     >
       {name.slice(0, 2).toUpperCase()}
     </span>

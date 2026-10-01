@@ -1,37 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto, Courier_Prime } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/ui/Header";
-import ScrollProgress from "@/components/ui/ScrollProgress";
+import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/Footer";
+import CustomCursor from "@/components/ui/CustomCursor";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 import { site } from "@/lib/site";
 
-/* Two webfonts, three roles.
-
-   The token sheet's stack is Roboto, Courier Prime and Times New Roman. The
-   display face is therefore a SYSTEM font — nothing to download, nothing to
-   swap, no layout shift on the largest type on the page — so only the other
-   two are fetched here.
-
-   Roboto carries body, leads and prose. Courier Prime carries every tracked
-   label: eyebrows, metadata, navigation, buttons, chips. That split is the
-   whole character of the system — the reader sees serif against monospace,
-   with the sans holding the middle, rather than three sans faces competing.
-
-   The italic cut of Roboto is not loaded: the only italics on the page are
-   the display clause and the signature, and both are set in Times. */
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  display: "swap",
-});
-
-const courier = Courier_Prime({
-  variable: "--font-courier",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
+/* Clash Display and Clash Grotesk, the reference typefaces, from Fontshare.
+   They are not on Google Fonts, so `next/font/google` cannot reach them —
+   hence the stylesheet link and the two preconnects, which is the same way
+   the reference loads them. */
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -71,22 +49,39 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
-  colorScheme: "light",
+  themeColor: "#0d0d0d",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${roboto.variable} ${courier.variable} h-full antialiased`}
-    >
-      <body className="relative min-h-full">
-        <ScrollProgress />
-        <Header />
-        <main id="main" className="relative">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=clash-grotesk@300,400,500,600&display=swap"
+        />
+        {/* Theme before first paint, so the page never flashes the wrong one.
+            The DEFAULT is dark: on black the amber is legible everywhere,
+            which is the version of this palette that works without
+            compromise. A stored preference always wins. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');if(t!=='light')document.documentElement.classList.add('dark');}catch(e){document.documentElement.classList.add('dark');}})();",
+          }}
+        />
+      </head>
+      <body className="flex min-h-screen flex-col antialiased">
+        <div className="grain" aria-hidden="true" />
+        <CustomCursor />
+        <SmoothScroll />
+        <Navbar />
+        <main id="main" className="relative z-[2] flex-1">
           {children}
         </main>
+        <Footer />
       </body>
     </html>
   );

@@ -1,49 +1,30 @@
-"use client";
-
-import type { ReactNode } from "react";
-
 /**
- * Infinite ticker.
+ * An endless horizontal ticker.
  *
- * The reference runs two of these around its work section — a technology
- * strip above and a discipline strip below. They travel the SAME way: what
- * separates them is a 1.7:1 speed ratio and a full tonal step, not opposed
- * directions. (Opposed directions was the instinctive reading of the reel and
- * is measurably not what it does.)
- *
- * The content is duplicated once and the pair translates by exactly -50%, so
- * the loop point lands on an identical frame and the seam is never visible.
- *
- * `aria-hidden` on the duplicate, so a screen reader hears the list once.
- * Pauses on hover, and stops entirely under reduced motion (the CSS rule
- * lives in globals.css) — leaving the first copy legible and static.
+ * The track holds the list TWICE and translates by exactly -50%, which is
+ * what makes the loop seamless: at the end of the animation the second copy
+ * sits precisely where the first began, so the jump back to 0 is invisible.
+ * It pauses on hover, and the duplicate copy is hidden from screen readers
+ * so the words are not announced twice.
  */
 export default function Marquee({
   items,
-  direction = "left",
-  duration = 38,
-  separator = "·",
+  duration = 42,
   className = "",
   itemClassName = "",
 }: {
-  items: ReactNode[];
-  direction?: "left" | "right";
-  /** Seconds for one full pass. Larger = slower. */
+  items: readonly string[];
   duration?: number;
-  separator?: ReactNode;
   className?: string;
   itemClassName?: string;
 }) {
-  const row = (hidden: boolean) => (
+  const run = (hidden: boolean) => (
     <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {items.map((item, i) => (
-        <span key={i} className="flex shrink-0 items-center">
-          <span className={itemClassName}>{item}</span>
-          <span
-            className="mx-[4.5vw] select-none opacity-40"
-            aria-hidden="true"
-          >
-            {separator}
+        <span key={`${item}-${i}`} className={`flex items-center ${itemClassName}`}>
+          {item}
+          <span className="px-6 opacity-40" aria-hidden="true">
+            &bull;
           </span>
         </span>
       ))}
@@ -51,14 +32,10 @@ export default function Marquee({
   );
 
   return (
-    <div className={`marquee relative overflow-hidden ${className}`}>
-      <div
-        className="marquee-track"
-        data-direction={direction}
-        style={{ ["--marquee-duration" as string]: `${duration}s` }}
-      >
-        {row(false)}
-        {row(true)}
+    <div className={`marquee overflow-hidden ${className}`}>
+      <div className="marquee-track" style={{ ["--marquee-duration" as string]: `${duration}s` }}>
+        {run(false)}
+        {run(true)}
       </div>
     </div>
   );

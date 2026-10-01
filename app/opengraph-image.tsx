@@ -4,41 +4,41 @@ import { join } from "node:path";
 import { site } from "@/lib/site";
 
 /**
- * The social card, set as the site's opening frame: the same two words the
- * hero opens with, in the same display serif, with the closing word in
- * italic and in the accent — the one move the whole page is built on.
+ * The social card: the same three lines the hero opens with, on the same
+ * near-black ground, with the closing word in amber.
  *
- * It is set on the DARK ground rather than the light one. That is not a
- * stylistic preference: amber is 1.8:1 on #FFFFFF and 9.85:1 on #161616, so
- * the dark band is the only place in this palette where the accent can carry
- * a word. A social card is also the one surface that gets scaled down to a
- * thumbnail in a feed, which is exactly where a light-on-white accent would
- * vanish. Both accents appear — amber on the clause, acid green on the rule —
- * and both clear AAA here.
+ * Dark is not a style choice here. Amber is 1.9:1 on a light ground and
+ * 10.6:1 on this one, and a social card is the one surface that gets scaled
+ * to a thumbnail in a feed — which is exactly where a low-contrast accent
+ * disappears.
  *
- * The faces are vendored TTFs in `lib/og-fonts/` (both OFL) because satori
- * cannot reuse `next/font`'s woff2 pipeline and the build must not depend on
- * the network. Tinos stands in for Times New Roman: it is metric-compatible
- * with it, which is the whole reason it exists, so the card and the page set
- * the same words at the same widths.
+ * Satori cannot reuse the webfont pipeline and the build must not depend on
+ * the network, so the faces are vendored TTFs in `lib/og-fonts/` (both OFL).
+ * Clash is not redistributable that way, so the card uses Archivo Black for
+ * the headline and Archivo for the labels — a grotesque with the same
+ * squared-off, tightly-tracked character at display size.
+ *
+ * Both faces are SINGLE-WEIGHT static files, which is not a preference —
+ * satori cannot parse a variable TTF with a `wdth,wght` axis pair at all and
+ * fails the build outright, so a static cut is the only option here. Hence
+ * Archivo Black rather than Archivo at weight 900, and Space Mono rather
+ * than a variable grotesque, for the tracked labels.
  */
 
 export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const GROUND = "#161616"; /* --color-bg-invert            */
-const INK = "#FFFFFF"; /* --color-text-primary (dark)  */
-const MUTED = "#828282"; /* --color-text-muted (dark)    */
-const ACCENT = "#FEB002"; /* --color-accent               */
-const LIVE = "#70FF00"; /* --color-live                 */
-const LINE = "rgba(255, 255, 255, 0.14)"; /* --color-line (dark) */
+const GROUND = "#0D0D0D";
+const INK = "#F5F5F5";
+const MUTED = "#8A8A8A";
+const ACCENT = "#FEB002";
+const LINE = "rgba(255, 255, 255, 0.12)";
 
 export default async function OpenGraphImage() {
-  const [serif, serifItalic, mono] = await Promise.all([
-    readFile(join(process.cwd(), "lib", "og-fonts", "Tinos-Regular.ttf")),
-    readFile(join(process.cwd(), "lib", "og-fonts", "Tinos-Italic.ttf")),
-    readFile(join(process.cwd(), "lib", "og-fonts", "CourierPrime-Regular.ttf")),
+  const [bold, regular] = await Promise.all([
+    readFile(join(process.cwd(), "lib", "og-fonts", "ArchivoBlack-Regular.ttf")),
+    readFile(join(process.cwd(), "lib", "og-fonts", "SpaceMono-Regular.ttf")),
   ]);
 
   return new ImageResponse(
@@ -51,25 +51,20 @@ export default async function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           backgroundColor: GROUND,
-          padding: "56px 64px 48px",
-          fontFamily: "Courier",
+          padding: "56px 64px 52px",
+          fontFamily: "Mono",
         }}
       >
-        {/* The acid rule, the one mark that carries over from the section
-            headers on the page. There it is amber on white; here it is green
-            on near-black, because on the dark ground green is the louder of
-            the two and this is the only frame that has to survive being
-            shrunk to a thumbnail. */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", width: 72, height: 4, backgroundColor: LIVE }} />
+          <div style={{ display: "flex", width: 72, height: 5, backgroundColor: ACCENT }} />
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               borderTop: `1px solid ${LINE}`,
               marginTop: -1,
-              paddingTop: 20,
-              fontSize: 18,
+              paddingTop: 22,
+              fontSize: 19,
               letterSpacing: 3,
               color: INK,
             }}
@@ -79,13 +74,12 @@ export default async function OpenGraphImage() {
           </div>
         </div>
 
-        {/* The two words, exactly as the hero sets them. */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", marginTop: -20 }}>
           <div
             style={{
-              fontFamily: "Tinos",
-              fontSize: 172,
-              lineHeight: 0.98,
+              fontFamily: "ArchivoBold",
+              fontSize: 112,
+              lineHeight: 0.92,
               letterSpacing: -5,
               color: INK,
             }}
@@ -94,14 +88,25 @@ export default async function OpenGraphImage() {
           </div>
           <div
             style={{
-              fontFamily: "TinosItalic",
-              fontSize: 172,
-              lineHeight: 0.98,
+              fontFamily: "ArchivoBold",
+              fontSize: 112,
+              lineHeight: 0.92,
+              letterSpacing: -5,
+              color: INK,
+            }}
+          >
+            that actually
+          </div>
+          <div
+            style={{
+              fontFamily: "ArchivoBold",
+              fontSize: 112,
+              lineHeight: 0.92,
               letterSpacing: -5,
               color: ACCENT,
             }}
           >
-            Engineer.
+            works.
           </div>
         </div>
 
@@ -110,13 +115,13 @@ export default async function OpenGraphImage() {
             display: "flex",
             justifyContent: "space-between",
             borderTop: `1px solid ${LINE}`,
-            paddingTop: 20,
-            fontSize: 16,
+            paddingTop: 22,
+            fontSize: 17,
             letterSpacing: 3,
             color: MUTED,
           }}
         >
-          <span>SOFTWARE — HARDWARE — APPLIED AI</span>
+          <span>WEB PLATFORMS — EMBEDDED — APPLIED AI</span>
           <span>{new URL(site.url).host.toUpperCase()}</span>
         </div>
       </div>
@@ -124,18 +129,12 @@ export default async function OpenGraphImage() {
     {
       ...size,
       fonts: [
-        { name: "Tinos", data: serif, style: "normal", weight: 400 },
-        /* Registered as its own family rather than as the italic style of
-           the first: satori resolves `fontStyle: italic` unreliably across
-           versions, and a card that silently falls back to the upright cut
-           loses the one gesture it exists to show. */
-        {
-          name: "TinosItalic",
-          data: serifItalic,
-          style: "normal",
-          weight: 400,
-        },
-        { name: "Courier", data: mono, style: "normal", weight: 400 },
+        { name: "Mono", data: regular, style: "normal", weight: 400 },
+        /* Registered as its own family rather than as a weight of the first:
+           satori resolves numeric weights unreliably across versions, and a
+           card that silently falls back to the regular cut loses the one
+           thing its headline is doing. */
+        { name: "ArchivoBold", data: bold, style: "normal", weight: 400 },
       ],
     },
   );

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Info } from "lucide-react";
 import { GithubIcon } from "@/components/ui/BrandIcons";
-import BrowserFrame from "@/components/ui/BrowserFrame";
-import { MEASURE } from "@/components/ui/Section";
+import ScrollReveal from "@/components/ui/ScrollReveal";
+import Blob from "@/components/ui/Blob";
+import TechIcon from "@/components/ui/TechIcon";
 import { projects, getProject, statusCopy, coverFor } from "@/lib/projects";
 
 /** Static params so every case study is prerendered at build time. */
@@ -23,16 +24,11 @@ export async function generateMetadata({
   return {
     title: project.name,
     description: project.summary,
-    openGraph: {
-      title: project.name,
-      description: project.summary,
-    },
+    openGraph: { title: project.name, description: project.summary },
   };
 }
 
-export default async function ProjectPage({
-  params,
-}: PageProps<"/projects/[slug]">) {
+export default async function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
@@ -41,166 +37,140 @@ export default async function ProjectPage({
   const next = projects[(index + 1) % projects.length];
 
   return (
-    <article className="bg-ink pb-[92px] pt-32 sm:pb-[138px] sm:pt-44">
-      <div className={MEASURE}>
-        <div className="grid grid-cols-1 items-start gap-y-12 lg:grid-cols-12 lg:gap-x-10">
-          {/* ---- the sticky dossier --------------------------------
-              Everything factual about the project, pinned beside the prose.
-              On a case study the reader keeps wanting these — year, status,
-              what it was built with — and scrolling back up for them is the
-              friction a sticky column removes. */}
-          <aside className="lg:sticky lg:top-32 lg:col-span-3">
-            <Link
-              href="/#projects"
-              className="group meta inline-flex items-center gap-2.5 text-text-muted transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-text-primary"
+    <article className="px-6 pb-28 pt-36 lg:pt-44">
+      <div className="mx-auto max-w-5xl">
+        <Link
+          href="/#work"
+          className="group inline-flex items-center gap-2.5 text-sm font-semibold text-ink-subtle transition-colors hover:text-ink dark:text-ink-invert-muted dark:hover:text-ink-invert"
+        >
+          <ArrowLeft
+            size={16}
+            className="transition-transform group-hover:-translate-x-1"
+            aria-hidden="true"
+          />
+          All projects
+        </Link>
+
+        <ScrollReveal className="mt-10">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="chip chip-accent">{statusCopy[project.status]}</span>
+            <span className="chip">{project.year}</span>
+            {project.categories.slice(0, 2).map((c) => (
+              <span key={c} className="chip">
+                {c}
+              </span>
+            ))}
+          </div>
+
+          <h1 className="mt-6 font-display text-5xl font-semibold leading-[0.95] tracking-tight text-ink md:text-7xl dark:text-ink-invert">
+            {project.name}
+          </h1>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink-muted dark:text-ink-invert-muted">
+            {project.summary}
+          </p>
+
+          {project.repo ? (
+            <a
+              href={project.repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost mt-8 px-7 py-4"
             >
-              <ArrowLeft
-                size={14}
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:-translate-x-0.5"
-              />
-              All projects
-            </Link>
+              <GithubIcon size={18} /> View the repository
+              <ArrowUpRight size={15} aria-hidden="true" />
+            </a>
+          ) : null}
+        </ScrollReveal>
 
-            <dl className="mt-10 space-y-6 border-t border-line pt-7">
-              <div>
-                <dt className="meta text-text-primary">Year</dt>
-                <dd className="text-editorial mt-2 text-lg text-text-primary">
-                  {project.year}
-                </dd>
-              </div>
-              <div>
-                <dt className="meta text-text-primary">Status</dt>
-                <dd className="text-editorial mt-2 flex items-center gap-2.5 text-lg text-text-primary">
-                  <span
-                    aria-hidden="true"
-                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
-                  />
-                  {statusCopy[project.status]}
-                </dd>
-              </div>
-              <div>
-                <dt className="meta text-text-primary">Focus</dt>
-                <dd className="text-editorial mt-2 text-lg leading-snug text-text-primary">
-                  {project.categories.join(" · ")}
-                </dd>
-              </div>
-              <div>
-                <dt className="meta text-text-primary">Built with</dt>
-                <dd className="mt-2 flex flex-wrap gap-1.5">
-                  {project.stack.map((t) => (
-                    <span
-                      key={t}
-                      className="chip px-3 py-1.5 text-[0.6875rem] text-text-muted"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </dd>
-              </div>
-            </dl>
-
-            {project.repo && (
-              <a
-                href={project.repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-depth label-ui group mt-10 inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-text-primary hover:text-text-primary"
-              >
-                <GithubIcon size={14} />
-                View source
-                <ArrowUpRight
-                  size={14}
-                  aria-hidden="true"
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
-              </a>
-            )}
-          </aside>
-
-          {/* ---- the case study ----------------------------------- */}
-          <div className="lg:col-span-9">
-            <h1 className="text-mega text-[clamp(2.8rem,7vw,6rem)] text-text-primary">
-              {project.name}
-            </h1>
-
-            <p className="lead mt-8 max-w-[46ch] text-text-secondary">
-              {project.summary}
-            </p>
-
-            <BrowserFrame label={project.name} className="mt-14">
+        <ScrollReveal className="mt-14">
+          <div className="glass-card relative overflow-hidden p-4">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[1.3rem]">
               <Image
                 src={coverFor(project.slug)}
                 alt=""
-                width={1600}
-                height={900}
-                sizes="(max-width: 1024px) 100vw, 60rem"
+                fill
                 priority
-                className="aspect-16/9 w-full object-cover"
+                sizes="(min-width: 1024px) 960px, 100vw"
+                className="object-cover"
               />
-            </BrowserFrame>
-
-            {project.stats && (
-              <div className="mt-12 grid grid-cols-2 border-t border-line sm:grid-cols-4">
-                {project.stats.map((s) => (
-                  <div
-                    key={s.label}
-                    className="border-b border-line py-7 sm:border-b-0 sm:border-l sm:pl-7 sm:first:border-l-0 sm:first:pl-0"
-                  >
-                    <p className="meta text-text-muted">{s.label}</p>
-                    <p className="text-mega mt-3 text-[clamp(2rem,3.4vw,2.8rem)] text-text-primary">
-                      {s.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="mt-20 grid gap-14 lg:grid-cols-2 lg:gap-16">
-              <section>
-                <h2 className="eyebrow mb-5 block border-b border-line pb-4">
-                  The problem
-                </h2>
-                <p className="text-pretty leading-relaxed text-text-secondary">
-                  {project.problem}
-                </p>
-              </section>
-
-              <section>
-                <h2 className="eyebrow mb-5 block border-b border-line pb-4">
-                  The approach
-                </h2>
-                <p className="text-pretty leading-relaxed text-text-secondary">
-                  {project.solution}
-                </p>
-              </section>
             </div>
+          </div>
+        </ScrollReveal>
 
-            {project.evidence && (
-              <p className="mt-16 flex items-start gap-3 rounded-tile border border-line bg-bg-raised p-6 text-[11px] leading-relaxed text-text-muted">
-                <Info size={14} aria-hidden="true" className="mt-0.5 shrink-0" />
+        <div className="mt-20 grid gap-12 md:grid-cols-2">
+          <ScrollReveal>
+            <p className="eyebrow">The problem</p>
+            <p className="mt-5 text-lg leading-relaxed text-ink-muted dark:text-ink-invert-muted">
+              {project.problem}
+            </p>
+          </ScrollReveal>
+          <ScrollReveal delay={0.08}>
+            <p className="eyebrow">The approach</p>
+            <p className="mt-5 text-lg leading-relaxed text-ink-muted dark:text-ink-invert-muted">
+              {project.solution}
+            </p>
+          </ScrollReveal>
+        </div>
+
+        {project.stats?.length ? (
+          <ScrollReveal className="mt-20">
+            <p className="eyebrow">By the numbers</p>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {project.stats.map((s, i) => (
+                <div key={s.label} className="glass-card relative overflow-hidden p-6">
+                  <Blob index={i} className="h-28 w-28 -right-6 -top-8" />
+                  <p className="relative font-display text-3xl font-semibold text-ink dark:text-ink-invert">
+                    {s.value}
+                  </p>
+                  <p className="relative mt-2 text-[11px] font-bold uppercase tracking-[0.15em] text-ink-subtle dark:text-ink-invert-subtle">
+                    {s.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+            {project.evidence ? (
+              <p className="mt-6 flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-white px-5 py-4 text-sm leading-relaxed text-ink-subtle dark:border-white/10 dark:bg-panel-dark dark:text-ink-invert-muted">
+                <Info size={16} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
                 {project.evidence}
               </p>
-            )}
+            ) : null}
+          </ScrollReveal>
+        ) : null}
 
-            <nav className="mt-24 border-t border-line pt-8">
-              <p className="eyebrow mb-4 block">Next project</p>
-              <Link
-                href={`/projects/${next.slug}`}
-                className="plate lift group flex flex-wrap items-baseline justify-between gap-4 px-8 py-8"
+        <ScrollReveal className="mt-20">
+          <p className="eyebrow">Built with</p>
+          <ul className="mt-6 flex flex-wrap gap-3">
+            {project.stack.map((tech) => (
+              <li
+                key={tech}
+                className="flex items-center gap-3 rounded-2xl border border-black/[0.06] bg-white px-4 py-3 text-sm font-semibold text-ink dark:border-white/10 dark:bg-panel-dark dark:text-ink-invert"
               >
-                <span className="text-display text-3xl text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-text-primary sm:text-5xl">
-                  {next.name}
-                </span>
-                <ArrowUpRight
-                  size={22}
-                  aria-hidden="true"
-                  className="text-text-muted transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-text-primary"
-                />
-              </Link>
-            </nav>
-          </div>
-        </div>
+                <TechIcon name={tech} size={20} />
+                {tech}
+              </li>
+            ))}
+          </ul>
+        </ScrollReveal>
+
+        <ScrollReveal className="mt-24">
+          <p className="eyebrow">Next project</p>
+          <Link
+            href={`/projects/${next.slug}`}
+            className="glass-card lift group mt-5 flex items-center justify-between gap-6 p-8"
+          >
+            <span>
+              <span className="block font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl dark:text-ink-invert">
+                {next.name}
+              </span>
+              <span className="mt-2 block text-ink-subtle dark:text-ink-invert-muted">
+                {next.summary}
+              </span>
+            </span>
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-ink transition-transform duration-300 group-hover:rotate-45">
+              <ArrowUpRight size={20} aria-hidden="true" />
+            </span>
+          </Link>
+        </ScrollReveal>
       </div>
     </article>
   );

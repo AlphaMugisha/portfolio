@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Design reference dropped in by hand — another project's full source tree,
+# kept locally to work from but not ours to commit.
+/Levi-Portfolio-main/

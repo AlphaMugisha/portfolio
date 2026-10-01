@@ -21,13 +21,11 @@ export const site = {
   cv: "/alpha-mugisha-cv.pdf",
 } as const;
 
-/* Labels follow the reference's naming — "Work" and "Expertise" rather than
-   "Projects" and "Skills". The section ids are unchanged, so every existing
-   anchor, deep link and case-study back-link still resolves. */
+/* The page is one scroll, so every nav item is an in-page anchor. The ids
+   live on the sections in `components/sections/HomeSections.tsx`. */
 export const navItems = [
-  { label: "Work", href: "/#projects" },
+  { label: "Work", href: "/#work" },
   { label: "About", href: "/#about" },
-  { label: "Expertise", href: "/#skills" },
+  { label: "Toolbox", href: "/#toolbox" },
   { label: "Journey", href: "/#journey" },
-  { label: "Contact", href: "/#contact" },
 ] as const;

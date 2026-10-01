@@ -1,23 +1,36 @@
 import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Skills from "@/components/sections/Skills";
-import Projects from "@/components/sections/Projects";
-import Journey from "@/components/sections/Journey";
-import Contact from "@/components/sections/Contact";
+import {
+  About,
+  WhatIDo,
+  SelectedWork,
+  ProjectGrid,
+  Toolbox,
+  Journey,
+  Beyond,
+  ClosingCta,
+} from "@/components/sections/HomeSections";
 
 /**
- * Conventional portfolio order: introduce, establish capability, show the
- * work, explain the progression, invite contact.
+ * The page reads as a single scroll: who, what, proof, depth, history, how,
+ * and an invitation.
+ *
+ * `SelectedWork` and `ProjectGrid` deliberately sit next to each other — the
+ * first argues for three projects in prose beside a laptop, the second lets
+ * you browse all eight. One without the other is either a wall of cards with
+ * no argument, or an argument with nothing to browse.
  */
 export default function Home() {
   return (
     <>
       <Hero />
       <About />
-      <Skills />
-      <Projects />
+      <WhatIDo />
+      <SelectedWork />
+      <ProjectGrid />
+      <Toolbox />
       <Journey />
-      <Contact />
+      <Beyond />
+      <ClosingCta />
     </>
   );
 }
