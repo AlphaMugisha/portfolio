@@ -7,7 +7,7 @@ import { Menu, X, Download } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
 import { site, navItems } from "@/lib/site";
 
-const EASE = [0.7, 0, 0.3, 1] as const;
+const EASE = [0.4, 0, 0.2, 1] as const;
 
 /**
  * Site header — an ordinary one, on purpose.
@@ -82,7 +82,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
           scrolled || open
             ? "border-b border-line bg-surface/85 backdrop-blur-xl"
             : "border-b border-transparent"
@@ -111,7 +111,7 @@ export default function Header() {
                     <Link
                       href={item.href}
                       aria-current={on ? "page" : undefined}
-                      className={`meta relative block px-4 py-2 transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${
+                      className={`meta relative block px-4 py-2 transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
                         on
                           ? "text-text-primary"
                           : "text-text-secondary hover:text-text-primary"
@@ -122,7 +122,7 @@ export default function Header() {
                         <motion.span
                           layoutId="nav-underline"
                           aria-hidden="true"
-                          className="absolute inset-x-4 -bottom-0.5 h-px bg-primary"
+                          className="absolute inset-x-4 -bottom-0.5 h-px bg-text-primary"
                           transition={
                             reduced
                               ? { duration: 0 }
@@ -153,7 +153,7 @@ export default function Header() {
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
               aria-label={open ? "Close menu" : "Open menu"}
-              className="grid h-10 w-10 place-items-center rounded-pill border border-line text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] hover:border-primary hover:text-primary md:hidden"
+              className="grid h-10 w-10 place-items-center rounded-pill border border-line text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:border-text-primary hover:text-text-primary md:hidden"
             >
               {open ? <X size={19} /> : <Menu size={19} />}
             </button>
@@ -170,7 +170,7 @@ export default function Header() {
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.4, ease: EASE }}
+            transition={{ duration: 0.3, ease: EASE }}
             className="fixed inset-x-0 top-16 z-40 border-b border-line bg-surface px-6 pb-8 pt-4 shadow-[var(--shadow-card)] md:hidden"
           >
             <ul className="flex flex-col">

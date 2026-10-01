@@ -13,29 +13,31 @@ const fs = require("fs");
 const OUT = path.join(__dirname, "..", "public", "images");
 fs.mkdirSync(OUT, { recursive: true });
 
-// Re-graded to sit beside the hero art, which is a saturated mesh gradient.
-// The previous pass was so pale the covers read as blank tiles next to it —
-// a cover is meant to be the loudest thing in its card, not the quietest.
-// Each scheme is a light base with three real chroma notes; the heavy blur
-// and the veil in `field` take most of the intensity back out.
+// Re-graded onto the token sheet's palette. The sheet carries exactly TWO
+// chromatic hues — amber #FEB002 and acid #70FF00 — so fourteen covers that
+// all had to be distinguishable are built from tonal steps of those two plus
+// the sheet's greys, rather than from invented hues. Every cover is therefore
+// amber-led, acid-led, or neutral, and the variation inside each family comes
+// from how light the base is and how much of the dark ground shows through.
 const SCHEMES = {
-  portrait:   ["#E8EFFC", "#9CC0F5", "#5B8DEF", "#C7B4FF"],
-  hero:       ["#E9F0FD", "#A5C6F7", "#4F8BF0", "#B9A8FF"],
-  rwasport:   ["#E6F0FE", "#8FBDF8", "#2F7BEF", "#63D3E8"],
-  greenhouse: ["#E7F6F0", "#93DCC2", "#3FBF96", "#BEE86F"],
-  cleankigali:["#E6F4F7", "#8FD3E2", "#3CA9C6", "#7BE0C9"],
-  tembera:    ["#EFEBFD", "#BDAEF5", "#7C5CE8", "#E39BE0"],
-  transiteco: ["#EBEFF6", "#A9B8D4", "#6B82AC", "#8FB6D9"],
-  payment:    ["#FCF3E6", "#F3D5A0", "#E0A94F", "#FF9E6B"],
-  ikibina:    ["#EFEAFB", "#C3B0EE", "#8465D8", "#B79BF0"],
-  school:     ["#EBEFF5", "#ABBBD3", "#6C86A8", "#9CC2DD"],
+  portrait:   ["#F2F2F2", "#FFD37A", "#FEB002", "#E5A002"],
+  hero:       ["#FFFFFF", "#FFE0A3", "#FEB002", "#C98C02"],
+  rwasport:   ["#F2F2F2", "#C6F89B", "#70FF00", "#4FBF00"],
+  greenhouse: ["#F2F2F2", "#A8FF5E", "#70FF00", "#FEB002"],
+  cleankigali:["#FFFFFF", "#D4FFB0", "#70FF00", "#828282"],
+  tembera:    ["#F2F2F2", "#FFD37A", "#FEB002", "#70FF00"],
+  transiteco: ["#F2F2F2", "#BFBFBF", "#828282", "#4F4F4F"],
+  payment:    ["#FFFFFF", "#FFC94D", "#E5A002", "#161616"],
+  ikibina:    ["#F2F2F2", "#FFE0A3", "#C98C02", "#828282"],
+  school:     ["#FFFFFF", "#CFCFCF", "#828282", "#FEB002"],
 
-  // The journey strip reads left to right as a progression: warm workbench
-  // -> teal server era -> the accent blue -> violet.
-  jFoundation:["#FCF2E4", "#F0D096", "#DFA243", "#FFAE72"],
-  jEarly:     ["#E6F5F1", "#8FDAC4", "#38BC97", "#6FD7C0"],
-  jCurrent:   ["#E6EFFD", "#93C0F8", "#2F7BEF", "#6BB2F5"],
-  jOngoing:   ["#EEEAFC", "#BFAEF2", "#7C5CE8", "#A98FE8"],
+  // The journey strip reads left to right as a progression: a warm amber
+  // workbench, into acid green, into the near-black ground, and out again
+  // into amber at full strength.
+  jFoundation:["#FFFFFF", "#FFE0A3", "#FEB002", "#C98C02"],
+  jEarly:     ["#F2F2F2", "#C6F89B", "#70FF00", "#4FBF00"],
+  jCurrent:   ["#E8E8E8", "#9A9A9A", "#4F4F4F", "#161616"],
+  jOngoing:   ["#FFFFFF", "#FFD37A", "#FEB002", "#70FF00"],
 };
 
 /** Soft blurred blobs over a base wash — reads as depth-of-field photography. */
@@ -101,7 +103,7 @@ const JOBS = [
     await sharp(field(w, h, colors, seed))
       // Heavy blur turns the hard circles into a soft photographic field.
       .blur(Math.round(Math.min(w, h) / 26))
-      .modulate({ saturation: 1.12, brightness: 1.0 })
+      .modulate({ saturation: 1.04, brightness: 1.0 })
       .jpeg({ quality: 78, mozjpeg: true })
       .toFile(dest);
     const kb = (fs.statSync(dest).size / 1024).toFixed(0);

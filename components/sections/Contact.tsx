@@ -53,7 +53,7 @@ export default function Contact() {
                   <ArrowUpRight
                     size={22}
                     aria-hidden="true"
-                    className="transition-transform duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-1 group-hover:translate-x-1"
+                    className="transition-transform duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-1 group-hover:translate-x-1"
                   />
                 </a>
               </Magnetic>
@@ -64,7 +64,7 @@ export default function Contact() {
                 <a
                   href={site.cv}
                   download
-                  className="btn-depth label-ui inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-primary hover:text-primary-strong"
+                  className="btn-depth label-ui inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-text-primary hover:text-text-primary"
                 >
                   <Download size={15} aria-hidden="true" />
                   Download CV
@@ -78,14 +78,14 @@ export default function Contact() {
                       href={sn.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-depth label-ui group inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-primary hover:text-primary-strong"
+                      className="btn-depth label-ui group inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-text-primary hover:text-text-primary"
                     >
                       <Icon size={15} />
                       {sn.label}
                       <ArrowUpRight
                         size={14}
                         aria-hidden="true"
-                        className="text-text-muted transition-transform duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                        className="text-text-muted transition-transform duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                       />
                     </a>
                   );
@@ -100,14 +100,14 @@ export default function Contact() {
           <Reveal delay={0.18}>
             <dl className="border-t border-line">
               <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-line py-6">
-                <dt className="meta text-primary-strong">Location</dt>
+                <dt className="meta text-text-primary">Location</dt>
                 <dd className="text-editorial text-xl text-text-primary">
                   {site.location}
                 </dd>
               </div>
 
               <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-line py-6">
-                <dt className="meta text-primary-strong">Availability</dt>
+                <dt className="meta text-text-primary">Availability</dt>
                 <dd className="text-editorial flex items-center gap-3 text-xl text-text-primary">
                   <span className="relative grid h-1.5 w-1.5 place-items-center">
                     <span className="absolute h-1.5 w-1.5 animate-ping rounded-full bg-primary opacity-60 motion-reduce:hidden" />
@@ -118,7 +118,7 @@ export default function Contact() {
               </div>
 
               <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-line py-6">
-                <dt className="meta text-primary-strong">Based around</dt>
+                <dt className="meta text-text-primary">Based around</dt>
                 <dd className="text-editorial text-right text-xl text-text-primary">
                   Web platforms · Embedded · Applied AI
                 </dd>
@@ -128,7 +128,7 @@ export default function Contact() {
         </div>
       </Section>
 
-      <footer data-band="dark" className="bg-ink">
+      <footer data-band="dark" className="bg-bg-invert">
         <Marquee
           items={[
             "Available for work",
@@ -139,7 +139,7 @@ export default function Contact() {
           ]}
           duration={52}
           className="border-y border-line py-5"
-          itemClassName="meta text-primary"
+          itemClassName="meta text-accent"
         />
 
         <div className={`${MEASURE} py-20`}>
@@ -159,7 +159,7 @@ export default function Contact() {
                   <li key={item.href}>
                     <a
                       href={item.href}
-                      className="meta link-rule inline-block text-text-secondary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] hover:text-primary"
+                      className="meta link-rule inline-block text-text-secondary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-primary"
                     >
                       {item.label}
                     </a>

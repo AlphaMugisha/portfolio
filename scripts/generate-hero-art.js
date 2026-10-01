@@ -20,13 +20,15 @@ const fs = require("fs");
 const OUT = path.join(__dirname, "..", "public", "images", "hero");
 fs.mkdirSync(OUT, { recursive: true });
 
-/* The accent blue and two neighbours either side of it, plus a warm note so
-   the field is not monochrome. Saturated on purpose — the blur takes most of
-   the intensity back out, so starting subtle ends up looking like nothing. */
+/* The sheet's two hues and their tonal steps, over a near-white base. The
+   blur takes most of the intensity back out, so starting subtle ends up
+   looking like nothing — these are saturated on purpose. `primary` is the
+   amber field behind the hero, `warm` pushes it further, and `cool` is the
+   acid-green counterpart for the one place the page needs a second note. */
 const PIECES = {
-  primary: ["#DCE8FB", "#0A6EFA", "#7C5CFF", "#22D3EE", "#F8FAFF"],
-  warm: ["#FDF3E7", "#FFB45E", "#FF7A59", "#0A6EFA", "#FFFFFF"],
-  cool: ["#E8F0FF", "#3B82F6", "#06B6D4", "#8B5CF6", "#FFFFFF"],
+  primary: ["#FFFFFF", "#FEB002", "#FFD37A", "#C98C02", "#F2F2F2"],
+  warm: ["#FFF6E6", "#FEB002", "#E5A002", "#FFC94D", "#FFFFFF"],
+  cool: ["#F2F2F2", "#70FF00", "#A8FF5E", "#FEB002", "#FFFFFF"],
 };
 
 /** Deterministic PRNG so the art never changes between runs. */
@@ -78,7 +80,7 @@ const JOBS = [
     const dest = path.join(OUT, name);
     const field = await sharp(mesh(w, h, colors, seed))
       .blur(Math.round(Math.min(w, h) / 9))
-      .modulate({ saturation: 1.18 })
+      .modulate({ saturation: 1.02 })
       .toBuffer();
 
     await sharp(field)

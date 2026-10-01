@@ -7,7 +7,7 @@ export default function NotFound() {
       {/* Even the dead end is a place in the room, not a blank page. */}
       <span
         aria-hidden="true"
-        className="text-mega pointer-events-none absolute select-none whitespace-nowrap text-ghost/60"
+        className="text-mega pointer-events-none absolute select-none whitespace-nowrap text-ghost/20"
         style={{ fontSize: "min(38svh, 26vw)" }}
       >
         404
@@ -29,7 +29,7 @@ export default function NotFound() {
       >
         <ArrowLeft
           size={14}
-          className="transition-transform duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-x-0.5"
+          className="transition-transform duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-x-0.5"
         />
         Back to start
       </Link>

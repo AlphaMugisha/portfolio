@@ -10,7 +10,7 @@ import TechIcon from "@/components/ui/TechIcon";
 import { skillGroups } from "@/lib/skills";
 import { toolIndex, referencedCount, type ToolRef } from "@/lib/tool-usage";
 
-const EASE = [0.7, 0, 0.3, 1] as const;
+const EASE = [0.4, 0, 0.2, 1] as const;
 
 /**
  * Expertise — a toolbox that cross-references itself against the work.
@@ -92,7 +92,7 @@ export default function Skills() {
                               }`
                             : s.name
                         }
-                        className={`flex w-full items-center gap-3.5 rounded-pill px-3 py-3 text-left transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${
+                        className={`flex w-full items-center gap-3.5 rounded-pill px-3 py-3 text-left transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           on ? "bg-accent-soft" : "hover:bg-bg-raised"
                         }`}
                       >
@@ -101,8 +101,8 @@ export default function Skills() {
                         </span>
 
                         <span
-                          className={`min-w-0 flex-1 truncate font-geometric text-[0.95rem] font-light tracking-[0.02em] transition-colors duration-[400ms] ${
-                            on ? "text-primary-strong" : "text-text-primary"
+                          className={`min-w-0 flex-1 truncate font-geometric text-[0.95rem] font-light tracking-[0.02em] transition-colors duration-[300ms] ${
+                            on ? "text-text-primary" : "text-text-primary"
                           }`}
                         >
                           {s.name}
@@ -113,9 +113,9 @@ export default function Skills() {
                             nobody has made; a project count is checkable. */}
                         {used > 0 && (
                           <span
-                            className={`meta shrink-0 rounded-pill border px-2.5 py-1 text-[0.625rem] transition-colors duration-[400ms] ${
+                            className={`meta shrink-0 rounded-pill border px-2.5 py-1 text-[0.625rem] transition-colors duration-[300ms] ${
                               on
-                                ? "border-primary bg-primary text-on-primary"
+                                ? "border-text-primary bg-primary text-on-primary"
                                 : "border-line text-text-muted"
                             }`}
                           >
@@ -168,7 +168,7 @@ function Reader({
           initial={reduced ? undefined : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={reduced ? undefined : { opacity: 0, y: -8 }}
-          transition={{ duration: 0.4, ease: EASE }}
+          transition={{ duration: 0.3, ease: EASE }}
           className="flex w-full flex-wrap items-center gap-x-8 gap-y-4"
         >
           <span className="grid h-14 w-14 shrink-0 place-items-center rounded-tile border border-line bg-surface">
@@ -189,7 +189,7 @@ function Reader({
 
           {current.projects.length > 0 ? (
             <div className="flex min-w-0 flex-col gap-2">
-              <span className="meta text-primary-strong">
+              <span className="meta text-text-primary">
                 Named in {current.projects.length} case{" "}
                 {current.projects.length === 1 ? "study" : "studies"}
               </span>
@@ -198,7 +198,7 @@ function Reader({
                   <li key={p.slug}>
                     <Link
                       href={`/projects/${p.slug}`}
-                      className="chip group inline-flex items-center gap-2 px-3.5 py-2 text-text-secondary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] hover:border-primary hover:text-primary-strong"
+                      className="chip group inline-flex items-center gap-2 px-3.5 py-2 text-text-secondary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:border-text-primary hover:text-text-primary"
                     >
                       {p.name}
                       <ArrowUpRight

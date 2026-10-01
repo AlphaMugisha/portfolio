@@ -26,7 +26,7 @@ import Wash from "@/components/ui/Wash";
 export const MEASURE = "mx-auto w-full max-w-[1320px] px-6 sm:px-10";
 
 /** The vertical rhythm. 90 / 133 / 180 — the reference's top three steps. */
-export const SECTION_PAD = "py-[90px] sm:py-[133px] lg:py-[180px]";
+export const SECTION_PAD = "py-[92px] sm:py-[138px] lg:py-[184px]";
 
 export default function Section({
   id,
@@ -65,10 +65,22 @@ export default function Section({
       <div className={`relative ${MEASURE}`}>
         <header>
           <Reveal y={10}>
-            {/* Name and aside sit ON the rule, not above it. */}
-            <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2 border-t border-line pt-5">
-              <p className="eyebrow">{eyebrow}</p>
-              {aside}
+            {/* Name and aside sit ON the rule, not above it.
+
+                The rule is where the accent lives on the light ground. Amber
+                text would be 1.8:1 on white, but a 3px amber bar carrying
+                nothing is purely decorative, so the colour gets to be
+                present on every section header without being asked to
+                communicate. The hairline continues past it at 12% ink. */}
+            <div className="relative border-t border-line pt-5">
+              <span
+                aria-hidden="true"
+                className="absolute -top-px left-0 h-[3px] w-14 bg-accent"
+              />
+              <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2">
+                <p className="eyebrow">{eyebrow}</p>
+                {aside}
+              </div>
             </div>
           </Reveal>
 

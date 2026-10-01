@@ -67,7 +67,7 @@ export default function Projects() {
                   <Arrow size={20} />
                 </div>
 
-                <h3 className="text-display mt-7 text-[clamp(2rem,3.6vw,3.2rem)] text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong">
+                <h3 className="text-display mt-7 text-[clamp(2rem,3.6vw,3.2rem)] text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-text-primary">
                   {lead.name}
                 </h3>
 
@@ -117,7 +117,7 @@ export default function Projects() {
               <div className="flex flex-1 flex-col border-t border-line pt-5">
                 <div className="flex items-start justify-between gap-4">
                   <p className="meta truncate text-text-muted">
-                    <span className="text-primary">
+                    <span className="text-text-primary">
                       {String(i + 2).padStart(2, "0")}
                     </span>{" "}
                     · {p.year} · {statusCopy[p.status]}
@@ -125,7 +125,7 @@ export default function Projects() {
                   <Arrow size={16} />
                 </div>
 
-                <h3 className="text-display mt-3 text-2xl text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong sm:text-3xl">
+                <h3 className="text-display mt-3 text-2xl text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-text-primary sm:text-3xl">
                   {p.name}
                 </h3>
 
@@ -158,7 +158,7 @@ function Arrow({ size, className = "" }: { size: number; className?: string }) {
     <ArrowUpRight
       size={size}
       aria-hidden="true"
-      className={`shrink-0 text-text-muted transition-all duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary ${className}`}
+      className={`shrink-0 text-text-muted transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text-primary ${className}`}
     />
   );
 }

@@ -25,7 +25,7 @@ export default function GlobalError({
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#FFFFFF",
-          color: "#393A3D",
+          color: "#161616",
           fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "1.5rem",
         }}
@@ -36,7 +36,7 @@ export default function GlobalError({
               fontSize: "0.625rem",
               letterSpacing: "0.26em",
               textTransform: "uppercase",
-              color: "#0A6EFA",
+              color: "#161616",
               margin: 0,
             }}
           >
@@ -57,7 +57,7 @@ export default function GlobalError({
 
           <p
             style={{
-              color: "#55585E",
+              color: "#4F4F4F",
               lineHeight: 1.65,
               margin: "1rem 0 0",
             }}
@@ -69,7 +69,7 @@ export default function GlobalError({
           {error.digest && (
             <p
               style={{
-                color: "#61636A",
+                color: "#6B6B6B",
                 fontSize: "0.75rem",
                 fontFamily: "inherit",
                 margin: "1.5rem 0 0",
@@ -85,10 +85,10 @@ export default function GlobalError({
             style={{
               marginTop: "2rem",
               padding: "0.875rem 2rem",
-              borderRadius: "10px",
+              borderRadius: "6px",
               border: "none",
-              backgroundColor: "#0A6EFA",
-              color: "#FFFFFF",
+              backgroundColor: "#FEB002",
+              color: "#161616",
               fontSize: "0.8125rem",
               letterSpacing: "0.14em",
               textTransform: "uppercase",

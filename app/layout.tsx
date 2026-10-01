@@ -1,45 +1,35 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Cormorant_Garamond,
-  Jost,
-  Mrs_Saint_Delafield,
-} from "next/font/google";
+import { Roboto, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/ui/Header";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import { site } from "@/lib/site";
 
-/* Two working faces and a signature.
+/* Two webfonts, three roles.
 
-   The display serif, standing in for TT Ramillas: high contrast, a long
-   ascender, and enough of a modern cut that it never reads as a book. It is
-   only ever set LIGHT and LARGE — the size carries the emphasis, so the
-   weight never has to, which is the whole difference between this and the
-   bold grotesque it replaces. The italic is loaded because the closing
-   clause of every section heading is set in it. */
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+   The token sheet's stack is Roboto, Courier Prime and Times New Roman. The
+   display face is therefore a SYSTEM font — nothing to download, nothing to
+   swap, no layout shift on the largest type on the page — so only the other
+   two are fetched here.
+
+   Roboto carries body, leads and prose. Courier Prime carries every tracked
+   label: eyebrows, metadata, navigation, buttons, chips. That split is the
+   whole character of the system — the reader sees serif against monospace,
+   with the sans holding the middle, rather than three sans faces competing.
+
+   The italic cut of Roboto is not loaded: the only italics on the page are
+   the display clause and the signature, and both are set in Times. */
+const roboto = Roboto({
+  variable: "--font-roboto",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "700"],
   display: "swap",
 });
 
-/* The sans, standing in for TT Commons Pro: body, navigation, every tracked
-   label and every control. One sans rather than the three the page used to
-   run — once the headings are set in a serif, the contrast a reader sees is
-   serif against sans, and a second sans only muddies it. */
-const jost = Jost({
-  variable: "--font-jost",
+const courier = Courier_Prime({
+  variable: "--font-courier",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  display: "swap",
-});
-
-const script = Mrs_Saint_Delafield({
-  variable: "--font-delafield",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -89,7 +79,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${jost.variable} ${script.variable} h-full antialiased`}
+      className={`${roboto.variable} ${courier.variable} h-full antialiased`}
     >
       <body className="relative min-h-full">
         <ScrollProgress />

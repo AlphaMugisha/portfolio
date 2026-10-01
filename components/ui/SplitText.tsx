@@ -89,9 +89,9 @@ export default function SplitText({
             initial={{ y: "108%" }}
             animate={go ? { y: "0%" } : undefined}
             transition={{
-              duration: 1.1,
+              duration: 0.5,
               delay: delay + i * stagger,
-              ease: [0.7, 0, 0.3, 1],
+              ease: [0.4, 0, 0.2, 1],
             }}
           >
             {char === " " ? " " : char}

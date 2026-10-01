@@ -75,7 +75,7 @@ export default function About() {
               </span>
               <span className="h-5 w-px bg-line" aria-hidden="true" />
               <span className="meta text-text-muted">{site.location}</span>
-              <span className="meta ml-auto text-primary-strong">
+              <span className="meta ml-auto text-text-primary">
                 {new Date().getFullYear()}
               </span>
             </div>
@@ -112,7 +112,7 @@ export default function About() {
             {FACTS.map((f) => (
               <StaggerItem key={f.label}>
                 <div className="border-b border-line py-5">
-                  <p className="meta text-primary-strong">{f.label}</p>
+                  <p className="meta text-text-primary">{f.label}</p>
                   <p className="text-editorial mt-2 text-lg text-text-primary">
                     {f.value}
                   </p>
@@ -140,7 +140,7 @@ export default function About() {
                 i > 0 ? "sm:border-l sm:pl-10" : ""
               }`}
             >
-              <p className="text-mega text-[clamp(3.2rem,7vw,5.5rem)] text-primary">
+              <p className="text-mega text-[clamp(3.2rem,7vw,5.5rem)] text-text-primary">
                 <Counter value={f.value} suffix={f.suffix} />
               </p>
               <p className="meta mt-4 text-text-muted">{f.label}</p>

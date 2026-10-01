@@ -16,17 +16,19 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
    Four rules the whole site obeys, so the animation reads as one system
    rather than a collection of effects:
 
-   1. Everything runs on ONE symmetric curve — cubic-bezier(0.7, 0, 0.3, 1).
-      An ease-out curve leaves fast and settles slowly, which reads as eager;
-      this one accelerates and decelerates equally, so nothing on the page
-      ever arrives in a hurry.
+   1. Everything runs on ONE curve — cubic-bezier(0.4, 0, 0.2, 1), which is
+      the `ease-in-out` the token sheet specifies. It accelerates and
+      decelerates equally, so nothing arrives in a hurry and nothing drifts.
    2. Motion enters from below or fades. Never sideways, never rotating.
-   3. Durations are 0.4s, 1s or 1.6s and nothing else. Reveals take the full
-      second: at this weight of type, a fast reveal reads as a flicker.
+   3. Durations are 0.2s, 0.3s or 0.5s and nothing else — the sheet's three
+      interactive steps. Anything that repeats forever runs on its 3s or 6s
+      float loop instead. The previous system ran reveals at a full second,
+      which suited a light display serif at 7rem; Roboto and Courier at this
+      scale read as sluggish at that length.
    4. Every primitive returns a plain static element under reduced motion.
    ------------------------------------------------------------------ */
 
-export const EASE = [0.7, 0, 0.3, 1] as const;
+export const EASE = [0.4, 0, 0.2, 1] as const;
 
 /* ---------- Reveal ------------------------------------------------ */
 
@@ -71,7 +73,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y }}
       animate={inView ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration: 1, delay, ease: EASE }}
+      transition={{ duration: 0.5, delay, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -130,7 +132,7 @@ export function StaggerItem({
       className={className}
       variants={{
         hidden: { opacity: 0, y: 22 },
-        visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
       }}
     >
       {children}
@@ -278,7 +280,7 @@ export function TextReveal({
             className={`block ${lineClassName}`}
             initial={{ y: "110%" }}
             animate={inView ? { y: "0%" } : undefined}
-            transition={{ duration: 1, delay: delay + i * 0.09, ease: EASE }}
+            transition={{ duration: 0.5, delay: delay + i * 0.09, ease: EASE }}
           >
             {line}
           </motion.span>
@@ -340,7 +342,7 @@ export function MaskedWords({
             className={`mr-[0.28em] inline-block ${wordClassName?.(i) ?? ""}`}
             initial={{ y: "112%" }}
             animate={inView ? { y: "0%" } : undefined}
-            transition={{ duration: 0.95, delay: delay + i * stagger, ease: EASE }}
+            transition={{ duration: 0.5, delay: delay + i * stagger, ease: EASE }}
           >
             {w}
           </motion.span>
@@ -431,7 +433,7 @@ export function Zoom({
   from = "center",
   delay = 0,
   scale = 0.72,
-  duration = 0.7,
+  duration = 0.5,
   /** AOS replays by default; keep that unless a one-shot is wanted. */
   once = false,
 }: {
@@ -502,6 +504,6 @@ export const zoomItem = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.55, ease: EASE },
+    transition: { duration: 0.3, ease: EASE },
   },
 };

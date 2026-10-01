@@ -41,7 +41,7 @@ export default async function ProjectPage({
   const next = projects[(index + 1) % projects.length];
 
   return (
-    <article className="bg-ink pb-[90px] pt-32 sm:pb-[133px] sm:pt-44">
+    <article className="bg-ink pb-[92px] pt-32 sm:pb-[138px] sm:pt-44">
       <div className={MEASURE}>
         <div className="grid grid-cols-1 items-start gap-y-12 lg:grid-cols-12 lg:gap-x-10">
           {/* ---- the sticky dossier --------------------------------
@@ -52,7 +52,7 @@ export default async function ProjectPage({
           <aside className="lg:sticky lg:top-32 lg:col-span-3">
             <Link
               href="/#projects"
-              className="group meta inline-flex items-center gap-2.5 text-text-muted transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] hover:text-text-primary"
+              className="group meta inline-flex items-center gap-2.5 text-text-muted transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-text-primary"
             >
               <ArrowLeft
                 size={14}
@@ -64,13 +64,13 @@ export default async function ProjectPage({
 
             <dl className="mt-10 space-y-6 border-t border-line pt-7">
               <div>
-                <dt className="meta text-primary-strong">Year</dt>
+                <dt className="meta text-text-primary">Year</dt>
                 <dd className="text-editorial mt-2 text-lg text-text-primary">
                   {project.year}
                 </dd>
               </div>
               <div>
-                <dt className="meta text-primary-strong">Status</dt>
+                <dt className="meta text-text-primary">Status</dt>
                 <dd className="text-editorial mt-2 flex items-center gap-2.5 text-lg text-text-primary">
                   <span
                     aria-hidden="true"
@@ -80,13 +80,13 @@ export default async function ProjectPage({
                 </dd>
               </div>
               <div>
-                <dt className="meta text-primary-strong">Focus</dt>
+                <dt className="meta text-text-primary">Focus</dt>
                 <dd className="text-editorial mt-2 text-lg leading-snug text-text-primary">
                   {project.categories.join(" · ")}
                 </dd>
               </div>
               <div>
-                <dt className="meta text-primary-strong">Built with</dt>
+                <dt className="meta text-text-primary">Built with</dt>
                 <dd className="mt-2 flex flex-wrap gap-1.5">
                   {project.stack.map((t) => (
                     <span
@@ -105,7 +105,7 @@ export default async function ProjectPage({
                 href={project.repo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-depth label-ui group mt-10 inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-primary hover:text-primary-strong"
+                className="btn-depth label-ui group mt-10 inline-flex items-center gap-3 rounded-pill border border-line-strong bg-surface px-6 py-4 text-text-primary hover:border-text-primary hover:text-text-primary"
               >
                 <GithubIcon size={14} />
                 View source
@@ -148,7 +148,7 @@ export default async function ProjectPage({
                     className="border-b border-line py-7 sm:border-b-0 sm:border-l sm:pl-7 sm:first:border-l-0 sm:first:pl-0"
                   >
                     <p className="meta text-text-muted">{s.label}</p>
-                    <p className="text-mega mt-3 text-[clamp(2rem,3.4vw,2.8rem)] text-primary">
+                    <p className="text-mega mt-3 text-[clamp(2rem,3.4vw,2.8rem)] text-text-primary">
                       {s.value}
                     </p>
                   </div>
@@ -189,13 +189,13 @@ export default async function ProjectPage({
                 href={`/projects/${next.slug}`}
                 className="plate lift group flex flex-wrap items-baseline justify-between gap-4 px-8 py-8"
               >
-                <span className="text-display text-3xl text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong sm:text-5xl">
+                <span className="text-display text-3xl text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-text-primary sm:text-5xl">
                   {next.name}
                 </span>
                 <ArrowUpRight
                   size={22}
                   aria-hidden="true"
-                  className="text-text-muted transition-all duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary"
+                  className="text-text-muted transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-text-primary"
                 />
               </Link>
             </nav>

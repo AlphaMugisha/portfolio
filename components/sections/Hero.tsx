@@ -19,7 +19,7 @@ import { MEASURE } from "@/components/ui/Section";
 import { projects, coverFor, statusCopy } from "@/lib/projects";
 import { site } from "@/lib/site";
 
-const EASE = [0.7, 0, 0.3, 1] as const;
+const EASE = [0.4, 0, 0.2, 1] as const;
 
 const TICKER = [
   "Software",
@@ -53,7 +53,7 @@ const TAIL = {
 
 const TAIL_ITEM = {
   hidden: { opacity: 0, y: 22 },
-  shown: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
 };
 
 /* ---------- orchestration helpers --------------------------------- */
@@ -94,7 +94,7 @@ function Beat({
       className={className}
       initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: at, ease: EASE }}
+      transition={{ duration: 0.5, delay: at, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -307,7 +307,7 @@ export default function Hero() {
                       <motion.span
                         aria-hidden="true"
                         animate={reduced ? undefined : { y: [0, 3, 0] }}
-                        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         className="inline-flex"
                       >
                         <ArrowDown size={14} />
@@ -317,7 +317,7 @@ export default function Hero() {
                   <Magnetic pull={6} contentPull={3} radius={90}>
                     <Link
                       href="#contact"
-                      className="btn-depth label-ui inline-flex items-center rounded-pill border border-line-strong bg-surface px-8 py-4 text-on-band hover:border-primary hover:text-primary-strong"
+                      className="btn-depth label-ui inline-flex items-center rounded-pill border border-line-strong bg-surface px-8 py-4 text-on-band hover:border-text-primary hover:text-text-primary"
                     >
                       Get in touch
                     </Link>
@@ -367,14 +367,14 @@ export default function Hero() {
                     <p className="meta truncate text-text-muted">
                       {featured.year} · {statusCopy[featured.status]}
                     </p>
-                    <p className="text-editorial mt-1 truncate text-xl text-text-primary transition-colors duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:text-primary-strong">
+                    <p className="text-editorial mt-1 truncate text-xl text-text-primary transition-colors duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-text-primary">
                       {featured.name}
                     </p>
                   </div>
                   <ArrowUpRight
                     size={18}
                     aria-hidden="true"
-                    className="mr-2 shrink-0 text-text-muted transition-all duration-[400ms] ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+                    className="mr-2 shrink-0 text-text-muted transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text-primary"
                   />
                 </Link>
               </motion.div>

@@ -44,8 +44,8 @@ function Counter({ active }: { active: number }) {
             initial={{ y: "100%" }}
             animate={{ y: "0%" }}
             exit={{ y: "-100%" }}
-            transition={{ duration: 0.45, ease: EASE }}
-            className="absolute inset-0 text-primary"
+            transition={{ duration: 0.3, ease: EASE }}
+            className="absolute inset-0 text-text-primary"
           >
             {String(active + 1).padStart(2, "0")}
           </motion.span>
@@ -69,7 +69,7 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
       ref={ref}
       initial={reduced ? undefined : { opacity: 0, x: 70 }}
       animate={reduced || inView ? { opacity: 1, x: 0 } : undefined}
-      transition={{ duration: 0.9, ease: EASE }}
+      transition={{ duration: 0.5, ease: EASE }}
       className="w-[80vw] shrink-0 snap-start sm:w-[440px] lg:w-[480px]"
     >
       <div className="group h-full">
@@ -80,7 +80,7 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
               animate={
                 reduced || inView ? { clipPath: "inset(0% 0% 0% 0%)" } : undefined
               }
-              transition={{ duration: 1.0, delay: 0.15, ease: EASE }}
+              transition={{ duration: 0.5, delay: 0.15, ease: EASE }}
               className="absolute inset-0"
             >
               <Image
@@ -95,7 +95,7 @@ function StageCard({ entry, index }: { entry: (typeof journey)[number]; index: n
 
           <div className="p-7 sm:p-8">
             <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-line pb-4">
-              <span className="meta text-primary">
+              <span className="meta text-text-primary">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className="meta text-text-muted">{entry.period}</span>
@@ -217,7 +217,7 @@ export default function Journey() {
       <div className="relative mt-8 h-px w-full bg-line">
         <motion.div
           style={{ scaleX: pinned ? rail : (active + 1) / n }}
-          className="absolute inset-0 origin-left bg-primary"
+          className="absolute inset-0 origin-left bg-text-primary"
         />
       </div>
     </div>
@@ -231,7 +231,7 @@ export default function Journey() {
     return (
       <section
         id="journey"
-        data-band="dark"
+        data-band="light"
         className="relative scroll-mt-24 bg-ink"
       >
         <Wash side="left" />
@@ -254,8 +254,8 @@ export default function Journey() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -40 }}
-                  transition={{ duration: 0.6, ease: EASE }}
-                  className="text-mega whitespace-nowrap text-ghost/60"
+                  transition={{ duration: 0.3, ease: EASE }}
+                  className="text-mega whitespace-nowrap text-ghost/20"
                   style={{ fontSize: "min(30svh, 17vw)" }}
                 >
                   {journey[active].period}
@@ -294,8 +294,8 @@ export default function Journey() {
       ref={(el) => {
         outer.current = el;
       }}
-      data-band="dark"
-      className="relative scroll-mt-24 bg-ink py-[90px] sm:py-[133px] lg:py-[180px]"
+      data-band="light"
+      className="relative scroll-mt-24 bg-ink py-[92px] sm:py-[138px] lg:py-[184px]"
     >
       <Wash side="left" />
       {header}

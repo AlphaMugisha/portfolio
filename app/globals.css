@@ -3,148 +3,217 @@
 /* ============================================================
    DESIGN TOKENS
 
-   The PALETTE is unchanged — it is still the blue-on-white system sampled
-   from fortosee.mp4, ratio for ratio:
+   The whole visual language now comes from the extracted token sheet for
+   tuyishimireeric.github.io. Nothing in the palette is invented: the seven
+   colours below ARE the sheet, role for role.
 
-     #FFFFFF  the ground AND the card
-     #E7F0FD  the active pill
-     #0A6EFA  the accent. Fills, active marks, the closing clause
-     #393A3D  heading ink
-     #DADBE0  the hairline
-     #0B5ED1  the darkened accent step, for small text that must clear AA
+     #FFFFFF  the ground, and the card
+     #F2F2F2  the one raised fill — inactive tiles, skeletons
+     #161616  the dark ground, and the ink of every heading
+     #4F4F4F  body ink
+     #828282  the lightest grey the sheet carries
+     #FEB002  amber — the accent, as a FILL on light, as TEXT on dark
+     #70FF00  acid  — the live mark, dark ground only
 
-   Everything ELSE is new. The old look was a soft dashboard: 22px corners,
-   three stacked shadows, a heavy grotesque shouting at 6.5rem. This one is
-   the luxury-property editorial language — a high-contrast serif carrying
-   the display, one geometric sans carrying every label and control, a
-   single 10px corner used everywhere, hairlines instead of elevation, and
-   motion on a slow symmetric curve rather than an eager ease-out.
+   Three deliberate departures from the sheet, each because the sheet's own
+   accessibility rules demand it:
 
-   Four faces, three roles:
-     Cormorant Garamond  display, and the italic closing clause
-     Jost                body, navigation, labels, buttons — everything else
-     Mrs Saint Delafield the signature
-   with Times New Roman behind the serif, as the reference names it.
+   1. #828282 is 3.84:1 on white. That clears AA for large text and for
+      non-text marks and NOTHING else, so body-scale secondary copy uses a
+      tonal step on the same grey ramp — #6B6B6B, 5.33:1 — and #828282 is
+      kept for the dark ground (4.71:1 there) and for decoration.
+   2. Both accents are near-white in luminance: amber is 1.8:1 on white and
+      acid is 1.3:1. Neither can be text on the light ground, and acid
+      cannot even be a 1px rule. So the accent relationship is inverted —
+      amber is a FILL carrying #161616 ink (9.85:1), and both accents become
+      text only inside a dark band, where they run 9.85:1 and 13.8:1.
+   3. The sheet names no hairline colour. Hairlines are #161616 at low alpha
+      rather than a new hue, so the palette stays closed.
+
+   Typography is the sheet's stack, three faces to three roles:
+     Times New Roman  display, the italic clause, the signature
+     Roboto           body, leads, prose
+     Courier Prime    every tracked label — eyebrows, metadata, controls, nav
+
+   Shape is the sheet's signature: ONE notched corner, 0 0 0 24px, on every
+   editorial surface, with 6px on controls and 50% on round marks.
    ============================================================ */
 @theme {
   /* -- core ------------------------------------------------ */
   --color-ink: #FFFFFF;      /* the section ground — plain white */
-  --color-void: #FAFBFC;     /* the footer, a half-step off white */
+  --color-void: #F2F2F2;
   --color-panel: #FFFFFF;    /* the card */
   --color-paper: #FFFFFF;
-  --color-cyan: #0A6EFA;
-  --color-ember: #0B5ED1;
-  --color-ghost: #CFD5DE;    /* oversized display type used as texture */
+  --color-cyan: #FEB002;
+  --color-ember: #161616;
+  --color-ghost: #828282;    /* oversized display type used as texture */
 
   /* -- semantic surfaces ---------------------------------- */
   --color-bg: #FFFFFF;
-  --color-bg-raised: #F4F6F8;
+  --color-bg-raised: #F2F2F2;
   --color-surface: #FFFFFF;
   --color-surface-raised: #FFFFFF;
-  --color-bg-invert: #FAFBFC;
-  --color-surface-invert: #FFFFFF;
+  --color-bg-invert: #161616;
+  --color-surface-invert: #161616;
 
   --color-band-light: #FFFFFF;
-  --color-band-deep: #FAFBFC;
+  --color-band-deep: #161616;
 
-  /* -- ink ------------------------------------------------- */
-  --color-text-primary: #393A3D;   /* 11.37:1 on white */
-  --color-text-secondary: #55585E; /* 7.13:1 on white */
-  --color-text-muted: #61636A;     /* 6.00:1 on white — lightest allowed */
-  --color-text-invert: #393A3D;
-  --color-text-invert-muted: #61636A;
+  /* -- ink -------------------------------------------------
+     A three-step ramp with real separation — 18.9 : 8.2 : 5.3 — rather than
+     four greys a reader cannot tell apart. Headings take the sheet's dark
+     ground colour as ink; body takes the sheet's Text Primary. */
+  --color-text-primary: #161616;   /* 18.88:1 on white — display + strong */
+  --color-text-secondary: #4F4F4F; /*  8.19:1 on white — body, leads */
+  --color-text-muted: #6B6B6B;     /*  5.33:1 on white — metadata */
+  --color-text-invert: #FFFFFF;
+  --color-text-invert-muted: #828282;
 
-  --color-on-band: #393A3D;
-  --color-on-band-muted: #61636A;
+  --color-on-band: #161616;
+  --color-on-band-muted: #6B6B6B;
 
-  --color-on-panel: #393A3D;
-  --color-on-panel-muted: #61636A;
+  --color-on-panel: #161616;
+  --color-on-panel-muted: #6B6B6B;
 
-  --color-panel-mid: #FFFFFF;
-  --color-on-panel-mid: #393A3D;
-  --color-on-panel-mid-lift: #0A6EFA;
+  --color-panel-mid: #F2F2F2;
+  --color-on-panel-mid: #161616;
+  --color-on-panel-mid-lift: #4F4F4F;
 
-  /* -- interactive ----------------------------------------- */
-  --color-primary: #0A6EFA;
-  --color-primary-strong: #0B5ED1;
-  --color-primary-hover: #0B5ED1;
-  --color-primary-light: #E7F0FD;
-  --color-on-primary: #FFFFFF;
+  /* -- interactive ----------------------------------------
+     The accent as a fill. Amber ground, #161616 ink — 9.85:1, which is the
+     only way this palette produces a coloured button that passes. */
+  --color-primary: #FEB002;
+  --color-primary-strong: #E5A002;  /* tonal step for hover / pressed */
+  --color-primary-hover: #E5A002;
+  --color-primary-light: #FFF0CC;   /* tonal step for soft fills */
+  --color-on-primary: #161616;
 
   /* -- accent ---------------------------------------------- */
-  --color-accent: #0A6EFA;
-  --color-accent-text: #0B5ED1;
-  --color-accent-soft: #E7F0FD;
+  --color-accent: #FEB002;
+  --color-accent-text: #161616;     /* the accent's role when it must read */
+  --color-accent-soft: #FFF0CC;
+  --color-live: #70FF00;            /* dark ground only — 13.8:1 there */
 
-  /* -- lines ----------------------------------------------- */
-  --color-line: #DADBE0;
-  --color-line-strong: #C6CAD4;
-  --color-line-invert: #DADBE0;
-  --color-line-band: #D2D7E0;
-  --color-line-panel: #DFE3EA;
+  /* -- lines ----------------------------------------------
+     The sheet names no line colour, so these are the dark ground at low
+     alpha. 12% lands on #E0E0E0, which is a visible 1px rule on white
+     without reading as a border. */
+  --color-line: rgba(22, 22, 22, 0.12);
+  --color-line-strong: rgba(22, 22, 22, 0.24);
+  --color-line-invert: rgba(255, 255, 255, 0.16);
+  --color-line-band: rgba(22, 22, 22, 0.14);
+  --color-line-panel: rgba(22, 22, 22, 0.10);
 
   /* -- type -----------------------------------------------
-     A serif for display, one sans for everything else. The previous system
-     ran three sans faces — a grotesque for headings, Inter for prose,
-     Poppins for chrome — which is two more than a page needs once the
-     headings are set in a serif. Jost now holds body, chrome and controls;
-     the contrast the page reads as is serif against sans, not sans against
-     sans. */
-  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-cormorant), "Times New Roman", Times, serif;
-  --font-serif: var(--font-cormorant), "Times New Roman", Times, serif;
-  --font-script: var(--font-delafield), cursive;
+     Times New Roman is a system face, so the display costs nothing to load
+     and never swaps. Roboto and Courier Prime are the two webfonts. The
+     contrast a reader sees is serif against monospace, with Roboto holding
+     the middle. */
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Times New Roman", Times, serif;
+  --font-serif: "Times New Roman", Times, serif;
+  /* The signature is the display serif in italic rather than a fourth face —
+     the sheet carries no script. */
+  --font-script: "Times New Roman", Times, serif;
   /* Kept under its old name so every existing `font-geometric` call site
-     resolves — it is simply the same sans as the body now. */
-  --font-geometric: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+     resolves. It is the monospace now — this is the slot Courier Prime is
+     in the sheet's stack to fill. */
+  --font-geometric: var(--font-courier), ui-monospace, "Courier New", monospace;
+  --font-mono: var(--font-courier), ui-monospace, "Courier New", monospace;
 
   /* -- radii ----------------------------------------------
-     ONE corner, 10px, on every surface: card, media, control, chip, frame.
-     The previous system mixed 22 / 15 / 11 and a full pill, and a mixed
-     radius set is the loudest tell that a page was assembled rather than
-     designed. The names are unchanged so nothing has to be renamed at the
-     call site; they all resolve to the same value now. */
-  --radius-card: 10px;
-  --radius-tile: 10px;
-  --radius-pill: 10px;
+     The sheet's three shapes. `0 0 0 24px` is the signature — a single
+     notched bottom-left corner on every editorial surface, which is the one
+     thing that makes this system recognisable at a glance. Controls take
+     6px, round marks take 50%. The names are unchanged so nothing has to be
+     renamed at the call site. */
+  --radius-card: 0px 0px 0px 24px;
+  --radius-tile: 6px;
+  --radius-pill: 6px;
+  --radius-round: 50%;
 
   /* -- elevation ------------------------------------------
-     Almost none. A luxury surface is defined by its edge, not by how far it
-     floats: at rest there is a hairline and a whisper of an inset ring, and
-     the only real shadow on the page appears under the pointer. */
-  --shadow-card: inset 0 0 0 1px rgba(26, 25, 25, 0.04);
-  --shadow-lift: 0 1px 2px rgba(26, 25, 25, 0.03),
-                 0 24px 60px rgba(26, 25, 25, 0.09);
-  --ring-hover: rgba(10, 110, 250, 0.45);
+     The sheet carries five shadows and no hairline tokens, so this system
+     is elevated rather than edged. Two of the five are usable on a white
+     ground: the 0.24 sm for rest, and the two-layer 0.19/0.23 for lift. The
+     md/lg/xl trio runs 0.53–0.60 alpha, which is a scrape off dark-ground
+     elements and would read as soot here. */
+  --shadow-card: rgba(0, 0, 0, 0.24) 0px 3px 8px 0px;
+  --shadow-lift: rgba(0, 0, 0, 0.19) 0px 10px 20px 0px,
+                 rgba(0, 0, 0, 0.23) 0px 6px 6px 0px;
+  --ring-hover: rgba(254, 176, 2, 0.9);
 
-  /* The two washes behind a section. Held very faint — under type this
-     light, any visible field reads as dirt. */
-  --grid-wash-accent: rgba(10, 110, 250, 0.07);
-  --grid-wash-ink: rgba(124, 92, 255, 0.05);
+  /* The two washes behind a section. Amber is how this palette puts colour
+     on a white ground without putting it anywhere near a contrast ratio. */
+  --grid-wash-accent: rgba(254, 176, 2, 0.14);
+  --grid-wash-ink: rgba(22, 22, 22, 0.04);
 
   /* -- motion ---------------------------------------------
-     One symmetric curve, everywhere. An ease-OUT curve leaves fast and
-     settles slowly, which is what made the old page feel eager; this one
-     accelerates and decelerates equally, so nothing ever arrives in a
-     hurry. Three durations and no others. */
-  --ease-out-expo: cubic-bezier(0.7, 0, 0.3, 1);
-  --ease-in-out-quart: cubic-bezier(0.6, 0, 0.4, 1);
-  --duration-fast: 0.4s;
-  --duration-slow: 1s;
-  --duration-slower: 1.6s;
+     The sheet's curve is `ease-in-out` and its steps are 0.2 / 0.3 / 0.4 /
+     0.5, with 3s and 6s float loops. Three durations here, plus the floats. */
+  --ease-out-expo: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out-quart: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 0.2s;
+  --duration-slow: 0.3s;
+  --duration-slower: 0.5s;
+  --duration-float: 3s;
+  --duration-float-long: 6s;
 
   /* -- spacing -------------------------------------------
-     The vertical rhythm of the page as named steps: sections breathe at
-     90 / 133 / 180 rather than at Tailwind's 20 / 28 / 32. */
-  --spacing-section: 90px;
-  --spacing-section-md: 133px;
-  --spacing-section-lg: 180px;
+     46px is the sheet's large step; the page's vertical rhythm is multiples
+     of it — 92 / 138 / 184 — rather than Tailwind's 20 / 28 / 32. */
+  --spacing-section: 92px;
+  --spacing-section-md: 138px;
+  --spacing-section-lg: 184px;
+}
+
+/* ============================================================
+   THE DARK BAND
+
+   Everything inside `[data-band="dark"]` re-points the ink, line and accent
+   tokens rather than overriding colours at the call site — so a section
+   moves from the light ground to the dark one by changing one attribute,
+   and every `text-text-muted` inside it is simply correct.
+
+   This is also the only place the two accents get to be TEXT: amber reads
+   9.85:1 here and acid reads 13.8:1, against 1.8:1 and 1.3:1 on white.
+   ============================================================ */
+[data-band="dark"] {
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #F2F2F2;
+  --color-text-muted: #828282;     /* 4.71:1 on #161616 */
+
+  --color-surface: #161616;
+  --color-bg-raised: #2A2A2A;      /* tonal step — the raised fill on dark */
+  --color-ghost: #F2F2F2;
+
+  --color-line: rgba(255, 255, 255, 0.14);
+  --color-line-strong: rgba(255, 255, 255, 0.28);
+  --color-line-panel: rgba(255, 255, 255, 0.12);
+
+  /* Acid is the live mark and the hover; amber stays the accent. */
+  --color-primary: #70FF00;
+  --color-primary-strong: #70FF00;
+  --color-accent: #FEB002;
+
+  color: #F2F2F2;
+}
+
+[data-band="dark"] ::selection {
+  background-color: #70FF00;
+  color: #161616;
+}
+
+[data-band="dark"] :focus-visible {
+  outline-color: #70FF00;
 }
 
 /* ============================================================
    BASE
    ============================================================ */
 @layer base {
+  /* Tailwind's preflight leaves border-color at `currentColor`, so any
+     `border-t` written without a colour would come out as ink. */
   * {
     border-color: var(--color-line);
   }
@@ -156,46 +225,48 @@
   }
 
   body {
-    color: var(--color-text-primary);
+    /* The sheet's Text Primary, for prose that carries no class. */
+    color: #4F4F4F;
     font-family: var(--font-sans);
-    /* Jost runs a smaller x-height than Inter did, so the same measure wants
-       a little more leading and a light default weight. Set here rather than
-       on <html> so Tailwind's rem spacing scale is left alone. */
-    font-size: 1.0625rem;
-    font-weight: 300;
-    line-height: 1.75;
-    letter-spacing: 0.005em;
+    /* Roboto runs a tall x-height, so the same measure reads at a smaller
+       size and tighter leading than the previous serif-paired sans wanted.
+       Set here rather than on <html> so Tailwind's rem spacing scale is
+       left alone. */
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: 0;
     overflow-x: clip;
     background-color: #FFFFFF;
   }
 
   ::selection {
-    background-color: #0A6EFA;
-    color: #FFFFFF;
+    background-color: #FEB002;
+    color: #161616;
   }
 
   :focus-visible {
-    outline: 1px solid var(--color-primary);
-    outline-offset: 4px;
+    outline: 2px solid #161616;
+    outline-offset: 3px;
     border-radius: 2px;
   }
 
   ::-webkit-scrollbar { width: 9px; }
   ::-webkit-scrollbar-track { background: #FFFFFF; }
   ::-webkit-scrollbar-thumb {
-    background: #C6CAD4;
+    background: #828282;
     border: 3px solid #FFFFFF;
   }
-  ::-webkit-scrollbar-thumb:hover { background: #AEB4C1; }
+  ::-webkit-scrollbar-thumb:hover { background: #4F4F4F; }
 }
 
 /* ============================================================
    CARDS
    ============================================================ */
 
-/* The interactive surface. It does NOT rise — a -4px hop is the gesture of
-   a dashboard tile. Here the edge takes the accent and a wide, very soft
-   shadow opens underneath it, both on the slow curve. */
+/* The interactive surface. It rises: this system is defined by elevation,
+   not by its edge, so a hover takes the shadow from the sheet's sm step to
+   its two-layer step and the amber edge comes up underneath. */
 .lift {
   transition:
     box-shadow var(--duration-slow) var(--ease-out-expo),
@@ -215,22 +286,21 @@
    TYPE UTILITIES
    ============================================================ */
 
-/* The display headline. A high-contrast serif at a light weight and a large
-   size is a different instrument from a bold grotesque: the size carries
-   the emphasis so the weight never has to. Tracking is barely negative — a
-   serif tracked like a grotesque closes up on itself. */
+/* The display headline. Times New Roman at 400 and very large: it has no
+   light cut, so the size carries the emphasis and the tracking is pulled in
+   hard — Times set large and tracked at zero falls apart into words. */
 @utility text-mega {
   font-family: var(--font-display);
-  font-weight: 300;
-  letter-spacing: -0.012em;
-  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: -0.028em;
+  line-height: 0.98;
 }
 
 @utility text-display {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.008em;
-  line-height: 1.12;
+  letter-spacing: -0.018em;
+  line-height: 1.08;
   text-wrap: balance;
 }
 
@@ -238,50 +308,55 @@
 @utility text-editorial {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1.18;
+  letter-spacing: -0.008em;
+  line-height: 1.16;
   text-wrap: balance;
 }
 
-/* The closing clause of a heading. Italic AND accented: the italic is what
-   lets a serif heading turn a corner mid-sentence, the colour is what keeps
-   the site's one identifying hue on every section header. */
+/* The closing clause of a heading. Italic, and amber only once it is on the
+   dark ground — on white it takes the body grey, because amber text there
+   is 1.8:1. The italic is what lets a serif heading turn a corner
+   mid-sentence; the tonal drop is what marks it on the light ground. */
 @utility text-clause {
   font-family: var(--font-display);
   font-style: italic;
-  font-weight: 300;
-  color: var(--color-primary);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+[data-band="dark"] .text-clause {
+  color: #FEB002;
 }
 
-/* The opening paragraph under a heading — 28px at the top of its range, as
-   the reference sets its body. Large enough to be read rather than skimmed,
-   light enough not to compete with the serif above it. */
+/* The opening paragraph under a heading. Roboto, not the serif — a lead set
+   in the display face competes with the heading above it. */
 @utility lead {
-  font-size: clamp(1.15rem, 0.95rem + 0.85vw, 1.75rem);
+  font-family: var(--font-sans);
+  font-size: clamp(1.0625rem, 0.92rem + 0.6vw, 1.375rem);
   font-weight: 300;
-  line-height: 1.55;
-  letter-spacing: 0.002em;
+  line-height: 1.6;
+  letter-spacing: 0;
   text-wrap: pretty;
 }
 
+/* The signature. The display serif in italic rather than a fourth face. */
 @utility script {
   font-family: var(--font-script);
+  font-style: italic;
   font-weight: 400;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.02em;
 }
 
-/* The small accent label above a heading. 10px is not a mistake: at this
-   tracking it is a rule of letters marking the section, not something
-   anyone reads before the headline. Uses the darkened blue — the sampled
-   one sits at 3.73:1 here. */
+/* The small accent label above a heading. Courier Prime, and tracked well
+   back from where a proportional face wanted it — monospace is already wide,
+   so 0.26em on Courier reads as spaced-out letters rather than as a rule. */
 @utility eyebrow {
   font-family: var(--font-geometric);
-  font-size: 0.625rem;
-  font-weight: 500;
-  letter-spacing: 0.26em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   line-height: 1.6;
-  color: var(--color-primary-strong);
+  color: var(--color-text-primary);
 }
 
 /* The workhorse label — metadata, counts, navigation, footer. */
@@ -289,17 +364,17 @@
   font-family: var(--font-geometric);
   font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1.5;
 }
 
-/* A control's label. Tracked and small, never bold. */
+/* A control's label. */
 @utility label-ui {
   font-family: var(--font-geometric);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   line-height: 1;
 }
@@ -307,12 +382,10 @@
 /* ============================================================
    SURFACES
 
-   One card. White, a 10px corner, a hairline, and an inset ring where the
-   hairline alone is too quiet. No drop shadow at rest anywhere on the page.
+   One card: white, the notched corner, and the sheet's resting shadow.
    ============================================================ */
 @utility card {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-line-panel);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
 }
@@ -324,7 +397,6 @@
 }
 .card-hover:hover {
   box-shadow: var(--shadow-lift);
-  border-color: var(--color-line-strong);
 }
 @media (prefers-reduced-motion: reduce) {
   .card-hover,
@@ -333,35 +405,33 @@
 
 /* Translucent chrome — the floating header. */
 @utility glass {
-  background-color: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(18px) saturate(1.3);
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  border: 1px solid rgba(218, 219, 224, 0.9);
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  border: 1px solid var(--color-line);
 }
 
 /* The same card under its original name, so every section keeps working. */
 @utility plate {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-line-panel);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
 }
 
-/* A chip is an outline, not a fill. Inside a card a filled chip reads as a
-   second surface; a hairline rectangle reads as a caption. */
+/* A chip is an outline at 6px — the sheet's control corner. */
 @utility chip {
   background-color: transparent;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   font-family: var(--font-geometric);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   line-height: 1.2;
 }
 
-/* Controls. No hop, no growing shadow — the fill and the edge cross-fade on
-   the slow curve, and a press is a barely perceptible settle. */
+/* Controls. The sheet's 0.2s colour step, with the elevation coming up
+   underneath on 0.3s. */
 .btn-depth {
   transition:
     background-color var(--duration-fast) var(--ease-out-expo),
@@ -370,11 +440,11 @@
     box-shadow var(--duration-slow) var(--ease-out-expo);
 }
 .btn-depth:hover {
-  box-shadow: 0 14px 34px rgba(10, 110, 250, 0.14);
+  box-shadow: var(--shadow-lift);
 }
 .btn-depth:active {
-  transform: scale(0.994);
-  transition-duration: 0.12s;
+  transform: translateY(1px);
+  transition-duration: 0.1s;
 }
 @media (prefers-reduced-motion: reduce) {
   .btn-depth,
@@ -397,7 +467,7 @@
   background-color: currentColor;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform var(--duration-fast) var(--ease-out-expo);
+  transition: transform var(--duration-slow) var(--ease-out-expo);
 }
 .link-rule:hover::after,
 .link-rule:focus-visible::after {
@@ -445,6 +515,19 @@
   animation-play-state: paused;
 }
 
+/* The sheet's two float loops. Transform-only, so they stay on the
+   compositor. */
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -8px, 0); }
+}
+.animate-float {
+  animation: float var(--duration-float) ease-in-out infinite;
+}
+.animate-float-long {
+  animation: float var(--duration-float-long) ease-in-out infinite;
+}
+
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }
@@ -460,10 +543,10 @@
   background-image: linear-gradient(
     90deg,
     transparent,
-    rgba(57, 58, 61, 0.06),
+    rgba(22, 22, 22, 0.07),
     transparent
   );
-  animation: shimmer var(--duration-slower) var(--ease-out-expo) infinite;
+  animation: shimmer var(--duration-float) ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -476,12 +559,14 @@
     scroll-behavior: auto !important;
   }
   .marquee-track { animation: none !important; }
+  .animate-float,
+  .animate-float-long { animation: none !important; }
 }
 
 /* Media rests desaturated and comes back to full colour under the pointer
-   over 1.6s — the slowest thing on the page, deliberately. */
+   on the sheet's slowest interactive step. */
 @utility media-hover {
-  filter: saturate(0.82) brightness(1.01);
+  filter: saturate(0.8) brightness(1.01);
   transition:
     filter var(--duration-slower) var(--ease-out-expo),
     transform var(--duration-slower) var(--ease-out-expo);
