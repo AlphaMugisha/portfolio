@@ -50,11 +50,17 @@ export function About() {
             style={{ borderRadius: BLOB_SHAPES[1] }}
           />
           <div className="relative overflow-hidden rounded-[2.5rem] border border-black/[0.06] shadow-[var(--shadow-float-lg)] dark:border-white/10">
+            {/* Declared at the photograph's real 556px rather than at the
+                920 the column can take: asking next/image for more than the
+                source has makes it upscale, which costs bandwidth and buys
+                nothing. Drop a higher-resolution original at this same path
+                and the only change needed is this number. */}
             <Image
               src="/images/portrait.jpg"
               alt={`${site.name}, ${site.role}`}
-              width={920}
-              height={920}
+              width={556}
+              height={556}
+              sizes="(min-width: 1024px) 560px, 100vw"
               className="aspect-square w-full object-cover"
             />
           </div>

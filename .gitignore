@@ -43,3 +43,7 @@ next-env.d.ts
 # Design reference dropped in by hand — another project's full source tree,
 # kept locally to work from but not ours to commit.
 /Levi-Portfolio-main/
+
+# Source screenshots dropped in by hand. The portrait is converted into
+# public/images/portrait.jpg, which is what the site actually ships.
+/Screenshot*.png
