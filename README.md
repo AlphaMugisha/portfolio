@@ -166,3 +166,17 @@ Values in `lib/site.ts` marked `PLACEHOLDER`:
 Replace the placeholder imagery (above). The OpenGraph card is generated at
 build time from `app/opengraph-image.tsx` — it picks up `lib/site.ts`
 automatically, so it needs no edits when the values above change.
+
+## Mission and Goals
+
+**Mission:** Present Alpha Mugisha's software engineering work in a clear, fast, accessible portfolio that helps visitors understand the projects, technologies, and thinking behind them.
+
+**Goals:**
+- Make projects and case studies easy to discover and review.
+- Explain skills and learning progress honestly, without unsupported claims.
+- Provide clear ways to connect and discuss potential collaboration.
+- Keep the experience responsive, accessible, and lightweight.
+
+## Project maintenance
+
+Keep project descriptions, links, screenshots, and contact details aligned with the current implementation. Replace any clearly marked placeholder content before public launch.
