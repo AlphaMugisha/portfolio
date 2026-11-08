@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { mediaUrl } from "@/lib/supabase/env";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/motion";
 import { useBoot } from "@/components/system/Boot";
@@ -65,6 +67,21 @@ export default function Hero({ settings }: { settings: SiteSettingsRow }) {
           { opacity: 0, scale: 1.04 },
           { opacity: 1, scale: 1, duration: 1.6, ease: "power2.out" },
           0.1,
+        )
+        // The plate drops in on the board's beat, slightly after the
+        // trace that connects it has somewhere to land.
+        .fromTo(
+          "[data-hero-plate]",
+          { opacity: 0, y: -14, clipPath: "inset(0 0 100% 0)" },
+          {
+            opacity: 1,
+            y: 0,
+            clipPath: "inset(0 0 0% 0)",
+            duration: 0.9,
+            ease: "power3.out",
+            onComplete: () => gsap.set("[data-hero-plate]", { clipPath: "none" }),
+          },
+          0.42,
         )
         // Deliberately overlapping the name build rather than queuing
         // behind it: the headline takes ~1.8s to set itself, and making
@@ -131,6 +148,22 @@ export default function Hero({ settings }: { settings: SiteSettingsRow }) {
           },
         );
         gsap.fromTo(
+          "[data-hero-plate]",
+          { yPercent: 0, opacity: 1 },
+          {
+            yPercent: -18,
+            opacity: 0,
+            ease: "none",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: root.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.7,
+            },
+          },
+        );
+        gsap.fromTo(
           "[data-hero-copy]",
           { yPercent: 0, opacity: 1 },
           {
@@ -179,6 +212,68 @@ export default function Hero({ settings }: { settings: SiteSettingsRow }) {
       >
         <ReactiveBoard className="h-full w-full" />
       </div>
+
+      {/*
+        The builder, wired into his own board.
+
+        The hero was previously type over abstract texture, with the
+        whole upper right empty — no person anywhere in the first
+        screen of a personal portfolio. The plate fixes that without
+        giving up the full-width name: it is absolutely positioned, so
+        it occupies dead space instead of competing for layout and the
+        carefully fitted 100svh composition underneath is untouched.
+
+        It is a probe view, not a headshot. The photograph sits behind
+        a signal tint and reads as another instrument on the sheet,
+        then resolves to its true colour when you point at it — the
+        same "poke it and it responds" contract as everything else
+        here. A trace runs from its left edge back into the lattice, so
+        the person is a node on the system rather than a sticker on top
+        of it.
+      */}
+      <figure
+        data-hero-plate
+        /* Sits BELOW the sheet's top rule, not level with it: at 8rem the
+           plate landed on top of the Kigali coordinates in the corner and
+           read as a collision rather than an inset. */
+        className="pointer-events-auto group absolute right-6 top-[13.5rem] z-10 m-0 sm:right-10"
+      >
+        {/* the trace back into the board */}
+        <span
+          aria-hidden="true"
+          className="absolute right-full top-1/2 hidden h-px w-[clamp(2rem,6vw,7rem)] bg-signal-deep sm:block"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute right-full top-1/2 hidden h-1.5 w-1.5 -translate-x-[clamp(2rem,6vw,7rem)] -translate-y-1/2 rounded-full bg-signal sm:block"
+        />
+
+        <div className="board board-sm relative w-[clamp(104px,17vw,232px)] p-2">
+          <span className="ticks" />
+          <div className="relative aspect-[4/5] overflow-hidden">
+            <Image
+              src={mediaUrl(settings.portrait_path)}
+              alt={settings.portrait_alt}
+              fill
+              priority
+              sizes="(min-width: 1024px) 232px, 17vw"
+              /* Held slightly back by default so it supports the name
+                 instead of competing with it, and released on hover. */
+              className="object-cover brightness-[0.82] grayscale-[0.5] contrast-[1.08] transition-[filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:brightness-100 group-hover:grayscale-0 group-hover:contrast-100"
+            />
+            {/* signal tint, lifted on hover so the photo resolves */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-signal/18 mix-blend-color transition-opacity duration-700 group-hover:opacity-0"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"
+            />
+            <span className="scan-line" style={{ animationDuration: "5.5s" }} aria-hidden="true" />
+          </div>
+        </div>
+      </figure>
 
       {/* Sheet metadata, pinned to the corners of the drawing.
 

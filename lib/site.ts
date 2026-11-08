@@ -10,15 +10,27 @@ export const site = {
   location: "Kigali, Rwanda",
   email: "tigerkev07@gmail.com",
   github: "https://github.com/AlphaMugisha",
-  // PLACEHOLDER — replace with your real LinkedIn URL.
-  linkedin: "https://www.linkedin.com/in/",
+  /**
+   * `null` until a real value exists, NOT a placeholder string.
+   *
+   * These used to hold `https://www.linkedin.com/in/` and
+   * `/alpha-mugisha-cv.pdf`. Both shipped as live links on the deployed
+   * site: the first went to a bare LinkedIn route, the second returned a
+   * hard 404 because no such file has ever been committed. Every
+   * consumer already renders these conditionally, so `null` removes the
+   * link from the contact section, the footer and the menu at once.
+   *
+   * To enable them: paste the real profile URL here, and for the CV drop
+   * the file at `public/alpha-mugisha-cv.pdf` and set `cv` to that path.
+   */
+  linkedin: null as string | null,
   tagline: "I'm still learning — but I'm already building.",
   description:
     "Alpha Mugisha — a software and systems builder from Kigali, Rwanda, working across web platforms, embedded electronics and applied AI.",
-  url: "https://alphamugisha.dev", // PLACEHOLDER — update once deployed.
-  // PLACEHOLDER — the rail links here. Drop the real file at
-  // `public/alpha-mugisha-cv.pdf` and the Download CV button works as-is.
-  cv: "/alpha-mugisha-cv.pdf",
+  // The live deployment. Canonical and OpenGraph URLs resolve from this,
+  // so it has to be where the site actually answers.
+  url: "https://alphamugisha.vercel.app",
+  cv: null as string | null,
 } as const;
 
 /* The three disciplines, in the order the site argues them: the physical

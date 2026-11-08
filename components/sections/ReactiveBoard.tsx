@@ -60,10 +60,18 @@ interface Trace {
   glow: number;
 }
 
+/**
+ * Normalised anchor positions.
+ *
+ * `Learn` sits at 0.70 rather than out at 0.85 because the hero's
+ * portrait plate occupies the upper right from roughly 82% of the
+ * width — at 0.85 the anchor's label was drawn underneath the plate and
+ * came out clipped mid-word.
+ */
 const ANCHORS = [
   { nx: 0.17, ny: 0.2, label: "Sense" },
   { nx: 0.52, ny: 0.55, label: "Compute" },
-  { nx: 0.85, ny: 0.26, label: "Learn" },
+  { nx: 0.7, ny: 0.19, label: "Learn" },
 ] as const;
 
 const SIGNAL = [84, 209, 219] as const;
