@@ -1,10 +1,6 @@
 /** Skeleton for a case study: the same boxes, with no content in them. */
 function Box({ className = "" }: { className?: string }) {
-  return (
-    <div
-      className={`animate-pulse rounded-2xl bg-black/[0.06] dark:bg-white/[0.06] ${className}`}
-    />
-  );
+  return <div className={`animate-pulse bg-white/[0.06] ${className}`} />;
 }
 
 export default function Loading() {

@@ -24,8 +24,8 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#0D0D0D",
-          color: "#F5F5F5",
+          backgroundColor: "#0b0e14",
+          color: "#e9eef2",
           fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "1.5rem",
         }}
@@ -36,7 +36,7 @@ export default function GlobalError({
               fontSize: "0.625rem",
               letterSpacing: "0.26em",
               textTransform: "uppercase",
-              color: "#F5F5F5",
+              color: "#54d1db",
               margin: 0,
             }}
           >
@@ -45,10 +45,9 @@ export default function GlobalError({
 
           <h1
             style={{
-              fontFamily: '"Times New Roman", Times, serif',
               fontSize: "clamp(2rem, 6vw, 3.5rem)",
-              fontWeight: 400,
-              letterSpacing: "-0.012em",
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
               margin: "1.25rem 0 0",
             }}
           >
@@ -57,7 +56,7 @@ export default function GlobalError({
 
           <p
             style={{
-              color: "#B4B4B4",
+              color: "#9aa7b5",
               lineHeight: 1.65,
               margin: "1rem 0 0",
             }}
@@ -69,7 +68,7 @@ export default function GlobalError({
           {error.digest && (
             <p
               style={{
-                color: "#8A8A8A",
+                color: "#647080",
                 fontSize: "0.75rem",
                 fontFamily: "inherit",
                 margin: "1.5rem 0 0",
@@ -85,14 +84,16 @@ export default function GlobalError({
             style={{
               marginTop: "2rem",
               padding: "0.875rem 2rem",
-              borderRadius: "16px",
+              borderRadius: 0,
+              clipPath:
+                "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
               border: "none",
-              backgroundColor: "#FEB002",
-              color: "#121212",
+              backgroundColor: "#54d1db",
+              color: "#04171a",
               fontSize: "0.8125rem",
               letterSpacing: "0.14em",
               textTransform: "uppercase",
-              fontWeight: 400,
+              fontWeight: 500,
               cursor: "pointer",
             }}
           >

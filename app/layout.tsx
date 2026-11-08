@@ -1,15 +1,31 @@
 import type { Metadata, Viewport } from "next";
+import { Space_Grotesk, IBM_Plex_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
-import CustomCursor from "@/components/ui/CustomCursor";
-import SmoothScroll from "@/components/ui/SmoothScroll";
 import { site } from "@/lib/site";
+import { getSiteSettings } from "@/lib/db/public";
 
-/* Clash Display and Clash Grotesk, the reference typefaces, from Fontshare.
-   They are not on Google Fonts, so `next/font/google` cannot reach them —
-   hence the stylesheet link and the two preconnects, which is the same way
-   the reference loads them. */
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display-raw",
+  display: "swap",
+});
+
+const sans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-sans-raw",
+  display: "swap",
+});
+
+const mono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono-raw",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -49,39 +65,21 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0d0d0d",
+  themeColor: "#0b0e14",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const settings = await getSiteSettings();
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=clash-grotesk@300,400,500,600&display=swap"
-        />
-        {/* Theme before first paint, so the page never flashes the wrong one.
-            The DEFAULT is dark: on black the amber is legible everywhere,
-            which is the version of this palette that works without
-            compromise. A stored preference always wins. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){try{var t=localStorage.getItem('theme');if(t!=='light')document.documentElement.classList.add('dark');}catch(e){document.documentElement.classList.add('dark');}})();",
-          }}
-        />
-      </head>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
-        <div className="grain" aria-hidden="true" />
-        <CustomCursor />
-        <SmoothScroll />
-        <Navbar />
+        <div className="grid-field" aria-hidden="true" />
+        <Navbar settings={settings} />
         <main id="main" className="relative z-[2] flex-1">
           {children}
         </main>
-        <Footer />
+        <Footer settings={settings} />
       </body>
     </html>
   );

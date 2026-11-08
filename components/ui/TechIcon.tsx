@@ -129,7 +129,7 @@ export default function TechIcon({
     <span
       aria-hidden="true"
       style={{ width: size, height: size, fontSize: size * 0.4 }}
-      className={`grid place-items-center rounded-md border border-black/15 font-semibold dark:border-white/20 ${className}`}
+      className={`grid place-items-center border border-white/20 font-semibold ${className}`}
     >
       {name.slice(0, 2).toUpperCase()}
     </span>

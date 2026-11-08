@@ -2,41 +2,32 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { site } from "@/lib/site";
+import { getSiteSettings } from "@/lib/db/public";
 
 /**
  * The social card: the same three lines the hero opens with, on the same
- * near-black ground, with the closing word in amber.
- *
- * Dark is not a style choice here. Amber is 1.9:1 on a light ground and
- * 10.6:1 on this one, and a social card is the one surface that gets scaled
- * to a thumbnail in a feed — which is exactly where a low-contrast accent
- * disappears.
+ * ink ground, with the closing word in the site's one signal colour.
  *
  * Satori cannot reuse the webfont pipeline and the build must not depend on
- * the network, so the faces are vendored TTFs in `lib/og-fonts/` (both OFL).
- * Clash is not redistributable that way, so the card uses Archivo Black for
- * the headline and Archivo for the labels — a grotesque with the same
- * squared-off, tightly-tracked character at display size.
- *
- * Both faces are SINGLE-WEIGHT static files, which is not a preference —
- * satori cannot parse a variable TTF with a `wdth,wght` axis pair at all and
- * fails the build outright, so a static cut is the only option here. Hence
- * Archivo Black rather than Archivo at weight 900, and Space Mono rather
- * than a variable grotesque, for the tracked labels.
+ * the network, so the faces are vendored TTFs in `lib/og-fonts/` (both OFL):
+ * Archivo Black for the headline, Space Mono for the labels — both
+ * single-weight static files, because satori cannot parse a variable TTF's
+ * `wdth,wght` axis pair at all and fails the build outright on one that has it.
  */
 
 export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const GROUND = "#0D0D0D";
-const INK = "#F5F5F5";
-const MUTED = "#8A8A8A";
-const ACCENT = "#FEB002";
+const GROUND = "#0b0e14";
+const INK = "#e9eef2";
+const MUTED = "#647080";
+const SIGNAL = "#54d1db";
 const LINE = "rgba(255, 255, 255, 0.12)";
 
 export default async function OpenGraphImage() {
-  const [bold, regular] = await Promise.all([
+  const [settings, bold, regular] = await Promise.all([
+    getSiteSettings(),
     readFile(join(process.cwd(), "lib", "og-fonts", "ArchivoBlack-Regular.ttf")),
     readFile(join(process.cwd(), "lib", "og-fonts", "SpaceMono-Regular.ttf")),
   ]);
@@ -56,7 +47,7 @@ export default async function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", width: 72, height: 5, backgroundColor: ACCENT }} />
+          <div style={{ display: "flex", width: 72, height: 5, backgroundColor: SIGNAL }} />
           <div
             style={{
               display: "flex",
@@ -69,44 +60,20 @@ export default async function OpenGraphImage() {
               color: INK,
             }}
           >
-            <span>{site.name.toUpperCase()}</span>
-            <span style={{ color: MUTED }}>{site.location.toUpperCase()}</span>
+            <span>{settings.name.toUpperCase()}</span>
+            <span style={{ color: MUTED }}>{settings.location.toUpperCase()}</span>
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", marginTop: -20 }}>
-          <div
-            style={{
-              fontFamily: "ArchivoBold",
-              fontSize: 112,
-              lineHeight: 0.92,
-              letterSpacing: -5,
-              color: INK,
-            }}
-          >
-            Software
+          <div style={{ fontFamily: "ArchivoBold", fontSize: 112, lineHeight: 0.92, letterSpacing: -5, color: INK }}>
+            {settings.hero_line_1}
           </div>
-          <div
-            style={{
-              fontFamily: "ArchivoBold",
-              fontSize: 112,
-              lineHeight: 0.92,
-              letterSpacing: -5,
-              color: INK,
-            }}
-          >
-            that actually
+          <div style={{ fontFamily: "ArchivoBold", fontSize: 112, lineHeight: 0.92, letterSpacing: -5, color: INK }}>
+            {settings.hero_line_2}
           </div>
-          <div
-            style={{
-              fontFamily: "ArchivoBold",
-              fontSize: 112,
-              lineHeight: 0.92,
-              letterSpacing: -5,
-              color: ACCENT,
-            }}
-          >
-            works.
+          <div style={{ fontFamily: "ArchivoBold", fontSize: 112, lineHeight: 0.92, letterSpacing: -5, color: SIGNAL }}>
+            {settings.hero_line_3}
           </div>
         </div>
 
@@ -130,10 +97,6 @@ export default async function OpenGraphImage() {
       ...size,
       fonts: [
         { name: "Mono", data: regular, style: "normal", weight: 400 },
-        /* Registered as its own family rather than as a weight of the first:
-           satori resolves numeric weights unreliably across versions, and a
-           card that silently falls back to the regular cut loses the one
-           thing its headline is doing. */
         { name: "ArchivoBold", data: bold, style: "normal", weight: 400 },
       ],
     },

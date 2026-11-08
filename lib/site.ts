@@ -22,10 +22,12 @@ export const site = {
 } as const;
 
 /* The page is one scroll, so every nav item is an in-page anchor. The ids
-   live on the sections in `components/sections/HomeSections.tsx`. */
+   live on the sections rendered from `app/page.tsx`. */
 export const navItems = [
   { label: "Work", href: "/#work" },
   { label: "About", href: "/#about" },
+  { label: "What I do", href: "/#what-i-do" },
   { label: "Toolbox", href: "/#toolbox" },
   { label: "Journey", href: "/#journey" },
+  { label: "Contact", href: "/#contact" },
 ] as const;

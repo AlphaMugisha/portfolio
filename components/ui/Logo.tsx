@@ -1,29 +1,41 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
 
-/** Brand mark: an amber rounded square carrying the initials, plus the name. */
+/**
+ * Brand mark: initials set in mono type inside a chamfered tile — the same
+ * clipped-corner shape every panel on the site uses — rather than a rounded
+ * badge. The wordmark sits in the display face.
+ */
 export default function Logo({
-  size = 36,
+  name,
+  size = 34,
   withText = true,
   textClassName,
   href = "/",
 }: {
+  name: string;
   size?: number;
   withText?: boolean;
   textClassName?: string;
   href?: string | null;
 }) {
-  const initials = site.name
+  const initials = name
     .split(" ")
     .map((n) => n[0] ?? "")
     .join("")
-    .toUpperCase();
+    .toUpperCase()
+    .slice(0, 2);
 
   const content = (
-    <span className="inline-flex items-center gap-2.5">
+    <span className="inline-flex items-center gap-3">
       <span
-        className="flex items-center justify-center rounded-xl bg-accent font-display font-bold text-accent-ink shadow-[0_10px_24px_-8px_rgba(254,176,2,0.7)]"
-        style={{ width: size, height: size, fontSize: size * 0.42 }}
+        className="flex items-center justify-center border border-signal/50 bg-signal-soft font-mono font-bold text-signal"
+        style={{
+          width: size,
+          height: size,
+          fontSize: size * 0.38,
+          clipPath:
+            "polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)",
+        }}
         aria-hidden="true"
       >
         {initials}
@@ -31,11 +43,10 @@ export default function Logo({
       {withText ? (
         <span
           className={
-            textClassName ??
-            "font-display text-xl font-semibold tracking-tight text-ink dark:text-ink-invert"
+            textClassName ?? "font-display text-lg font-semibold tracking-tight text-text"
           }
         >
-          {site.name}
+          {name}
         </span>
       ) : null}
     </span>
@@ -43,7 +54,7 @@ export default function Logo({
 
   if (!href) return content;
   return (
-    <Link href={href} className="inline-flex items-center" aria-label={`${site.name}, home`}>
+    <Link href={href} className="inline-flex items-center" aria-label={`${name}, home`}>
       {content}
     </Link>
   );
