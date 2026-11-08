@@ -1,50 +1,70 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 /**
- * Counts up to a numeric value once it scrolls into view. Values that are
- * not purely numeric (e.g. "Multi", "Staff / Student / Admin") render as
- * static text — this never invents a number that was not in the data.
+ * Counts up to a numeric value once it scrolls into view.
+ *
+ * Values that are not purely numeric — "Multi", "Yes",
+ * "Staff / Student / Admin" — render as static text. This never invents
+ * a number that was not in the data, which is the whole premise of the
+ * figures on this site.
+ *
+ * The parsed value is memoised on the string. `value.match()` allocates
+ * a fresh array on every render, so using the match directly as an
+ * effect dependency restarted the rAF loop on every tick's re-render
+ * and the count never climbed past its first frame.
  */
-export default function Counter({ value, duration = 1.1 }: { value: string; duration?: number }) {
+export default function Counter({ value, duration = 1.2 }: { value: string; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduced = useReducedMotion();
 
-  // `value.match(...)` returns a new array every render; memoizing on the
-  // string keeps the effect below from seeing a "new" dependency on every
-  // tick's re-render, which previously restarted the rAF loop from t=0 on
-  // every frame and left the count stuck near zero forever.
   const parsed = useMemo(() => {
     const m = value.match(/^(\d+)(.*)$/);
     return m ? { target: parseInt(m[1], 10), suffix: m[2] } : null;
   }, [value]);
 
-  const [display, setDisplay] = useState(parsed ? "0" : value);
+  const [display, setDisplay] = useState(parsed ? `0${parsed.suffix}` : value);
 
   useEffect(() => {
-    if (!parsed || !inView) return;
+    const el = ref.current;
+    if (!el || !parsed) return;
+
     if (reduced) {
       setDisplay(value);
       return;
     }
-    const start = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / (duration * 1000));
-      const eased = 1 - Math.pow(1 - t, 3);
-      setDisplay(Math.round(parsed.target * eased) + parsed.suffix);
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, parsed, value, duration, reduced]);
 
+    let raf = 0;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / (duration * 1000));
+          const eased = 1 - Math.pow(1 - t, 3);
+          setDisplay(Math.round(parsed.target * eased) + parsed.suffix);
+          if (t < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      },
+      { rootMargin: "0px 0px -40px 0px" },
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [parsed, value, duration, reduced]);
+
+  // `tabular-nums` so the box does not jitter as digits change width.
   return (
-    <motion.span ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <span ref={ref} className="tabular-nums">
       {display}
-    </motion.span>
+    </span>
   );
 }

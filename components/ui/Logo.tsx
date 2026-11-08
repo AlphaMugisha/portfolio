@@ -28,7 +28,7 @@ export default function Logo({
   const content = (
     <span className="inline-flex items-center gap-3">
       <span
-        className="flex items-center justify-center border border-signal/50 bg-signal-soft font-mono font-bold text-signal"
+        className="flex items-center justify-center border border-signal/50 bg-signal/10 font-mono font-bold text-signal"
         style={{
           width: size,
           height: size,

@@ -21,6 +21,16 @@ export const site = {
   cv: "/alpha-mugisha-cv.pdf",
 } as const;
 
+/* The three disciplines, in the order the site argues them: the physical
+   edge, the system built on it, and the intelligence layered over that.
+   Brand copy rather than editable content, so it lives here and not in
+   the `site_settings` table. */
+export const disciplines = [
+  "Software Engineer",
+  "Full-stack Developer",
+  "Embedded Systems Builder",
+] as const;
+
 /* The page is one scroll, so every nav item is an in-page anchor. The ids
    live on the sections rendered from `app/page.tsx`. */
 export const navItems = [

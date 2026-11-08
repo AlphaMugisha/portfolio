@@ -5,17 +5,17 @@ import { skillGroups } from "@/lib/skills";
  * Cross-reference between the toolbox and the case studies.
  *
  * Every project already declares the stack it was built on, so the claim
- * "I use this" can be checked against the claim "this was used here" without
- * anyone writing the link by hand. The section renders whatever this file
- * computes; nothing is curated.
+ * "I use this" can be checked against the claim "this was used here"
+ * without anyone writing the link by hand. The Signal Map renders
+ * whatever this computes; nothing is curated.
  *
  * Matching is EXACT on a normalised name, plus a short alias table. An
- * earlier substring version was looser and immediately wrong: "CSS" matched
- * every project using "Tailwind CSS", inflating its count to four. A tool
- * that appears in no stack simply shows no reference — the project `stack`
- * arrays list the handful of technologies that define each build, not
- * everything that was touched, so absence here is not evidence of disuse and
- * the section says so.
+ * earlier substring version was looser and immediately wrong: "CSS"
+ * matched every project using "Tailwind CSS", inflating its count to
+ * four. A tool that appears in no stack simply shows no reference — the
+ * project `stack` arrays list the handful of technologies that define
+ * each build, not everything that was touched, so absence here is not
+ * evidence of disuse and the UI says so.
  */
 
 export interface ToolRef {
@@ -34,18 +34,25 @@ const ALIASES: Record<string, string[]> = {
   "Git / GitHub": ["GitHub", "Git"],
   "Node.js": ["Node", "Express"],
   "Tailwind CSS": ["Tailwind"],
-  "REST APIs": ["REST API"],
+  "REST APIs": ["REST API", "REST"],
   Sensors: ["DHT Sensor", "Sensors"],
   Supabase: ["Supabase"],
 };
 
-function matches(tool: string, stackEntry: string) {
+/** True when a toolbox entry and a project's stack entry are the same thing. */
+export function matches(tool: string, stackEntry: string): boolean {
   const a = norm(tool);
   const b = norm(stackEntry);
   if (a === b) return true;
   return (ALIASES[tool] ?? []).some((alias) => norm(alias) === b);
 }
 
+/**
+ * The static index, built from the modules that shipped before the
+ * database existed. The live site builds the same shape from Supabase
+ * rows at request time (see `buildSignalMap`); this remains the
+ * zero-config fallback and the thing the seed generator reads.
+ */
 export const toolIndex: Record<string, ToolRef> = {};
 
 for (const group of skillGroups) {
@@ -63,5 +70,5 @@ for (const group of skillGroups) {
 
 /** How many tools could be tied back to at least one case study. */
 export const referencedCount = Object.values(toolIndex).filter(
-  (t) => t.projects.length > 0
+  (t) => t.projects.length > 0,
 ).length;
