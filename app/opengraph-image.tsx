@@ -19,10 +19,10 @@ export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const GROUND = "#0b0e14";
-const INK = "#e9eef2";
-const MUTED = "#647080";
-const SIGNAL = "#54d1db";
+const GROUND = "#0e0e0e";
+const INK = "#f2f2f2";
+const MUTED = "#828282";
+const SIGNAL = "#feb002";
 const LINE = "rgba(255, 255, 255, 0.12)";
 
 export default async function OpenGraphImage() {

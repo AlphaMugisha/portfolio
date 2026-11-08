@@ -74,7 +74,7 @@ const ANCHORS = [
   { nx: 0.7, ny: 0.19, label: "Learn" },
 ] as const;
 
-const SIGNAL = [84, 209, 219] as const;
+const SIGNAL = [254, 176, 2] as const;
 
 export default function ReactiveBoard({ className = "" }: { className?: string }) {
   const wrap = useRef<HTMLDivElement>(null);
@@ -282,7 +282,7 @@ export default function ReactiveBoard({ className = "" }: { className?: string }
 
       // --- dim trace bed, one path for the whole lattice -------
       ctx!.lineWidth = 1;
-      ctx!.strokeStyle = "rgba(84, 209, 219, 0.1)";
+      ctx!.strokeStyle = "rgba(254, 176, 2, 0.1)";
       ctx!.beginPath();
       for (const trace of traces) {
         const a = pads[trace.a];
@@ -348,7 +348,7 @@ export default function ReactiveBoard({ className = "" }: { className?: string }
         if (glow > 0.12) {
           const halo = ctx!.createRadialGradient(pad.x, pad.y, 0, pad.x, pad.y, radius * 6);
           halo.addColorStop(0, `rgba(${SIGNAL[0]}, ${SIGNAL[1]}, ${SIGNAL[2]}, ${glow * 0.3})`);
-          halo.addColorStop(1, "rgba(84, 209, 219, 0)");
+          halo.addColorStop(1, "rgba(254, 176, 2, 0)");
           ctx!.fillStyle = halo;
           ctx!.beginPath();
           ctx!.arc(pad.x, pad.y, radius * 6, 0, Math.PI * 2);

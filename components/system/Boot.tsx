@@ -123,7 +123,7 @@ function BootOverlay({ onDone }: { onDone: () => void }) {
           { opacity: 0, x: -10, duration: 0.26, stagger: 0.12, ease: "power2.out" },
           0.05,
         )
-        .to("[data-boot-dot]", { backgroundColor: "#54d1db", duration: 0.18, stagger: 0.12 }, 0.14)
+        .to("[data-boot-dot]", { backgroundColor: "#feb002", duration: 0.18, stagger: 0.12 }, 0.14)
         .to("[data-boot-rail]", { scaleX: 1, duration: 0.85, ease: "power2.inOut" }, 0.05)
         // The shutter leaves as two bands splitting apart, which is the
         // same chamfered-edge language the rest of the site is built from.
@@ -176,7 +176,7 @@ function BootOverlay({ onDone }: { onDone: () => void }) {
                 <span
                   data-boot-dot
                   className="h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: "#243040" }}
+                  style={{ backgroundColor: "#2a2a2a" }}
                 />
                 <span className="flex-1">{stage}</span>
                 <span className="text-text-subtle">link</span>

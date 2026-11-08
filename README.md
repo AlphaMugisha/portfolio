@@ -5,7 +5,8 @@ site is designed as **one continuous signal travelling through a system** —
 off a physical sensor edge, through logic, into a model, out to people —
 because that is literally the span of the work it documents.
 
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · GSAP ·
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Three.js /
+React Three Fiber (hero only, lazy) · GSAP ·
 Lenis · Supabase (optional).
 
 ```bash
@@ -31,16 +32,21 @@ CSS-first, so there is **no `tailwind.config.js`** — everything lives in the
 
 ### Palette
 
-A dark board with exactly one accent.
+Alpha's original identity, recovered from commit `9d3243d` and documented
+with its provenance in **[PALETTE.md](PALETTE.md)**. Amber leads; lime is
+reserved for small marks; the page is dark throughout and builds rhythm by
+stepping the greys rather than flipping to a light surface.
 
 | Token | Value | Role |
 |---|---|---|
-| `--color-ink` | `#0b0e14` | the substrate; the default canvas |
-| `--color-ink-deep` | `#06080c` | wells, overlays, the menu shutter |
-| `--color-ink-raised` / `-high` | `#0f141d` / `#151c27` | mounted panels, hover |
-| `--color-porcelain` | `#b9c7d2` | the one lit surface — About only |
-| `--color-signal` | `#54d1db` | the live signal; the **only** accent |
-| `--color-text` / `-muted` / `-subtle` | `#e9eef2` / `#94a3b2` / `#5d6b7b` | 15.9:1 / 7.3:1 / 3.6:1 on ink |
+| `--color-ink` | `#0E0E0E` | the ground; page background |
+| `--color-ink-deep` | `#080808` | wells, overlays, the menu shutter |
+| `--color-ink-raised` / `-band` / `-high` | `#161616` / `#191919` / `#232323` | the rhythm ramp |
+| `--color-signal` | `#FEB002` | **amber — "the accent that carries the page"** (10.5:1) |
+| `--color-signal-bright` | `#FFC23A` | hover / lit step |
+| `--color-signal-deep` | `#6B4A00` | the same hue walked down, for hairline traces |
+| `--color-lime` | `#8FDC3C` | secondary — small technical marks only (10.6:1) |
+| `--color-text` / `-muted` / `-subtle` | `#F2F2F2` / `#B4B4B4` / `#828282` | 17.3:1 / 9.2:1 / 5.0:1 |
 
 Where four disciplines must be told apart (the Signal Map), they are
 separated by **stroke pattern, node geometry and intensity** — circles for
@@ -98,10 +104,13 @@ components/
     Boot.tsx                power-on sequence; publishes `ready` via context
     SmoothScroll.tsx        Lenis driven by GSAP's ticker (one clock)
     Cursor.tsx              probe + trailing ring, magnetic, labelled
+  three/
+    HeroStage.tsx           picks 3D or 2D; owns every capability gate
+    EngineeringCore.tsx     the custom 3D artifact (lazy, ssr:false)
   sections/
     Hero.tsx                the composition; waits on Boot's `ready`
-    ReactiveBoard.tsx       the live canvas lattice (pointer + click reactive)
-    About.tsx               the datasheet — the one porcelain surface
+    ReactiveBoard.tsx       the 2D canvas lattice — also the WebGL fallback
+    About.tsx               the datasheet, on the #191919 step
     Capabilities.tsx        the channel rail (0fr->1fr height transition)
     WorkRack.tsx            pinned horizontal rack; software vs hardware frames
     ProjectIndex.tsx        the directory + cursor-trailing preview plate
@@ -129,11 +138,37 @@ lib/
   site.ts, projects.ts, skills.ts, journey.ts
 ```
 
-Runtime dependencies: `next`, `react`, `react-dom`, `gsap`, `@gsap/react`,
-`lenis`, `lucide-react`, `simple-icons`, `@supabase/*`, `zod`. The homepage
-ships ~219 kB of first-load JS.
+Runtime dependencies: `next`, `react`, `react-dom`, `three`,
+`@react-three/fiber`, `@react-three/drei`, `gsap`, `@gsap/react`, `lenis`,
+`lucide-react`, `simple-icons`, `@supabase/*`, `zod`. The homepage ships
+~221 kB of first-load JS — three.js is **not** in that figure because the
+3D scene is a lazy `next/dynamic` chunk fetched only when a device passes
+the gates below.
 
 ### Notes on a few decisions
+
+**The 3D hero is genuinely optional.** `HeroStage` gates it on reduced
+motion, viewport width, WebGL availability, and core/memory on touch
+devices; anything that fails falls through to `ReactiveBoard`, the 2D
+canvas built for this same hero. Nothing about the HTML, the first paint,
+or any other section depends on WebGL.
+
+**Phones get the 2D hero on purpose.** A layered stack framed for a wide
+canvas fills a 390px portrait viewport and cuts across the headline — the
+2D version is simply better at that size, and costs no GPU time. "Adapted
+for mobile" means shipping the version that is actually better there.
+
+**Every object in the scene is generated from primitives.** Plates,
+traces, vias, chips, capacitors, pin headers and LEDs are all code — no
+downloaded model, no texture standing in for geometry. Repeated elements
+are single `InstancedMesh`es, so the whole scene is a handful of draw
+calls.
+
+**Materials are near-zero metalness.** `meshStandardMaterial` takes its
+metallic response from reflections, and the scene has no environment map,
+so any real metalness rendered the plates black. Point lights use
+`decay={0}` for the same reason — physically-correct falloff left the
+object unlit at this distance.
 
 **One scroll clock.** Lenis is driven by GSAP's ticker and calls
 `ScrollTrigger.update` itself, with `lagSmoothing(0)`. Without that sync the

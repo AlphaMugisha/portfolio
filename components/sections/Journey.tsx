@@ -136,7 +136,7 @@ export default function Journey({
               ref={rail}
               className="absolute left-0 top-0 h-full w-px origin-top bg-signal sm:left-1"
               aria-hidden="true"
-              style={{ boxShadow: "0 0 8px rgb(84 209 219 / 0.5)" }}
+              style={{ boxShadow: "0 0 8px rgb(254 176 2 / 0.45)" }}
             />
 
             <div className="space-y-16">

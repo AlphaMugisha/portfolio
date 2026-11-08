@@ -10,7 +10,7 @@ import { useBoot } from "@/components/system/Boot";
 import KineticText from "@/components/ui/KineticText";
 import Magnetic from "@/components/ui/Magnetic";
 import Marquee from "@/components/ui/Marquee";
-import ReactiveBoard from "./ReactiveBoard";
+import HeroStage from "@/components/three/HeroStage";
 import { disciplines } from "@/lib/site";
 import type { SiteSettingsRow } from "@/types/database";
 
@@ -210,7 +210,7 @@ export default function Hero({ settings }: { settings: SiteSettingsRow }) {
             "linear-gradient(100deg, transparent 0%, rgba(0,0,0,0.25) 26%, black 62%, black 100%)",
         }}
       >
-        <ReactiveBoard className="h-full w-full" />
+        <HeroStage className="h-full w-full" />
       </div>
 
       {/*

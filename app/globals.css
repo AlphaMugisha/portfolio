@@ -1,52 +1,64 @@
 @import "tailwindcss";
 
 /* ============================================================
-   SIGNAL PATH — design tokens
+   DESIGN TOKENS — Alpha Mugisha's original palette, restored
 
-   The site is built as one continuous signal travelling through a
-   system: off a physical sensor edge, through logic, into a model, out
-   to people. That is literally what Alpha builds, so it is the structure
-   of the page rather than a decoration on top of it.
+   Every value below is recovered from commit 9d3243d (2026-09-02), the
+   first real version of this site, and is documented with its source in
+   PALETTE.md. Nothing here is sampled, approximated or invented.
 
-   The substrate is a dark board. Cyan is the live signal and the ONLY
-   accent — where four disciplines need to be told apart (see the Signal
-   Map) they are separated by stroke pattern, node geometry and intensity,
-   never by inventing new hues. Porcelain is the one lit, paper-bright
-   surface, rationed to the moments that earn it.
+   The identity in one line, in the original's own words: AMBER IS "THE
+   ACCENT THAT CARRIES THE PAGE", and lime is toned down to #8FDC3C for
+   small marks only — never to full #70FF00, because that "reads as the
+   neon hacker look this site is deliberately not".
 
-   Shape language is drawn from board fabrication and engineering
-   drawing: chamfered corners, hairline rules, registration ticks,
-   annotated coordinates. No rounded floating cards, no blobs, no glass.
+   A cyan accent (#54D1DB) was introduced during a 2026-09-15 re-grade
+   and survived several rebuilds. It was never Alpha's colour and is now
+   gone, along with the light porcelain panels: the original was dark
+   throughout and built rhythm by STEPPING THE GREYS, so the ramp
+   #0E0E0E -> #161616 -> #191919 -> #232323 does the work a light band
+   was doing.
+
+   The token NAMES are semantic rather than chromatic, which is why they
+   survive the change: `signal` has always meant "the accent that
+   carries the page", and that is precisely what amber is here.
+
+   Shape language is unchanged — chamfered corners, hairline rules,
+   registration ticks. No rounded floating cards, no blobs, no glass.
    ============================================================ */
 @theme {
   --font-display: var(--font-display-raw), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-sans-raw), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-mono-raw), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-  /* -- substrate --------------------------------------------- */
-  --color-ink: #0b0e14;
-  --color-ink-deep: #06080c;
-  --color-ink-raised: #0f141d;
-  --color-ink-high: #151c27;
+  /* -- the ground ramp (original: bg / bg-invert / bg-raised / surface)
+     Rhythm comes from stepping these, not from a light band. */
+  --color-ink: #0e0e0e;
+  --color-ink-deep: #080808;
+  --color-ink-raised: #161616;
+  --color-ink-high: #232323;
+  --color-ink-band: #191919;
 
-  /* -- the lit surface ---------------------------------------- */
-  --color-porcelain: #b9c7d2;
-  --color-porcelain-bright: #d6e0e7;
-  --color-porcelain-ink: #080b10;
+  /* -- type (original contrast ratios on #0E0E0E) ------------- */
+  --color-text: #f2f2f2;        /* 17.3:1 */
+  --color-text-muted: #b4b4b4;  /*  9.2:1 */
+  --color-text-subtle: #828282; /*  5.0:1 — the lightest text permitted */
 
-  /* -- type on substrate -------------------------------------- */
-  --color-text: #e9eef2;
-  --color-text-muted: #94a3b2;
-  --color-text-subtle: #5d6b7b;
+  /* -- the accent: amber -------------------------------------- */
+  --color-signal: #feb002;        /* 10.5:1 — carries the page */
+  --color-signal-bright: #ffc23a; /* hover / lit step */
+  /* Not in the original token set, but required for the hairline traces
+     this design draws. It is the SAME HUE walked down the ramp, not a
+     new colour: amber at low luminance. */
+  --color-signal-deep: #6b4a00;
+  --color-signal-ink: #0e0e0e;    /* ink on an amber fill, 10.5:1 */
 
-  /* -- the signal --------------------------------------------- */
-  --color-signal: #54d1db;
-  --color-signal-bright: #9bf1f7;
-  --color-signal-deep: #1d5f66;
-  --color-signal-ink: #04171a;
+  /* -- the secondary: lime, for small marks only -------------- */
+  --color-lime: #8fdc3c;          /* 10.6:1 */
 
-  --color-rule: rgb(233 238 242 / 0.09);
-  --color-rule-strong: rgb(233 238 242 / 0.18);
+  /* Lines are the original's off-white at low alpha, not a grey. */
+  --color-rule: rgb(242 242 242 / 0.10);
+  --color-rule-strong: rgb(242 242 242 / 0.20);
 
   /* -- type scale ---------------------------------------------
      The display steps are deliberately violent: the hero and the
@@ -105,7 +117,7 @@
   ::-webkit-scrollbar { width: 9px; }
   ::-webkit-scrollbar-track { background: var(--color-ink-deep); }
   ::-webkit-scrollbar-thumb {
-    background: rgb(233 238 242 / 0.14);
+    background: rgb(242 242 242 / 0.14);
     border: 2px solid transparent;
     background-clip: content-box;
   }
@@ -237,7 +249,7 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0.55;
-  background-image: radial-gradient(circle, rgb(233 238 242 / 0.055) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgb(242 242 242 / 0.055) 1px, transparent 1px);
   background-size: 30px 30px;
   mask-image: radial-gradient(ellipse 90% 55% at 50% 0%, black 30%, transparent 100%);
 }
@@ -255,7 +267,7 @@
 }
 .trace-live {
   stroke: var(--color-signal);
-  filter: drop-shadow(0 0 5px rgb(84 209 219 / 0.6));
+  filter: drop-shadow(0 0 5px rgb(254 176 2 / 0.55));
 }
 .pad {
   fill: var(--color-ink);
@@ -264,7 +276,7 @@
 }
 .pad-live {
   fill: var(--color-signal);
-  filter: drop-shadow(0 0 7px rgb(84 209 219 / 0.75));
+  filter: drop-shadow(0 0 7px rgb(254 176 2 / 0.7));
 }
 
 /* ============================================================
@@ -355,7 +367,7 @@
 .marquee:hover .marquee-track { animation-play-state: paused; }
 
 /* ============================================================
-   SCAN — a slow vertical sweep used on the preloader and the porcelain
+   SCAN — a slow vertical sweep used on the preloader and the instrument
    band, suggesting a surface being read rather than merely displayed.
    ============================================================ */
 @keyframes scan-down {

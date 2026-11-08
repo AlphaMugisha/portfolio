@@ -178,8 +178,8 @@ export default function Cursor() {
         style={{
           width: ringSize,
           height: ringSize,
-          borderColor: state === "default" ? "rgb(84 209 219 / 0.45)" : "rgb(84 209 219 / 0.95)",
-          background: state === "labelled" ? "rgb(84 209 219 / 0.14)" : "transparent",
+          borderColor: state === "default" ? "rgb(254 176 2 / 0.5)" : "rgb(254 176 2 / 0.95)",
+          background: state === "labelled" ? "rgb(254 176 2 / 0.16)" : "transparent",
           backdropFilter: state === "default" ? "none" : "invert(4%)",
           transition:
             "width 420ms cubic-bezier(0.22,1,0.36,1), height 420ms cubic-bezier(0.22,1,0.36,1), background 300ms linear, border-color 300ms linear, opacity 220ms linear",
