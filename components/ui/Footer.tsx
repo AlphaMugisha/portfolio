@@ -8,14 +8,12 @@ import Logo from "./Logo";
 import type { SiteSettingsRow } from "@/types/database";
 
 const EXPLORE = [
-  { label: "About", href: "/#about" },
-  { label: "What I do", href: "/#what-i-do" },
-  { label: "Work", href: "/#work" },
-  { label: "Index", href: "/#work-grid" },
-  { label: "Signal map", href: "/#toolbox" },
-  { label: "Journey", href: "/#journey" },
-  { label: "GitHub", href: "/#github" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Meet Alpha", href: "/#meet" },
+  { label: "The beginning", href: "/#beginning" },
+  { label: "The learning journey", href: "/#learning" },
+  { label: "The things I've built", href: "/#built" },
+  { label: "How I see the world", href: "/#world" },
+  { label: "Let's connect", href: "/#connect" },
 ] as const;
 
 /**

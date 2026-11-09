@@ -9,26 +9,21 @@ import type { SiteSettingsRow } from "@/types/database";
 /**
  * The header, built as an instrument strip.
  *
- * It carries three live readings rather than a row of links:
- *   - a hairline progress rail along the bottom edge showing position
- *     through the document;
- *   - the section you are currently in, swapped as you pass through it;
- *   - the index count, as the affordance for the full menu.
+ * Deliberately almost nothing: the mark, a hairline progress rail
+ * along the bottom edge, and the index count that opens the chapter
+ * menu. The journey is meant to be the interface, so the bar stays
+ * out of its way.
  *
- * Links themselves live only in the curtain. One source of truth for
- * navigation means the bar cannot drift out of sync with the menu, and
- * it keeps the strip quiet enough to sit over the hero without
- * competing with the name.
+ * Links live only in the curtain — one source of truth for navigation,
+ * so the bar cannot drift out of sync with the menu.
  *
- * Both readings are written straight to the DOM from a scroll handler
- * and an IntersectionObserver — the progress rail never goes through
- * React state, because a setState per scroll event would re-render the
- * header sixty times a second for a one-pixel change.
+ * The rail is written straight to the DOM from the scroll handler and
+ * never through React state: a setState per scroll event would
+ * re-render the header sixty times a second for a one-pixel change.
  */
 export default function Navbar({ settings }: { settings: SiteSettingsRow }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [section, setSection] = useState("");
   const rail = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -57,28 +52,17 @@ export default function Navbar({ settings }: { settings: SiteSettingsRow }) {
     };
   }, []);
 
-  // Which section is currently crossing the upper third of the viewport.
-  useEffect(() => {
-    const targets = navItems
-      .map((item) => document.querySelector(item.href.replace("/", "")))
-      .filter((el): el is Element => Boolean(el));
-    if (!targets.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const hit = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (!hit) return;
-        const match = navItems.find((item) => item.href.replace("/#", "") === hit.target.id);
-        setSection(match?.label ?? "");
-      },
-      { rootMargin: "-12% 0px -72% 0px", threshold: 0 },
-    );
-
-    targets.forEach((target) => observer.observe(target));
-    return () => observer.disconnect();
-  }, []);
+  /*
+   * The live section readout was removed.
+   *
+   * It observed the chapter anchors, which on the journey are
+   * zero-height markers pinned inside one tall scroll container —
+   * an IntersectionObserver cannot meaningfully decide which of those
+   * is "current", and it reported the wrong chapter. The journey
+   * already prints the current chapter on its own rail along the
+   * bottom of the viewport, so this was duplicate chrome reporting a
+   * worse answer. The bar is now just the mark and the index.
+   */
 
   // The curtain owns scroll lock through the attribute SmoothScroll watches.
   useEffect(() => {
@@ -101,20 +85,6 @@ export default function Navbar({ settings }: { settings: SiteSettingsRow }) {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6">
           <Logo name={settings.name} size={30} />
-
-          {/* Live section readout. */}
-          <span
-            aria-hidden="true"
-            className={`hidden items-center gap-3 transition-opacity duration-500 sm:flex ${
-              section && scrolled ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <span className="h-1 w-1 rounded-full bg-signal" />
-            <span key={section} className="note note-signal">
-              {section}
-            </span>
-          </span>
-
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}

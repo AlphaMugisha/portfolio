@@ -8,7 +8,8 @@ import Reveal from "@/components/ui/Reveal";
 import KineticText from "@/components/ui/KineticText";
 import Counter from "@/components/ui/Counter";
 import TechIcon from "@/components/ui/TechIcon";
-import { getProject, getProjects } from "@/lib/db/public";
+import Footer from "@/components/ui/Footer";
+import { getProject, getProjects, getSiteSettings } from "@/lib/db/public";
 import { mediaUrl } from "@/lib/supabase/env";
 import { STATUS_LABEL } from "@/lib/utils/format";
 import { projects as staticProjects } from "@/lib/projects";
@@ -48,7 +49,11 @@ export async function generateMetadata({
  */
 export default async function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
   const { slug } = await params;
-  const [project, all] = await Promise.all([getProject(slug), getProjects()]);
+  const [project, all, settings] = await Promise.all([
+    getProject(slug),
+    getProjects(),
+    getSiteSettings(),
+  ]);
   if (!project) notFound();
 
   const index = all.findIndex((p) => p.slug === slug);
@@ -56,10 +61,11 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
   const cover = mediaUrl(project.cover_path);
 
   return (
+    <>
     <article className="px-6 pb-28 pt-32 lg:pt-40">
       <div className="mx-auto max-w-5xl">
         <Link
-          href="/#work-grid"
+          href="/#built"
           className="group inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.12em] text-text-muted transition-colors hover:text-signal"
           data-cursor-label="Back"
         >
@@ -231,5 +237,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
         </section>
       </div>
     </article>
+    <Footer settings={settings} />
+    </>
   );
 }

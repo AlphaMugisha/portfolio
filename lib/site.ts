@@ -45,11 +45,25 @@ export const disciplines = [
 
 /* The page is one scroll, so every nav item is an in-page anchor. The ids
    live on the sections rendered from `app/page.tsx`. */
+/**
+ * The menu is the chapter list.
+ *
+ * These ids match the anchor markers the journey pins down its scroll
+ * container, so each link lands at that chapter's position on the
+ * route. The previous list pointed at section ids (`#about`,
+ * `#toolbox`, `#work-grid`) that the journey replaced — every one of
+ * them was a dead link.
+ *
+ * Deliberately not derived from `lib/chapters.ts`: that module imports
+ * this one, and closing the loop would be a circular import.
+ */
 export const navItems = [
-  { label: "Work", href: "/#work" },
-  { label: "About", href: "/#about" },
-  { label: "What I do", href: "/#what-i-do" },
-  { label: "Toolbox", href: "/#toolbox" },
-  { label: "Journey", href: "/#journey" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Meet Alpha", href: "/#meet" },
+  { label: "The beginning", href: "/#beginning" },
+  { label: "Beyond the screen", href: "/#beyond" },
+  { label: "The learning journey", href: "/#learning" },
+  { label: "The things I've built", href: "/#built" },
+  { label: "How I see the world", href: "/#world" },
+  { label: "What comes next", href: "/#next" },
+  { label: "Let's connect", href: "/#connect" },
 ] as const;

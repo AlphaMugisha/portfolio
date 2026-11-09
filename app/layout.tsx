@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, IBM_Plex_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
-import Footer from "@/components/ui/Footer";
 import SmoothScroll from "@/components/system/SmoothScroll";
 import Cursor from "@/components/system/Cursor";
 import { BootProvider } from "@/components/system/Boot";
@@ -111,10 +110,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </a>
 
           <Navbar settings={settings} />
+          {/*
+            No global footer. The home page is one continuous journey
+            that ends on its own contact chapter — bolting a column of
+            links underneath it broke the experience and, worse, every
+            one of those links pointed at a section id the journey
+            replaced. The case studies render `Footer` themselves,
+            where a conventional ending is the right answer.
+          */}
           <main id="main" className="relative z-[2] flex-1">
             {children}
           </main>
-          <Footer settings={settings} />
         </BootProvider>
       </body>
     </html>
