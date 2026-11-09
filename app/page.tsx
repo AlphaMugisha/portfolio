@@ -1,20 +1,19 @@
-import Journey from "@/components/journey/Journey";
+import Drive from "@/components/world/Drive";
 import { getSiteSettings, getProjects } from "@/lib/db/public";
 
 /**
- * The site is the journey.
+ * Section 01 — the drive.
  *
- * One continuous scroll-driven world with eight chapters of
- * typography over it — no sections, no cards, no panels. The data
- * layer is unchanged: project content still comes from Supabase with
- * the static fallback, so editing a project in the admin still
- * changes what the reveals show.
+ * One scroll, one road, five environments: Winter Mountains, Sunny
+ * City, Green Forest, Rainy City and a Sunset ridge. The car travels
+ * the whole of it and the chapters play over the drive.
  *
- * The case studies at `/projects/[slug]` remain as the place to read
- * a project in depth; the journey links into them.
+ * The data layer is untouched: projects still come from Supabase with
+ * the static fallback, and each one puts a real portal on the forest
+ * road that links to its case study at `/projects/[slug]`.
  */
 export default async function Home() {
   const [settings, projects] = await Promise.all([getSiteSettings(), getProjects()]);
 
-  return <Journey settings={settings} projects={projects} />;
+  return <Drive settings={settings} projects={projects} />;
 }

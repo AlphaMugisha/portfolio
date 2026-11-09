@@ -1,9 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { mediaUrl } from "@/lib/supabase/env";
 import type { Chapter } from "@/lib/chapters";
-import type { ProjectRow } from "@/types/database";
 
 /**
  * The content interface: words, directly in the composition.
@@ -14,8 +11,8 @@ import type { ProjectRow } from "@/types/database";
  * lines, and a lot of air. The 3D world shows through everything.
  *
  * Opacity and drift are written to these nodes directly from the
- * journey's rAF loop (see `Journey.tsx`), never through React state,
- * so scrolling does not re-render the tree.
+ * drive's rAF loop (see `Drive.tsx`), never through React state, so
+ * scrolling does not re-render the tree.
  *
  * The one concession to legibility is a soft vignette behind the type
  * — a radial gradient with no edge, not a box. Without it the amber
@@ -26,7 +23,7 @@ function Statement({ chapter }: { chapter: Chapter }) {
   const accent = chapter.accent?.toLowerCase();
 
   return (
-    <h2 className="font-display text-[clamp(2.6rem,8.5vw,8.5rem)] font-semibold leading-[0.86] tracking-[-0.045em] text-text">
+    <h2 className="font-display text-[clamp(2.4rem,6.6vw,6.6rem)] font-semibold leading-[0.86] tracking-[-0.045em] text-text">
       {chapter.statement.map((line, i) => {
         // Lift the accent word without wrapping the line in anything.
         const words = line.split(" ");
@@ -94,7 +91,7 @@ export function ChapterBlock({
         }}
       />
 
-      <div className={`relative mx-auto flex w-full max-w-6xl flex-col ${place}`}>
+      <div className={`relative mx-auto flex w-full max-w-5xl flex-col ${place}`}>
         <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
           {chapter.index}
           <span className="ml-3 text-text-subtle">{chapter.label}</span>
@@ -122,88 +119,6 @@ export function ChapterBlock({
 
         {children ? <div className="mt-10">{children}</div> : null}
       </div>
-    </div>
-  );
-}
-
-/**
- * The projects chapter.
- *
- * Each project arrives as a full-bleed frame of its own cover with the
- * name set over it at display scale — the image IS the layout. No
- * card, no grid, no thumbnail. They cross-fade as the core travels
- * through this stretch of the route, so the reveals are paced by
- * scroll rather than by a carousel.
- */
-export function ProjectReveal({
-  projects,
-  nodeRef,
-  frameRef,
-}: {
-  projects: ProjectRow[];
-  nodeRef: (el: HTMLDivElement | null) => void;
-  frameRef: (el: HTMLDivElement | null, i: number) => void;
-}) {
-  return (
-    <div
-      ref={nodeRef}
-      className="pointer-events-none absolute inset-0 opacity-0"
-      style={{ willChange: "opacity" }}
-    >
-      {projects.map((project, i) => {
-        const cover = mediaUrl(project.cover_path);
-        return (
-          <div
-            key={project.id}
-            ref={(el) => frameRef(el, i)}
-            className="absolute inset-0 opacity-0"
-            style={{ willChange: "opacity, transform" }}
-          >
-            {cover ? (
-              <Image
-                src={cover}
-                alt=""
-                fill
-                sizes="100vw"
-                className="object-cover brightness-[0.85]"
-                priority={i === 0}
-              />
-            ) : null}
-
-            {/* Scrim so the type holds over photography. A gradient with
-                no edge — still not a box. */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(14,14,14,0.97) 0%, rgba(14,14,14,0.62) 44%, rgba(14,14,14,0.2) 74%, rgba(14,14,14,0.55) 100%)",
-              }}
-            />
-
-            <div className="absolute inset-0 flex flex-col justify-end px-6 pb-[14vh] sm:px-12 lg:px-20">
-              <div className="mx-auto w-full max-w-6xl">
-                <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
-                  {String(i + 1).padStart(2, "0")}
-                  <span className="ml-3 text-text-subtle">{project.year}</span>
-                </span>
-
-                <h3 className="mt-4 font-display text-[clamp(2.4rem,7.5vw,7rem)] font-semibold leading-[0.88] tracking-[-0.045em] text-text">
-                  {project.name}
-                </h3>
-
-                <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-text-muted sm:text-[17px]">
-                  {project.summary}
-                </p>
-
-                <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-text-subtle">
-                  {project.stack.slice(0, 5).join("  ·  ")}
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 }
