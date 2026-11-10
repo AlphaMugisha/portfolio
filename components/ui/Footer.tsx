@@ -8,12 +8,12 @@ import Logo from "./Logo";
 import type { SiteSettingsRow } from "@/types/database";
 
 const EXPLORE = [
-  { label: "Meet Alpha", href: "/#meet" },
-  { label: "The beginning", href: "/#beginning" },
-  { label: "The learning journey", href: "/#learning" },
+  { label: "The drive", href: "/#meet" },
   { label: "The things I've built", href: "/#built" },
-  { label: "How I see the world", href: "/#world" },
-  { label: "Let's connect", href: "/#connect" },
+  { label: "The record", href: "/#record" },
+  { label: "The toolbox", href: "/#toolbox" },
+  { label: "The progression", href: "/#progression" },
+  { label: "Open", href: "/#contact" },
 ] as const;
 
 /**

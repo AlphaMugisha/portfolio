@@ -117,6 +117,7 @@ export default function Drive({
   const blocks = useRef<Record<string, HTMLDivElement | null>>({});
   const portrait = useRef<HTMLDivElement>(null);
   const railFill = useRef<HTMLSpanElement>(null);
+  const handoff = useRef<HTMLDivElement>(null);
 
   const [ready, setReady] = useState<null | boolean>(null);
   const [envIndex, setEnvIndex] = useState(0);
@@ -126,6 +127,7 @@ export default function Drive({
   const [lampsManual, setLampsManual] = useState<boolean | null>(null);
   const [finish, setFinish] = useState(FINISHES[0]);
   const [passing, setPassing] = useState<string | null>(null);
+  const [atEnd, setAtEnd] = useState(false);
 
   /* ---- what can be clicked out there ---- */
   const spots: LiveSpot[] = useMemo(() => {
@@ -173,6 +175,7 @@ export default function Drive({
     let raf = 0;
     let lastEnv = -1;
     let lastPassing: string | null = null;
+    let lastEnd = false;
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
@@ -205,6 +208,19 @@ export default function Drive({
         const o = envelope(p, [0, 0.085], true);
         portrait.current.style.opacity = String(o);
         portrait.current.style.transform = `translate3d(0, ${(1 - o) * 40}px, 0) scale(${0.96 + o * 0.04})`;
+      }
+
+      // The hand-off. Once the road runs out there is a whole
+      // document underneath, and nothing on screen said so.
+      if (handoff.current) {
+        const o = Math.max(0, (p - 0.9) / 0.08);
+        handoff.current.style.opacity = String(Math.min(1, o));
+        handoff.current.style.pointerEvents = o > 0.6 ? "auto" : "none";
+      }
+      const end = p > 0.92;
+      if (end !== lastEnd) {
+        lastEnd = end;
+        setAtEnd(end);
       }
 
       const { index } = envAt(p);
@@ -262,7 +278,7 @@ export default function Drive({
      document. Not a placeholder — every chapter, every project and the
      portrait are all there. */
   if (ready === false) {
-    return <DriveFallback settings={settings} projects={projects} />;
+    return <DriveFallback settings={settings} />;
   }
 
   return (
@@ -425,10 +441,33 @@ export default function Drive({
           ))}
         </div>
 
+        {/* ---------- hand-off to the record ---------- */}
+        <div
+          ref={handoff}
+          className="absolute inset-x-0 bottom-24 flex flex-col items-center gap-3 opacity-0 transition-opacity"
+          style={{ pointerEvents: "none" }}
+        >
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-text-subtle">
+            The road ends here
+          </p>
+          <a
+            href="#record"
+            className="group font-display text-xl font-semibold tracking-tight text-text transition-colors hover:text-signal sm:text-2xl"
+          >
+            The record follows
+            <span
+              aria-hidden="true"
+              className="ml-3 inline-block transition-transform duration-300 group-hover:translate-y-1"
+            >
+              ↓
+            </span>
+          </a>
+        </div>
+
         {/* ---------- hint ---------- */}
         <p
           className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-text-subtle transition-opacity duration-700"
-          style={{ opacity: open || carOpen ? 0 : 0.85 }}
+          style={{ opacity: open || carOpen || atEnd ? 0 : 0.85 }}
         >
           <span className="hidden sm:inline">
             Scroll to drive · click the car, or anything that glows

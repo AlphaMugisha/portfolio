@@ -54,16 +54,18 @@ export const disciplines = [
  * `#toolbox`, `#work-grid`) that the journey replaced — every one of
  * them was a dead link.
  *
- * Deliberately not derived from `lib/chapters.ts`: that module imports
- * this one, and closing the loop would be a circular import.
+ * The first four land on chapter markers pinned inside the drive; the
+ * last four land on the document underneath it. Deliberately not
+ * derived from `lib/chapters.ts`: that module imports this one, and
+ * closing the loop would be a circular import.
  */
 export const navItems = [
-  { label: "Meet Alpha", href: "/#meet" },
+  { label: "The drive", href: "/#meet" },
   { label: "The beginning", href: "/#beginning" },
-  { label: "Beyond the screen", href: "/#beyond" },
-  { label: "The learning journey", href: "/#learning" },
   { label: "The things I've built", href: "/#built" },
-  { label: "How I see the world", href: "/#world" },
   { label: "What comes next", href: "/#next" },
-  { label: "Let's connect", href: "/#connect" },
+  { label: "The record", href: "/#record" },
+  { label: "The toolbox", href: "/#toolbox" },
+  { label: "The progression", href: "/#progression" },
+  { label: "Open", href: "/#contact" },
 ] as const;

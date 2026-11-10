@@ -286,7 +286,7 @@ export const ENV_RANGES: [number, number][] = environments.map((_, i) => [
 ]);
 
 /** Total scroll height of the drive, in viewport heights. */
-export const DRIVE_VH = environments.length * 220;
+export const DRIVE_VH = environments.length * 170;
 
 /** Index of the environment containing progress `p`, and how far into it. */
 export function envAt(p: number): { index: number; local: number } {
